@@ -122,33 +122,6 @@ function toolClick(editor){
 }
 
 /**
- * addStyle: 添加样式，即在选中的区域添加样式
- * @param {String} name 样式名
- * @param {String} val  样式值
- * @param {Editor} editor Editor实例对象
- */
-function addStyle(name,val,editor){
-    var spans = fe.browser == 'ie' ? editor.edit.find('font') : editor.edit.find('span'),
-        reg = /background\-color\:[\s]*?rgba\(255\,[\s]*?255\,[\s]*?255\,[\s]*?0\)\;/ig,
-        oStyle = '';
-    if(spans.length){
-        for(var i=0,len=spans.length; i<len; i++){
-            oStyle = spans[i].getAttribute('style');
-            if(reg.test(oStyle)){
-                spans[i].setAttribute('style',oStyle.replace(reg,''));
-                spans[i].style[name] = val;
-                //移除子级span中重复的样式。
-                var child = spans[i].getElementsByTagName('span');
-                if(child.length){
-                    for(var j=0,jlen=child.length; j<jlen; j++){
-                        child[j].style[name] = '';
-                    }
-                }
-            }
-        }
-    }
-}
-/**
  * editControl： 编辑框点击到图片时，选中图片，右键（自定义）菜单，编辑文件属性
  * @param {Editor} editor Editor实例对象
  */

@@ -109,9 +109,9 @@ class Editor{
             if(!obj) return;
             if(typeof html != 'string'){
                 obj.html('');
-                if(html instanceof Fe){
+                try{
                     obj.append(html);
-                }else{
+                }catch(err){
                     obj[0].appendChild(html);
                 }
             }else{
@@ -338,4 +338,34 @@ class Editor{
         return this.edit.innerHTML;
     }
 }
+
+
+/**===============================================
+ * addStyle: 添加样式，即在选中的区域添加样式
+ * @param {String} name 样式名
+ * @param {String} val  样式值
+ * @param {Editor} editor Editor实例对象
+ */
+function __addStyle__(name,val,editor){
+    var spans = fe.browser == 'ie' ? editor.edit.find('font') : editor.edit.find('span'),
+        reg = /background\-color\:[\s]*?rgba\(255\,[\s]*?255\,[\s]*?255\,[\s]*?0\)\;/ig,
+        oStyle = '';
+    if(spans.length){
+        for(var i=0,len=spans.length; i<len; i++){
+            oStyle = spans[i].getAttribute('style');
+            if(reg.test(oStyle)){
+                spans[i].setAttribute('style',oStyle.replace(reg,''));
+                spans[i].style[name] = val;
+                //移除子级span中重复的样式。
+                var child = spans[i].getElementsByTagName('span');
+                if(child.length){
+                    for(var j=0,jlen=child.length; j<jlen; j++){
+                        child[j].style[name] = '';
+                    }
+                }
+            }
+        }
+    }
+}
+
 module.exports = Editor;
