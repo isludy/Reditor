@@ -1,5 +1,5 @@
-fe.plugin.fontsize = function(){
-	var div = fe('<div unselectable="on" style="width: 100%;max-height: 100%;overflow-y: auto;">'),
+fe.plugin('fontsize', function(){
+	let div = fe('<div unselectable="on" style="width: 100%;max-height: 100%;overflow-y: auto;">'),
 		editor = this,
 		html = '<br>',
 		inputEl = fe('<input class="fe-input" type="text" placeholder="自定义，不能小于10">'),
@@ -12,16 +12,16 @@ fe.plugin.fontsize = function(){
 	fe(div[0].childNodes[0]).before(btn);
 	btn.before(inputEl);
 
-	var dialog = editor.dialog({
+	let dialog = editor.dialog({
 		header: '选择边框样式',
 		body: div,
 		ok: false,
 		cancel: false,
 		css: {'maxWidth':'800px'}
-	},'fe-dialog-fontsize');
+	});
 	
 	div.on('click', function handle(e){
-		var target = e.target || e.srcElement,
+		let target = e.target || e.srcElement,
 			dataval = target.getAttribute('data-fe-val');
 
 		if(target === div[0] || target === inputEl[0]) return;
@@ -32,4 +32,4 @@ fe.plugin.fontsize = function(){
 		if(!dataval) return;
 		dialog.exec('fontSize',dataval);
 	});
-}
+});

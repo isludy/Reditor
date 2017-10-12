@@ -1,5 +1,5 @@
-fe.plugin.fontname = function(){
-	var div = fe('<div>'),
+fe.plugin('fontname', function(){
+	let div = fe('<div>'),
 		editor = this,
 		html = '';
 
@@ -8,16 +8,16 @@ fe.plugin.fontname = function(){
 	});
 	div.html(html);
 
-	var dialog = editor.dialog({
+	let dialog = editor.dialog({
 		header: '选择字体',
 		body: div,
 		ok: false,
 		cancel: false,
 		css: {'maxWidth':'600px'}
-	},'fe-dialog-fontname');
+	});
 	
 	div.on('click', function handle(e){
-		var target = e.target || e.srcElement,
+		let target = e.target || e.srcElement,
 			dataval = target.getAttribute('data-fe-val');
 
 		div.off('click',handle);
@@ -26,4 +26,4 @@ fe.plugin.fontname = function(){
 		if(!dataval) return;
 		dialog.exec('fontFamily',dataval);
 	});
-}
+});

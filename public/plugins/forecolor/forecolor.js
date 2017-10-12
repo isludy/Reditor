@@ -1,5 +1,5 @@
-fe.plugin.forecolor = function(e,tg,fns){
-	var div = fe('<div unselectable="on">'),
+fe.plugin('forecolor', function(e,tg,fns){
+	let div = fe('<div unselectable="on">'),
 		editor = this,
 		html = '';
 
@@ -8,16 +8,16 @@ fe.plugin.forecolor = function(e,tg,fns){
 	});
 	div.html(html);
 
-	var dialog = editor.dialog({
+	let dialog = editor.dialog({
 		header: '颜色板',
 		body: div,
 		ok: false,
 		cancel: false,
 		css: {'maxWidth':'600px'}
-	},'fe-dialog-forecolor');
+	});
 
 	div.on('click', function handle(e){
-		var target = e.target || e.srcElement,
+		let target = e.target || e.srcElement,
 			dataval = target.getAttribute('data-fe-val');
 
 		div.off('click',handle);
@@ -26,4 +26,4 @@ fe.plugin.forecolor = function(e,tg,fns){
 		if(!dataval) return;
 		dialog.exec('color',dataval);
 	});
-}
+});

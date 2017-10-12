@@ -1,5 +1,5 @@
-fe.plugin.backcolor = function(){
-	var div = fe('<div unselectable="on">'),
+fe.plugin('backcolor', function(){
+	let div = fe('<div unselectable="on">'),
 		editor = this,
 		html = '';
 
@@ -8,16 +8,16 @@ fe.plugin.backcolor = function(){
 	});
 	div.html(html);
 
-	var dialog = editor.dialog({
+	let dialog = editor.dialog({
 		header: '添加背景色',
 		body: div,
 		ok: false,
 		cancel: false,
 		css: {'maxWidth':'600px'}
-	},'fe-dialog-backcolor');
+	});
 	
 	div.on('click', function handle(e){
-		var target = e.target || e.srcElement,
+		let target = e.target || e.srcElement,
 			dataval = target.getAttribute('data-fe-val');
 
 		div.off('click',handle);
@@ -26,4 +26,4 @@ fe.plugin.backcolor = function(){
 		if(!dataval) return;
 		dialog.exec('backgroundColor',dataval);
 	});
-}
+});

@@ -7,12 +7,12 @@
  * 视频、音频类：提交“截取时长信息”给后台进行裁剪处理
  * 视频类：提交“水印、头片和片尾等信息”给后台进行处理
  */
-fe.plugin.fileupload = function(fupevent){
-	var editor = this;
-	fe.loadScript([fe.getRoot+'plugins/fileupload/fup.js',fe.getRoot+'plugins/fileupload/fileupload.css'],ready);
+fe.plugin('fileupload', function(fupevent){
+	let editor = this;
+	fe.loadSource([fe.getRoot+'plugins/fileupload/fup.js',fe.getRoot+'plugins/fileupload/fileupload.css'],ready);
 	function ready(){
 		//初始化
-		var inputEl = fe('<input type="file" name="fup" multiple="multiple">'),
+		let inputEl = fe('<input type="file" name="fup" multiple="multiple">'),
 			//本地储一些文件信息
 			ls = window.localStorage,
 			lskey = editor.localKey,
@@ -39,7 +39,7 @@ fe.plugin.fileupload = function(fupevent){
 		}
 
 		//文件上传、预览dialog
-		var dialog = editor.dialog({
+		let dialog = editor.dialog({
 			header: 'FUP文件处理器',
 			body:
 				'<div id="fe-fup">\
@@ -76,13 +76,13 @@ fe.plugin.fileupload = function(fupevent){
 				localData = JSON.parse(ls.getItem(lskey));
 				//插入管理面板中选择的插入的id号对应的文件
 				managePanel.find('[data-fe=add]').each(function(){
-					var that = fe(this);
+					let that = fe(this);
 					if(that.hasClass('checked')){
 						editor.insertFile( localData[parseInt(that.parents('[data-fupid]',1).attr('data-fupid'))] , range);
 					}
 				});
 				//插入文件
-				for(var i=0; i<insertId.length; i++){
+				for(let i=0; i<insertId.length; i++){
 					editor.insertFile(localData[insertId[i]]);
 				}
 				insertId.splice(0,insertId.length);
@@ -98,7 +98,7 @@ fe.plugin.fileupload = function(fupevent){
 			}
 		},'fe-dialog-fup');
 		//获取要操作的节点
-		var fefup = fe('#fe-fup'),
+		let fefup = fe('#fe-fup'),
 			tabs = fefup.find('.fe-fup-tab'),
 			uploadPanel = fe('#fe-fup-tabbody-upload'),
 			managePanel = fe('#fe-fup-tabbody-manage'),
@@ -112,7 +112,7 @@ fe.plugin.fileupload = function(fupevent){
 		tabs.on('click', tabsFn);
 		if(fupevent.type=='paste') tabsFn(1);//当粘贴时，启用管理面板
 		function tabsFn(){
-			var isPaste = arguments[0] == 1,
+			let isPaste = arguments[0] == 1,
 				that = isPaste ? tabs.eq(1) : fe(this),
 				index = isPaste ? 1 : that.index();
 			if(index == 0){
@@ -133,7 +133,7 @@ fe.plugin.fileupload = function(fupevent){
 				btnbar.eq(1).removeClass('hide');
 				//延迟加载的图片预览加载
 				managePanel.on('scroll',mScrollFn);
-				var tmpTimer = setTimeout(function(){
+				let tmpTimer = setTimeout(function(){
 					fupimgLazy(0);
 				},200);
 			}
@@ -143,7 +143,7 @@ fe.plugin.fileupload = function(fupevent){
 		//事件：btnbar按钮面板事件委托的功能分配
 		btnbar.on('click',btnbarFn);
 		function btnbarFn(e){
-			var target = e.target || e.srcElement,
+			let target = e.target || e.srcElement,
 				febtn;
 			if(febtn = target.getAttribute('data-fe-btn')){
 				switch(febtn){
@@ -179,11 +179,11 @@ fe.plugin.fileupload = function(fupevent){
 				fup.dialog('提示：','文件夹是空的。');
 				return false;
 			}
-			var sentData = {},
+			let sentData = {},
 				doms = [];
 			//获取上传面板的数据
 			uploadPanel.find('.fe-fup-item-outer').each(function(){
-				var that = fe(this),
+				let that = fe(this),
 					id = that.attr('data-fupid');
 				//暂存需要用到的节点
 				doms[id] = {
@@ -218,14 +218,14 @@ fe.plugin.fileupload = function(fupevent){
 				success: function(data,id){
 					if(!!data){
 						//将响应的图片地址等信息添加到备用容器中。
-						var fileInfo = {
+						let fileInfo = {
 								'date': new Date().getTime(),
 								'src': data,
 								'description': sentData[id]['description']
 							};
 						localData = JSON.parse(ls.getItem(lskey));
 						//检查本地是否存在相同的图片，如果存在则删除后再添加更新的
-						for(var i=0,len=localData.length; i<len; i++){
+						for(let i=0,len=localData.length; i<len; i++){
 							if(localData[i]['src'] == fileInfo.src){
 								localData.splice(i,1);
 								break;
@@ -234,7 +234,7 @@ fe.plugin.fileupload = function(fupevent){
 						localData.push(fileInfo);
 						ls.setItem(lskey,JSON.stringify(localData));
 
-						var localId = localData.length-1;
+						let localId = localData.length-1;
 						//添加到管理面板
 						managePanel.prepend(mitem(localId,fileInfo));
 						//保存到insertId
@@ -275,7 +275,7 @@ fe.plugin.fileupload = function(fupevent){
 		});
 		//函数：改变btnbar里按钮的disabled状态
 		function btnStatusFn(status){
-			var btns = btnbar.children();
+			let btns = btnbar.children();
 			switch(status){
 				//预览时
 				case 'onpreview':
@@ -323,9 +323,9 @@ fe.plugin.fileupload = function(fupevent){
 		//事件：上传面板的item的删除
 		uploadPanel.on('click',uploadPanelFn);
 		function uploadPanelFn(e){
-			var target = fe(e.target || e.srcElement);
+			let target = fe(e.target || e.srcElement);
 			if(target.hasClass('fe-close')){
-				var p = target.parents('[data-fupid]',1),
+				let p = target.parents('[data-fupid]',1),
 					id = p.attr('data-fupid');
 				fup.del(id);
 				p.remove();
@@ -341,7 +341,7 @@ fe.plugin.fileupload = function(fupevent){
 		//事件：全选与反选
 		toolbar.on('click',toolbarFn);
 		function toolbarFn(e){
-			var target = fe(e.target || e.srcElement),
+			let target = fe(e.target || e.srcElement),
 				datafe = null;
 			if((datafe = target.attr('data-fe')) && (target.hasClass('fe-checkbox') || target.hasClass('fe-radio')) ){
 				if(fe(target).hasClass('checked')){
@@ -357,7 +357,7 @@ fe.plugin.fileupload = function(fupevent){
 		//----管理面板-----
 		//UI：管理面板添加item
 		function mview(json){
-			var len = json.length;
+			let len = json.length;
 			if(len){
 				managePanel.html('');
 				while(len--){
@@ -373,9 +373,9 @@ fe.plugin.fileupload = function(fupevent){
 		}
 		function fupimgLazy(sctop){
 			managePanel.children().each(function(){
-				var oftop = this.offsetTop;
+				let oftop = this.offsetTop;
 				if(oftop-sctop-managePanel[0].offsetHeight < 0){
-					var img = this.querySelector('[data-fupsrc]'),
+					let img = this.querySelector('[data-fupsrc]'),
 						src = '';
 					if(img){
 						src = img.getAttribute('data-fupsrc');
@@ -400,9 +400,9 @@ fe.plugin.fileupload = function(fupevent){
 		//事件函数：删除剪贴板文件
 		function mdelpasteFn(){
 			localData = JSON.parse(ls.getItem(lskey));
-			var len = localData.length,
+			let len = localData.length,
 				tmpArr = [];
-			for(var i=0; i<len; i++){
+			for(let i=0; i<len; i++){
 				if(!localData[i]['from']){
 					tmpArr.push(localData[i]);
 				}
@@ -416,11 +416,11 @@ fe.plugin.fileupload = function(fupevent){
 		//事件：管理面板的单个item删除与修改
 		managePanel.on('click',managePanelFn);
 		function managePanelFn(e){
-			var target = fe(e.target || e.srcElement),
+			let target = fe(e.target || e.srcElement),
 				id = null;
 			//删除
 			if(target.hasClass('fe-close')){
-				var p = target.parents('[data-fupid]',1);
+				let p = target.parents('[data-fupid]',1);
 
 				localData = JSON.parse(ls.getItem(lskey));
 				id = p.attr('data-fupid');
@@ -428,7 +428,7 @@ fe.plugin.fileupload = function(fupevent){
 				localData.splice(id,1);
 				ls.setItem(lskey,JSON.stringify(localData));
 				//刷新item的fupid
-				var len = localData.length;
+				let len = localData.length;
 				managePanel.children().each(function(){
 					this.setAttribute('data-fupid',--len);
 				});
@@ -483,7 +483,7 @@ fe.plugin.fileupload = function(fupevent){
 			</div>');
 		}
 		function uimg(info){
-			var ext = info.filename.slice(info.filename.lastIndexOf('.')+1);
+			let ext = info.filename.slice(info.filename.lastIndexOf('.')+1);
 			if(fup.inArray(ext,['jpg','png','gif','jpeg','svg','webp'])){
 				return '<img src="'+info.src+'">';
 			}else{
@@ -514,7 +514,7 @@ fe.plugin.fileupload = function(fupevent){
 			</div>');
 		}
 		function mimg(info){
-			var ext = info.src.slice(info.src.lastIndexOf('.')+1);
+			let ext = info.src.slice(info.src.lastIndexOf('.')+1);
 			if(/^(git|jpg|jpeg|png|svg|webp)$/i.test(ext)){
 				return '<img data-fupsrc="'+info.src+'" class="fe-loading-gif" src="'+fe.getRoot+'themes/loading.gif">';
 			}else{
@@ -525,4 +525,4 @@ fe.plugin.fileupload = function(fupevent){
 		 *  一些html模板 end
 		 * =============== */
 	}
-};
+});

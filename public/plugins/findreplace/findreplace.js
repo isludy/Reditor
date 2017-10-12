@@ -1,7 +1,7 @@
-fe.plugin.findreplace = function(){
-	var editor = this,
+fe.plugin('findreplace', function(){
+	let editor = this,
 		div = document.createElement('div'),
-		rangeTxt = editor.getRange() || '';
+		rangeTxt = fe.getRange() || '';
 
 	div.setAttribute('style','margin: 15px;');
 
@@ -27,15 +27,17 @@ fe.plugin.findreplace = function(){
 		body: div,
 		footer: true,
 		css: {'maxWidth':'500px'},
+		ok: false,
+		cancel: false,
 		onhide: function(){
 			fe(btnOne).off('click',btnOneFn);
 			fe(btnAll).off('click',btnAllFn);
 			fe(kw).off('change',kwChangeFn);
 			removeTempMark();
 		}
-	},'fe-dialog-findreplace');
+	});
 
-	var kw = fe('#fe-find-keywords')[0],
+	let kw = fe('#fe-find-keywords')[0],
 		btnOne = fe('#fe-find-replace-one')[0],
 		btnAll = fe('#fe-find-replace-all')[0],
 		rpw = fe('#fe-find-replacedwords')[0],
@@ -63,7 +65,7 @@ fe.plugin.findreplace = function(){
 
 	//递归获取所有包含查找的内容的文本节点
 	function getNodes(nodes){
-		for(var i=0,len=nodes.length; i<len; i++){
+		for(let i=0,len=nodes.length; i<len; i++){
 			if(nodes[i].nodeType === 3 && reg.test(nodes[i].data)){
 				txtNodes.push(nodes[i]);
 			}else{
@@ -76,9 +78,9 @@ fe.plugin.findreplace = function(){
 	//逐个替换。
 	fe(btnOne).on('click',btnOneFn);
 	function btnOneFn(){
-		var flag = false;
+		let flag = false;
 		refrashkw();
-		for(var i=0,len=txtNodes.length; i<len; i++){
+		for(let i=0,len=txtNodes.length; i<len; i++){
 			if(flag) break;
 			if(txtNodes[i].data.search(reg) != -1){
 				removeTempMark();
@@ -88,7 +90,7 @@ fe.plugin.findreplace = function(){
 				 * 把后面的文本节点after替换掉原来的txtNodes[i]，这样可以保证下一次执行的时候，
 				 * 不会被重复查找。
 				 */
-				var txt = txtNodes[i].data,
+				let txt = txtNodes[i].data,
 					before = txt.slice(0,txt.search(reg)),
 					after = txt.slice(txt.search(reg)+kw.value.length),
 					newNode = document.createElement('span');
@@ -113,7 +115,7 @@ fe.plugin.findreplace = function(){
 		}
 	}
 	function removeTempMark(){
-		var tmpmark = document.querySelector('[data-fe-mark=findreplace]');
+		let tmpmark = document.querySelector('[data-fe-mark=findreplace]');
 		if(tmpmark){
 			tmpmark.parentNode.replaceChild(document.createTextNode(tmpmark.innerText),tmpmark);
 		}
@@ -122,7 +124,7 @@ fe.plugin.findreplace = function(){
 	fe(btnAll).on('click',btnAllFn);
 	function btnAllFn(){
 		refrashkw(true);
-		for(var i=0,len=txtNodes.length; i<len; i++){
+		for(let i=0,len=txtNodes.length; i<len; i++){
 			txtNodes[i].data = txtNodes[i].data.replace(reg,function(){
 				count++;
 				return rpw.value;
@@ -130,4 +132,4 @@ fe.plugin.findreplace = function(){
 		}
 		fcount.innerHTML = '被替换了 <b style="color:#a00;">'+count+'</b> 处';
 	}
-}
+});

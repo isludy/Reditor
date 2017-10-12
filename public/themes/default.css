@@ -19,7 +19,6 @@
 	font-size: 0;
 	white-space: nowrap;
 	width: 100%;
-	height: 100vh;
 	position: relative;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -364,7 +363,7 @@
 /*radio end*/
 
 /*loading start*/
-.fe-loading{
+.fe-loadui{
 	background: rgba(0, 0, 0, 0.5);
 	position: fixed;
 	width: 200px;
@@ -377,33 +376,27 @@
 	border-radius: 6px;
 	transition: all .5s;
 }
-.fe-loading.show{
-	display: block;
-}
-.fe-loading.hide{
-	display: none;
-}
-.fe-loading-icon{
+.fe-loadui-icon{
 	width: 50px;
 	height: 50px;
 	border: 6px dashed #fff;
 	border-radius: 100%;
 	margin: 30px auto 15px;
-	animation: loading 2s infinite linear .5s;
+	animation: loadui 2s infinite linear .5s;
 }
-.fe-loading-text{
+.fe-loadui-text{
 	color: #fff;
 	font-size: 14px;
 	text-align: center;
 }
-@keyframes loading {
+@keyframes loadui {
 	from {
 		transform: rotateZ(0);
 	}to{
 		transform: rotateZ(360deg);
 	}
 }
-.fe-loading-gif{
+.fe-loadui-gif{
 	max-width: 30px !important;
 }
 /*loading end*/

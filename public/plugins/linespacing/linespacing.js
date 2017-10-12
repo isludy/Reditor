@@ -1,5 +1,5 @@
-fe.plugin.linespacing = function(){
-	var editor = this,
+fe.plugin('linespacing', function(){
+	let editor = this,
 		div = fe('<div unselectable="on">'),
 		html = '';
 
@@ -8,16 +8,16 @@ fe.plugin.linespacing = function(){
 	});
 	div.html(html);
 	
-	var dialog = editor.dialog({
+	let dialog = editor.dialog({
 		header: '选择行距',
 		body: div,
 		ok: false,
 		cancel: false,
 		css: {'maxWidth':'320px'}
-	},'fe-dialog-linespacing');
+	});
 	
 	div.on('click', function handle(e){
-		var target = e.target || e.srcElement,
+		let target = e.target || e.srcElement,
 			dataval = target.getAttribute('data-fe-val');
 
 		div.off('click',handle);
@@ -26,4 +26,4 @@ fe.plugin.linespacing = function(){
 		if(!dataval) return;
 		dialog.exec('lineHeight',dataval+'em');
 	});
-}
+});

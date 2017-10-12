@@ -1,5 +1,5 @@
-fe.plugin.border = function(){
-	var div = fe('<div unselectable="on">'),
+fe.plugin('border',function(){
+	let div = fe('<div unselectable="on">'),
 		editor = this,
 		html = '';
 
@@ -8,16 +8,16 @@ fe.plugin.border = function(){
 	});
 	div.html(html);
 
-	var dialog = editor.dialog({
+	let dialog = editor.dialog({
 		header: '选择边框样式',
 		body: div,
 		ok: false,
 		cancel: false,
 		css: {'maxWidth':'600px'}
-	},'fe-dialog-border');
+	});
 	
 	div.on('click', function handle(e){
-		var target = e.target || e.srcElement,
+		let target = e.target || e.srcElement,
 			dataval = target.getAttribute('data-fe-val');
 
 		div.on('click',handle);
@@ -26,4 +26,4 @@ fe.plugin.border = function(){
 		if(!dataval) return;
 		dialog.exec('border',dataval);
 	});
-}
+});

@@ -1,2 +1,2 @@
-const fe = require('./js/fe');
-window.fe = fe;
+window.fe = require('./js/Fe.static');
+
