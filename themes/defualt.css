@@ -1,0 +1,64 @@
+.reditor{
+    height: 100%;
+    width: 100%;
+    border: #ddd solid 1px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.reditor-toolbar{
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: #eee;
+    padding: 10px 20px;
+
+    -webkit-box-shadow: 0 2px 3px #888;
+    -moz-box-shadow: 0 2px 3px #888;
+    box-shadow: 0 2px 3px #888;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    -webkit-transition: all .8s;
+    -moz-transition: all .8s;
+    -ms-transition: all .8s;
+    -o-transition: all .8s;
+    transition: all .8s;
+
+    -webkit-transform: translateY(-100%);
+    -moz-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    -o-transform: translateY(-100%);
+    transform: translateY(-100%);
+}
+.reditor-toolbar::after{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    min-height: 10px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background: #ddd;
+}
+.reditor-toolbar-active,
+.reditor-toolbar:hover{
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+}
+.reditor-tool{
+    padding: .5em;
+    font-size: 14px;
+    display: inline-block;
+    cursor: pointer;
+}

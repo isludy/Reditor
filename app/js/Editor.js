@@ -108,7 +108,7 @@ class Editor{
      */
     static __toolListener__(editor){
         let tools = fe(editor.toolbar).children('button');
-        tools.on('click',function(evt){
+        tools.on('click', function(evt){
             editor.edit[0].focus();
             if(document.activeElement === editor.edit[0]){
                 let that = this,
