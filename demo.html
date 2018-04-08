@@ -10,17 +10,7 @@
 <div id="reditor-toolbar"></div>
 <script src="dist/main.js"></script>
 <script>
-    let reditor = new Reditor('reditor',{
-        toolbar: 'reditor-toolbar',
-        tools: [{
-            name: 'bold',
-            title: '加粗'
-        },{
-            name: 'italic',
-            title: '倾斜'
-        }]
-    });
-    console.log(reditor)
+    Reditor.create();
 </script>
 </body>
 </html>
