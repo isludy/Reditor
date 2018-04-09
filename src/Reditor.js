@@ -1,99 +1,68 @@
 import options from './options';
-import toolControl from './toolControl';
-//execCommand方法无需第二、三个参数的指令
-const noParamTools = ['bold','italic','underline','strikethrough','subscript','superscript','justifyleft','justifycenter','justifyright','justifyfull'];
+import utils from './utils';
+
+const RC =  require.context('./tools', false, /\.js$/);
 
 class Reditor {
-    constructor(o){
-        let _this = this;
-        if(typeof o.editor === 'string'){
-            _this.editor = document.getElementById(o.editor);
-        }else if(o.editor && o.editor.nodeType === 1){
-            _this.editor = o.editor;
-        }else{
-            throw 'The first parameter of constructor must be id or element';
+    constructor(id){
+        let _this = this,
+            editor = document.getElementById(id);
+
+        if(editor){
+            editor.className = 'reditor';
+            _this.editor = editor;
+
+            _this.toolbar = _this.createToolbar(options.tools);
+            _this.edit = _this.createEdit();
+            _this.editor.appendChild(_this.toolbar);
+            _this.editor.appendChild( _this.edit);
         }
+    }
+    createToolbar(tools){
+        let _this = this,
+            toolbar = document.createElement('div');
 
-        _this.editor.contentEditable = true;
-        _this.editor.className = 'reditor';
-
-        //toolbar
-        if((typeof o === 'object') && (typeof o.tools === 'object')){
-            let i = 0,
-                len = o.tools.length,
-                html = '',
-                tool;
-            if(len){
-                for(; i<len; i++){
-                    tool = o.tools[i];
-                    html += '<div class="reditor-tool reditor-tool-'+tool.name+'" title="'+tool.title+'" data-name="'+tool.name+'" unselectable="on">B</div>';
-                }
-
-                if(o.toolbar){
-                    if(typeof o.toolbar === 'string'){
-                        _this.toolbar = document.getElementById(o.toolbar);
-                    }else if(o.toolbar.nodeType === 1){
-                        _this.toolbar = o.toolbar;
-                    }else{
-                        throw 'The value of options.toolbar must be id or element';
-                    }
-                }else{
-                    _this.toolbar = document.createElement('div');
-                    document.body.appendChild(this.toolbar);
-                }
-
-                _this.toolbar.className = 'reditor-toolbar';
-                _this.toolbar.innerHTML = html;
+        let html = '',
+            title,
+            k;
+        for(k in tools){
+            if(tools.hasOwnProperty(k)){
+                title = typeof tools[k] === 'object' ? tools[k].title : tools[k];
+                html += '<div class="reditor-tool reditor-tool-'+k+'" title="'+title+'" data-name="'+k+'">'+title+'</div>';
             }
         }
-        _this.editor.addEventListener('mouseup', ()=>{
-            _this._range = Reditor.range();
-        });
-
-        _this.toolbar.onclick = function(e){
+        toolbar.innerHTML = html;
+        toolbar.className = 'reditor-toolbar';
+        toolbar.addEventListener('click', (e)=>{
             let name = e.target.getAttribute('data-name');
-            Reditor.range(_this._range);
-            if(name && document.activeElement === _this.editor){
-                if(noParamTools.indexOf(name) !== -1){
+            _this.edit.focus();
+            utils.range(_this._range);
+            if(name && document.activeElement === _this.edit){
+                if(tools[name].params === undefined){
                     document.execCommand(name);
-                    _this._range = Reditor.range();
+                    _this._range = utils.range();
                 }else{
-                    if(typeof toolControl[name] === 'function') toolControl[name](_this, name, e);
+                    let toolHandle = RC('./'+name+'.js');
+                    if(typeof toolHandle === 'function'){
+                        toolHandle(_this, name, e);
+                    }else if((toolHandle.default) && (typeof toolHandle.default === 'function')){
+                        toolHandle.default(_this, name, e);
+                    }
                 }
             }
-        }
+        });
+        return toolbar;
     }
-    static range(rg){
-        let s = window.getSelection();
-        if(rg){
-            if(s.rangeCount > 0)  s.removeAllRanges();
-            if(rg.rangeCount){
-                s.addRange(rg.getRangeAt(0))
-            }else{
-                s.addRange(rg);
-            }
-        }else{
-            if(s.rangeCount) return s.getRangeAt(0);
-            else return s;
-        }
-    }
-    static create(o){
+    createEdit(){
+        let _this = this,
+            edit = document.createElement('div');
 
-        if(typeof o === 'object'){
-            for(let k in o){
-                if(o.hasOwnProperty(k)){
-                   if(options.hasOwnProperty(k)){
-                       options[k] = o[k];
-                       delete o[k];
-                   }
-                }
-            }
-            o = null;
-        }
-
-        if(o && typeof o !== 'object') throw 'The parameter of create must be object';
-
-        return new Reditor(options);
+        edit.className = 'reditor-edit';
+        edit.contentEditable = true;
+        edit.addEventListener('mouseup', ()=>{
+            _this._range = utils.range();
+        });
+        return edit;
     }
 }
 

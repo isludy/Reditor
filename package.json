@@ -2,7 +2,6 @@
   "name": "Reditor",
   "version": "1.0.0",
   "description": "editor",
-  "main": "reditor.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --mode development",

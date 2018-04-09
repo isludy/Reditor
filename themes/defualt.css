@@ -1,5 +1,5 @@
-.reditor{
-    height: 100%;
+.reditor-edit{
+    min-height: 3em;
     width: 100%;
     border: #ddd solid 1px;
     -webkit-box-sizing: border-box;
@@ -44,9 +44,7 @@
     margin: auto;
     width: 100%;
     min-height: 10px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    background: #ddd;
+    background: transparent;
 }
 .reditor-toolbar-active,
 .reditor-toolbar:hover{
