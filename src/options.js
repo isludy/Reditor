@@ -15,6 +15,10 @@ export default {
             title: '字号',
             params: ['12','13','14','16','18','20','22','24','28','32','36','42','48','56','72']
         },
+        'linespacing': {
+            title: '行高',
+            params: ['1','1.5','1.6','1.8','2','2.5','3']
+        },
         'forecolor': {
             title: '前景色',
             params: colors
@@ -31,10 +35,6 @@ export default {
         'justifycenter': '居中对齐',
         'justifyright': '右对齐',
         'justifyfull': '两端对齐',
-        'linespacing': {
-            title: '行高',
-            params: ['1','1.5','1.6','1.8','2','2.5','3']
-        },
         'link': {
             title: '添加超链接',
             params: ''

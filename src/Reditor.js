@@ -28,7 +28,7 @@ class Reditor {
         for(k in tools){
             if(tools.hasOwnProperty(k)){
                 title = typeof tools[k] === 'object' ? tools[k].title : tools[k];
-                html += '<div class="reditor-tool reditor-tool-'+k+'" title="'+title+'" data-name="'+k+'">'+title+'</div>';
+                html += '<div class="reditor-tool reditor-tool-'+k+'" title="'+title+'" data-name="'+k+'"><i class="icon icon-'+k+'"></i></div>';
             }
         }
         toolbar.innerHTML = html;

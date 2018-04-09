@@ -57,6 +57,14 @@
 .reditor-tool{
     padding: .5em;
     font-size: 14px;
+    line-height: 1;
     display: inline-block;
     cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.reditor-tool:hover{
+    background: #ccc;
 }
