@@ -68,3 +68,29 @@
 .reditor-tool:hover{
     background: #ccc;
 }
+
+
+/*menu*/
+.reditor-menu{
+    position: fixed;
+    top: 0;
+    background: #fff;
+    border: 1px solid #eee;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 2px 3px #888;
+    -moz-box-shadow: 0 2px 3px #888;
+    box-shadow: 0 2px 3px #888;
+}
+.reditor-menu-item{
+    cursor: pointer;
+    -webkit-transition: all .3s;
+    -moz-transition: all .3s;
+    -ms-transition: all .3s;
+    -o-transition: all .3s;
+    transition: all .3s;
+}
+.reditor-menu-item:hover{
+    background: #e0e0e0;
+}

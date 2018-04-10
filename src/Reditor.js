@@ -24,17 +24,22 @@ class Reditor {
 
         let html = '',
             title,
+            div,
             k;
         for(k in tools){
             if(tools.hasOwnProperty(k)){
                 title = typeof tools[k] === 'object' ? tools[k].title : tools[k];
-                html += '<div class="reditor-tool reditor-tool-'+k+'" title="'+title+'" data-name="'+k+'"><i class="icon icon-'+k+'"></i></div>';
+                div = document.createElement('div');
+                div.className = 'reditor-tool reditor-tool-'+k;
+                div.title = title;
+                div.setAttribute('data-name', k);
+                div.innerHTML = '<i class="icon icon-'+k+'"></i>';
+                div.addEventListener('click', handle, false);
+                toolbar.appendChild(div);
             }
         }
-        toolbar.innerHTML = html;
-        toolbar.className = 'reditor-toolbar';
-        toolbar.addEventListener('click', (e)=>{
-            let name = e.target.getAttribute('data-name');
+        function handle(e){
+            let name = e.currentTarget.getAttribute('data-name');
             _this.edit.focus();
             utils.range(_this._range);
             if(name && document.activeElement === _this.edit){
@@ -46,11 +51,13 @@ class Reditor {
                     if(typeof toolHandle === 'function'){
                         toolHandle(_this, name, e);
                     }else if((toolHandle.default) && (typeof toolHandle.default === 'function')){
+
                         toolHandle.default(_this, name, e);
                     }
                 }
             }
-        });
+        }
+        toolbar.className = 'reditor-toolbar';
         return toolbar;
     }
     createEdit(){
