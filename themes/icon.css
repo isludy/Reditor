@@ -1,176 +1,46 @@
 @font-face {
-  font-family: 'editoricon';
+  font-family: 'editorIcon';
   src:
-    url('fonts/editoricon.ttf?a9gy3e') format('truetype'),
-    url('fonts/editoricon.woff?a9gy3e') format('woff'),
-    url('fonts/editoricon.svg?a9gy3e#editoricon') format('svg');
+    /*url('fonts/editor.ttf') format('truetype'),*/
+    url('fonts/editor.woff') format('woff'),
+    url('fonts/editor.otf') format('otf');
   font-weight: normal;
   font-style: normal;
 }
 
 .icon {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'editoricon' !important;
+  font-family: 'editorIcon' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
   line-height: 1;
-
-  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-forecolor .path1:before {
-  content: "\e900";
-  color: rgb(0, 0, 0);
-}
-.icon-forecolor .path2:before {
-  content: "\e901";
-  margin-left: -0.9931640625em;
-  color: rgb(36, 36, 36);
-}
-.icon-forecolor .path3:before {
-  content: "\e902";
-  margin-left: -0.9931640625em;
-  color: rgb(51, 51, 51);
-}
-.icon-forecolor .path4:before {
-  content: "\e903";
-  margin-left: -0.9931640625em;
-  color: rgb(68, 68, 68);
-}
-.icon-forecolor .path5:before {
-  content: "\e904";
-  margin-left: -0.9931640625em;
-  color: rgb(91, 91, 91);
-}
-.icon-border .path1:before {
-  content: "\e905";
-  color: rgb(0, 0, 0);
-}
-.icon-border .path2:before {
-  content: "\e906";
-  margin-left: -0.978515625em;
-  color: rgb(36, 36, 36);
-}
-.icon-border .path3:before {
-  content: "\e907";
-  margin-left: -0.978515625em;
-  color: rgb(55, 55, 55);
-}
-.icon-border .path4:before {
-  content: "\e908";
-  margin-left: -0.978515625em;
-  color: rgb(68, 68, 68);
-}
-.icon-backcolor .path1:before {
-  content: "\e909";
-  color: rgb(68, 68, 68);
-}
-.icon-backcolor .path2:before {
-  content: "\e90a";
-  margin-left: -0.99609375em;
-  color: rgb(120, 120, 120);
-}
-.icon-backcolor .path3:before {
-  content: "\e90b";
-  margin-left: -0.99609375em;
-  color: rgb(149, 149, 149);
-}
-.icon-backcolor .path4:before {
-  content: "\e90c";
-  margin-left: -0.99609375em;
-  color: rgb(187, 187, 187);
-}
-.icon-backcolor .path5:before {
-  content: "\e90d";
-  margin-left: -0.99609375em;
-  color: rgb(217, 217, 217);
-}
-.icon-fontname:before {
-  content: "\f031";
-}
-.icon-bold:before {
-  content: "\f032";
-}
-.icon-italic:before {
-  content: "\f033";
-}
-.icon-linespacing:before {
-  content: "\f034";
-}
-.icon-fontsize:before {
-  content: "\f035";
-}
-.icon-justifyleft:before {
-  content: "\f036";
-}
-.icon-justifycenter:before {
-  content: "\f037";
-}
-.icon-justifyright:before {
-  content: "\f038";
-}
-.icon-justifyfull:before {
-  content: "\f039";
-}
-.icon-outdent:before {
-  content: "\f03b";
-}
-.icon-indent:before {
-  content: "\f03c";
-}
-.icon-image:before {
-  content: "\f03e";
-}
-.icon-photo:before {
-  content: "\f03e";
-}
-.icon-picture-o:before {
-  content: "\f03e";
-}
-.icon-plus-circle:before {
-  content: "\f055";
-}
-.icon-minus-circle:before {
-  content: "\f056";
-}
-.icon-times-circle:before {
-  content: "\f057";
-}
-.icon-check-circle:before {
-  content: "\f058";
-}
-.icon-question-circle:before {
-  content: "\f059";
-}
-.icon-info-circle:before {
-  content: "\f05a";
-}
-.icon-link:before {
-  content: "\f0c1";
-}
-.icon-strikethrough:before {
-  content: "\f0cc";
-}
-.icon-underline:before {
-  content: "\f0cd";
-}
-.icon-paste:before {
-  content: "\f0ea";
-}
-.icon-code:before {
-  content: "\f121";
-}
-.icon-unlink:before {
-  content: "\f127";
-}
-.icon-superscript:before {
-  content: "\f12b";
-}
-.icon-subscript:before {
-  content: "\f12c";
-}
+.icon-home1:before{content: '\e900';}
+.icon-home2:before{content: '\e901';}
+.icon-home3:before{content: '\e902';}
+
+.icon-bold:before{content: '\ea62';}
+.icon-italic:before{content: '\ea64';}
+.icon-underline:before{content: '\ea63';}
+.icon-strikethrough:before{content: '\ea65';}
+.icon-subscript:before{content: '\ea6a';}
+.icon-superscript:before{content: '\ea69';}
+.icon-fontname:before{content: '\ea6d';}
+.icon-fontsize:before{content: '\ea61';}
+.icon-forecolor:before{content: '\e903';}
+.icon-backcolor:before{content: '\e915';}
+.icon-border:before{content: '\e907';}
+.icon-linespacing:before{content: '\e9bb';}
+.icon-justifyleft:before{content: '\ea77';}
+.icon-justifycenter:before{content: '\ea78';}
+.icon-justifyright:before{content: '\ea79';}
+.icon-justifyfull:before{content: '\ea7a';}
+
+.icon-link:before{content: '\e90c';}
+.icon-unlink:before{content: '\e916';}
+.icon-upload:before{content: '\e934';}

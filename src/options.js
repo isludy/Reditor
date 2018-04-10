@@ -43,7 +43,7 @@ export default {
             title: '删除超链接',
             params: ''
         },
-        'file': {
+        'upload': {
             title: '文件上传与管理',
             params: ''
         }
