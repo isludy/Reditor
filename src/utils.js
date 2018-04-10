@@ -70,8 +70,12 @@ export default {
         return menu;
     },
     exec(name, val, range){
-        let uniqid = 'http://reditor.'+new Date().getTime()+'.com';
+        if(!range || range.collapsed) return;
+
         this.range(range);
+        
+        let uniqid = 'http://reditor.'+new Date().getTime()+'.com';
+
         document.execCommand('createLink', false, uniqid);
 
         let spans = document.querySelectorAll('a[href="'+uniqid+'"]'),
