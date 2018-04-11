@@ -26,16 +26,16 @@ export default (reditor)=>{
 				return false;
             }
 
-			utils.exec('link', e.params.url+'__target_'+e.params.target, reditor._range);
+			utils.exec('link', url+'__target_'+target, reditor._range);
 
-			a = reditor.edit.querySelectorAll('a[href$="__target_'+e.params.target+'"]');
-			reg = new RegExp('__target_'+e.params.target+'[\/]?$','g');
+			a = reditor.edit.querySelectorAll('a[href$="__target_'+target+'"]');
+			reg = new RegExp('__target_'+target+'[\/]?$','g');
 			len = a.length;
 			i = 0;
 
 			for(; i<len; i++){
 				a[i].href = a[i].href.replace(reg, '');
-				if(e.params.target === '_blank') a[i].target = '_blank';
+				if(target === '_blank') a[i].target = '_blank';
 			}
 		}
 	});

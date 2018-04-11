@@ -9,9 +9,9 @@ let body = `
         <div class="re-upload-body">
             <div class="re-upload-tab-body">
                 <div class="re-upload-tools">
-                    <button class="re-upload-add">添加</button>
-                    <button class="re-upload-send">上传</button>
-                    <button class="re-upload-clear">清空</button>
+                    <button class="re-btn-m">添加</button>
+                    <button class="re-btn-m">上传</button>
+                    <button class="re-btn-m">清空</button>
                 </div>
                 <div class="re-upload-tab-content"></div>
             </div>

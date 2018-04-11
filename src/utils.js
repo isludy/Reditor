@@ -33,8 +33,8 @@ export default {
         body.className = 're-dialog-body';
         footer.className = 're-dialog-footer';
         close.className = 're-dialog-close';
-        yes.className = 're-dialog-yes';
-        no.className = 're-dialog-no';
+        yes.className = 're-dialog-yes re-btn-m';
+        no.className = 're-dialog-no re-btn-m';
 
         header.innerHTML = o.title || '弹窗';
         close.innerHTML = '&times;';

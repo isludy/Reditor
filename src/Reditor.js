@@ -22,8 +22,7 @@ class Reditor {
         let _this = this,
             toolbar = document.createElement('div');
 
-        let html = '',
-            title,
+        let title,
             div,
             k;
         for(k in tools){

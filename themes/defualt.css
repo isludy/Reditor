@@ -101,6 +101,50 @@
     font-size: 14px;
 }
 
+.re-btn-l,
+.re-btn-m,
+.re-btn-s{
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #333;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    -o-transition: all .5s;
+    transition: all .5s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.re-btn-l{
+    font-size: 18px;
+    padding: 6px 12px;
+}
+.re-btn-m{
+    font-size: 15px;
+    padding: 5px 10px;
+}
+.re-btn-s{
+    font-size: 12px;
+    padding: 4px 8px;
+}
+.re-btn-l:hover,
+.re-btn-m:hover,
+.re-btn-s:hover{
+    border-color: #44a4ff;
+    -webkit-box-shadow: 0 0 3px #44a4ff;
+    -moz-box-shadow: 0 0 3px #44a4ff;
+    box-shadow: 0 0 3px #44a4ff;
+}
+
+
 /*menu*/
 .re-menu{
     position: fixed;
@@ -186,33 +230,5 @@
 }
 .re-dialog-yes,
 .re-dialog-no{
-    border: 1px solid #ccc;
-    background: #fff;
-    color: #333;
-    font-size: 14px;
-    line-height: 1;
-    text-align: center;
-    cursor: pointer;
     margin: 0 10px;
-    padding: 5px 10px;
-    outline: none;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    -ms-transition: all .5s;
-    -o-transition: all .5s;
-    transition: all .5s;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-.re-dialog-yes:hover,
-.re-dialog-no:hover{
-    border-color: #44a4ff;
-    -webkit-box-shadow: 0 0 3px #44a4ff;
-    -moz-box-shadow: 0 0 3px #44a4ff;
-    box-shadow: 0 0 3px #44a4ff;
 }
