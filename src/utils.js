@@ -28,13 +28,13 @@ export default {
         yes = document.createElement('button');
         no = document.createElement('button');
 
-        box.className = 'reditor-dialog';
-        header.className = 'reditor-dialog-header';
-        body.className = 'reditor-dialog-body';
-        footer.className = 'reditor-dialog-footer';
-        close.className = 'reditor-dialog-close';
-        yes.className = 'reditor-dialog-yes';
-        no.className = 'reditor-dialog-no';
+        box.className = 're-dialog';
+        header.className = 're-dialog-header';
+        body.className = 're-dialog-body';
+        footer.className = 're-dialog-footer';
+        close.className = 're-dialog-close';
+        yes.className = 're-dialog-yes';
+        no.className = 're-dialog-no';
 
         header.innerHTML = o.title || '弹窗';
         close.innerHTML = '&times;';
@@ -92,7 +92,7 @@ export default {
             div,
             target;
 
-        menu.className = 'reditor-menu';
+        menu.className = 're-menu';
         for (; i < len; i++) {
             item = o.items[i];
             div = document.createElement('div');
@@ -101,7 +101,7 @@ export default {
                     if (item.data.hasOwnProperty(k)) div.setAttribute('data-' + k, item.data[k]);
                 }
             }
-            div.className = 'reditor-menu-item';
+            div.className = 're-menu-item';
             if (typeof item.css === 'string') div.setAttribute('style', item.css);
             if (typeof item.html === 'string') div.innerHTML = item.html;
             div.addEventListener('click', handle, false);

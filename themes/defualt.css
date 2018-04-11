@@ -1,4 +1,4 @@
-.reditor-edit{
+.re-edit{
     min-height: 3em;
     width: 100%;
     border: #ddd solid 1px;
@@ -6,7 +6,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
-.reditor-toolbar{
+.re-toolbar{
     position: fixed;
     width: 100%;
     top: 0;
@@ -34,7 +34,7 @@
     -o-transform: translateY(-100%);
     transform: translateY(-100%);
 }
-.reditor-toolbar::after{
+.re-toolbar::after{
     content: '';
     display: block;
     position: absolute;
@@ -46,15 +46,15 @@
     min-height: 10px;
     background: transparent;
 }
-.reditor-toolbar-active,
-.reditor-toolbar:hover{
+.re-toolbar-active,
+.re-toolbar:hover{
     -webkit-transform: translateY(0);
     -moz-transform: translateY(0);
     -ms-transform: translateY(0);
     -o-transform: translateY(0);
     transform: translateY(0);
 }
-.reditor-tool{
+.re-tool{
     padding: .5em;
     font-size: 14px;
     line-height: 1;
@@ -65,14 +65,14 @@
     -ms-user-select: none;
     user-select: none;
 }
-.reditor-tool:hover{
+.re-tool:hover{
     background: #ccc;
 }
 
 /*common*/
-.reditor-input-l,
-.reditor-input-m,
-.reditor-input-s{
+.re-input-l,
+.re-input-m,
+.re-input-s{
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -80,29 +80,29 @@
     outline: none;
     border: 1px solid #ccc;
 }
-.reditor-input-l:focus,
-.reditor-input-m:focus,
-.reditor-input-s:focus{
+.re-input-l:focus,
+.re-input-m:focus,
+.re-input-s:focus{
     border-color: #44a4ff;
     -webkit-box-shadow: 0 0 2px #44a4ff;
     -moz-box-shadow: 0 0 2px #44a4ff;
     box-shadow: 0 0 2px #44a4ff;
 }
-.reditor-input-l{
+.re-input-l{
     height: 35px;
     font-size: 18px;
 }
-.reditor-input-m{
+.re-input-m{
     height: 28px;
     font-size: 16px;
 }
-.reditor-input-s{
+.re-input-s{
     height: 20px;
     font-size: 14px;
 }
 
 /*menu*/
-.reditor-menu{
+.re-menu{
     position: fixed;
     top: 0;
     background: #fff;
@@ -114,7 +114,7 @@
     -moz-box-shadow: 0 2px 3px #888;
     box-shadow: 0 2px 3px #888;
 }
-.reditor-menu-item{
+.re-menu-item{
     cursor: pointer;
     -webkit-transition: all .3s;
     -moz-transition: all .3s;
@@ -122,12 +122,12 @@
     -o-transition: all .3s;
     transition: all .3s;
 }
-.reditor-menu-item:hover{
+.re-menu-item:hover{
     background: #e0e0e0;
 }
 
 /*dialog*/
-.reditor-dialog{
+.re-dialog{
     position: fixed;
     top: 30px;
     left: 0;
@@ -143,29 +143,29 @@
     -moz-border-radius: 6px;
     border-radius: 6px;
 }
-.reditor-dialog-header,
-.reditor-dialog-body,
-.reditor-dialog-footer{
+.re-dialog-header,
+.re-dialog-body,
+.re-dialog-footer{
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 5px 15px;
 }
-.reditor-dialog-header{
+.re-dialog-header{
     border-bottom: 1px solid #ddd;
     background: #eee;
 }
-.reditor-dialog-body{
+.re-dialog-body{
     min-height: 30px;
     max-height: 80%;
     overflow: auto;
 }
-.reditor-dialog-footer{
+.re-dialog-footer{
     border-top: 1px solid #ddd;
     white-space: nowrap;
     text-align: right;
 }
-.reditor-dialog-close{
+.re-dialog-close{
     position: absolute;
     top: 5px;
     right: 5px;
@@ -181,11 +181,11 @@
     -ms-user-select: none;
     user-select: none;
 }
-.reditor-dialog-close:hover{
+.re-dialog-close:hover{
     color: #44a4ff;
 }
-.reditor-dialog-yes,
-.reditor-dialog-no{
+.re-dialog-yes,
+.re-dialog-no{
     border: 1px solid #ccc;
     background: #fff;
     color: #333;
@@ -209,8 +209,8 @@
     -ms-user-select: none;
     user-select: none;
 }
-.reditor-dialog-yes:hover,
-.reditor-dialog-no:hover{
+.re-dialog-yes:hover,
+.re-dialog-no:hover{
     border-color: #44a4ff;
     -webkit-box-shadow: 0 0 3px #44a4ff;
     -moz-box-shadow: 0 0 3px #44a4ff;

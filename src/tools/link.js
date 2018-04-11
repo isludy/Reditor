@@ -6,10 +6,10 @@ export default (reditor)=>{
 		css: 'max-width: 360px;',
 		body: `
 			<p>输入地址：
-				<input class="reditor-input-m" type="text" name="url" value="http://" style="width: 240px;">
+				<input class="re-input-m" type="text" name="url" value="http://" style="width: 240px;">
 			</p>
 			<p>打开模式：
-				<select class="reditor-input-m" name="target">
+				<select class="re-input-m" name="target">
 					<option value="_blank">在新建窗口打开</option>
 					<option value="_self">在当前窗口打开</option>
 				</select>

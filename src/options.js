@@ -42,7 +42,7 @@ export default {
         'unlink': '删除超链接',
         'upload': {
             title: '文件上传与管理',
-            params: ''
+            params: true
         }
     }
 };

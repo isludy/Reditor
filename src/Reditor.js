@@ -9,7 +9,7 @@ class Reditor {
             editor = document.getElementById(id);
 
         if(editor){
-            editor.className = 'reditor';
+            editor.className = 're';
             _this.editor = editor;
 
             _this.toolbar = _this.createToolbar(options.tools);
@@ -30,7 +30,7 @@ class Reditor {
             if(tools.hasOwnProperty(k)){
                 title = typeof tools[k] === 'object' ? tools[k].title : tools[k];
                 div = document.createElement('div');
-                div.className = 'reditor-tool reditor-tool-'+k;
+                div.className = 're-tool re-tool-'+k;
                 div.title = title;
                 div.setAttribute('data-name', k);
                 div.innerHTML = '<i class="icon icon-'+k+'"></i>';
@@ -57,14 +57,14 @@ class Reditor {
                 }
             }
         }
-        toolbar.className = 'reditor-toolbar';
+        toolbar.className = 're-toolbar';
         return toolbar;
     }
     createEdit(){
         let _this = this,
             edit = document.createElement('div');
 
-        edit.className = 'reditor-edit';
+        edit.className = 're-edit';
         edit.contentEditable = true;
         edit.addEventListener('mouseup', ()=>{
             _this._range = utils.range();
