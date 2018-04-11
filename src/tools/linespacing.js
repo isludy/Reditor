@@ -1,16 +1,16 @@
 import utils from '../utils';
 import options from '../options';
 
-let params = options.tools['fontname'].params,
+let params = options.tools['linespacing'].params,
     len = params.length,
     i = 0,
     items = [];
 for(; i<len; i++){
     items.push({
-        css: 'font-family:'+params[i]+';margin:10px;white-space:nowrap;',
-		html: params[i],
+        css: 'margin:10px;white-space:nowrap;font-size:14px;',
+        html: params[i]+' 倍',
         data: {
-            fontname: params[i]
+            linespacing: params[i]
         }
     });
 }
@@ -20,7 +20,7 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec('font-family', target.getAttribute('data-'+name), reditor._range);
+            utils.exec('line-height', target.getAttribute('data-'+name), reditor._range);
         }
     });
 }

@@ -16,7 +16,7 @@ export default {
             params: ['12','13','14','16','18','20','22','24','28','32','36','42','48','56','72']
         },
         'linespacing': {
-            title: '行高',
+            title: '行距',
             params: ['1','1.5','1.6','1.8','2','2.5','3']
         },
         'forecolor': {
@@ -37,12 +37,9 @@ export default {
         'justifyfull': '两端对齐',
         'link': {
             title: '添加超链接',
-            params: ''
+            params: true
         },
-        'unlink': {
-            title: '删除超链接',
-            params: ''
-        },
+        'unlink': '删除超链接',
         'upload': {
             title: '文件上传与管理',
             params: ''

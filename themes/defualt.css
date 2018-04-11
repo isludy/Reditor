@@ -69,6 +69,37 @@
     background: #ccc;
 }
 
+/*common*/
+.reditor-input-l,
+.reditor-input-m,
+.reditor-input-s{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid #ccc;
+}
+.reditor-input-l:focus,
+.reditor-input-m:focus,
+.reditor-input-s:focus{
+    border-color: #44a4ff;
+    -webkit-box-shadow: 0 0 2px #44a4ff;
+    -moz-box-shadow: 0 0 2px #44a4ff;
+    box-shadow: 0 0 2px #44a4ff;
+}
+.reditor-input-l{
+    height: 35px;
+    font-size: 18px;
+}
+.reditor-input-m{
+    height: 28px;
+    font-size: 16px;
+}
+.reditor-input-s{
+    height: 20px;
+    font-size: 14px;
+}
 
 /*menu*/
 .reditor-menu{
@@ -93,4 +124,95 @@
 }
 .reditor-menu-item:hover{
     background: #e0e0e0;
+}
+
+/*dialog*/
+.reditor-dialog{
+    position: fixed;
+    top: 30px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    max-width: 80%;
+    overflow: hidden;
+    background: #fff;
+    -webkit-box-shadow: 0 2px 5px #888;
+    -moz-box-shadow: 0 2px 5px #888;
+    box-shadow: 0 2px 5px #888;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+.reditor-dialog-header,
+.reditor-dialog-body,
+.reditor-dialog-footer{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 5px 15px;
+}
+.reditor-dialog-header{
+    border-bottom: 1px solid #ddd;
+    background: #eee;
+}
+.reditor-dialog-body{
+    min-height: 30px;
+    max-height: 80%;
+    overflow: auto;
+}
+.reditor-dialog-footer{
+    border-top: 1px solid #ddd;
+    white-space: nowrap;
+    text-align: right;
+}
+.reditor-dialog-close{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    font-size: 20px;
+    color: #000;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.reditor-dialog-close:hover{
+    color: #44a4ff;
+}
+.reditor-dialog-yes,
+.reditor-dialog-no{
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    margin: 0 10px;
+    padding: 5px 10px;
+    outline: none;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    -ms-transition: all .5s;
+    -o-transition: all .5s;
+    transition: all .5s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.reditor-dialog-yes:hover,
+.reditor-dialog-no:hover{
+    border-color: #44a4ff;
+    -webkit-box-shadow: 0 0 3px #44a4ff;
+    -moz-box-shadow: 0 0 3px #44a4ff;
+    box-shadow: 0 0 3px #44a4ff;
 }

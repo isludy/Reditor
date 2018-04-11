@@ -1,16 +1,16 @@
 import utils from '../utils';
 import options from '../options';
 
-let params = options.tools['fontname'].params,
+let params = options.tools['fontsize'].params,
     len = params.length,
     i = 0,
     items = [];
 for(; i<len; i++){
     items.push({
-        css: 'font-family:'+params[i]+';margin:10px;white-space:nowrap;',
-		html: params[i],
+        css: 'font-size:'+params[i]+'px;margin:10px;white-space:nowrap;',
+        html: params[i]+'px',
         data: {
-            fontname: params[i]
+            fontsize: params[i]+'px'
         }
     });
 }
@@ -20,7 +20,7 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec('font-family', target.getAttribute('data-'+name), reditor._range);
+            utils.exec('font-size', target.getAttribute('data-'+name), reditor._range);
         }
     });
 }

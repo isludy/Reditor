@@ -1,32 +1,25 @@
-export default (e,tg,fns)=>{
-	console.log('forecolor');
-	/*
-	let div = fe('<div unselectable="on">'),
-		editor = this,
-		html = '';
+import utils from '../utils';
+import options from '../options';
 
-	fe.each(editor.options.colors,function(){
-		html += '<span class="fe-btn fe-btn-default" unselectable="on" style="background:'+this+'" data-fe-val="'+this+'"> </span>';
-	});
-	div.html(html);
-
-	let dialog = editor.dialog({
-		header: '颜色板',
-		body: div,
-		ok: false,
-		cancel: false,
-		css: {'maxWidth':'600px'}
-	});
-
-	div.on('click', function handle(e){
-		let target = e.target || e.srcElement,
-			dataval = target.getAttribute('data-fe-val');
-
-		div.off('click',handle);
-		dialog.hide();
-
-		if(!dataval) return;
-		dialog.exec('color',dataval);
-	});
-	*/
+let params = options.tools['forecolor'].params,
+    len = params.length,
+    i = 0,
+    items = [];
+for(; i<len; i++){
+    items.push({
+        css: 'color:'+params[i]+';width:100px;height:15px;margin:5px;border:#ddd 1px solid; background-color: '+params[i]+';',
+        data: {
+            forecolor: params[i]
+        }
+    });
+}
+export default (reditor, name, e)=>{
+    utils.menu({
+        items,
+        x: e.clientX,
+        y: e.clientY,
+        onclick(target){
+            utils.exec('color', target.getAttribute('data-'+name), reditor._range);
+        }
+    });
 }
