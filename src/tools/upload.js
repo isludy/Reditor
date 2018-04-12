@@ -36,6 +36,19 @@ choser.addEventListener('change', ()=>{
 },false);
 
 function addItem(files){
+    let item = `
+    <div class="re-upload-item">
+        <div class="re-upload-item-left"></div>
+        <div class="re-upload-item-right">
+            <textarea name="desc"></textarea>
+            <div class="re-progress"></div>
+            <div class="re-upload-item-tools">
+                <input type="checkbox">
+                <input type="checkbox">
+            </div>
+        </div>
+    </div>
+    `;
     console.log(files);
 }
 
