@@ -2,8 +2,6 @@
     min-height: 3em;
     width: 100%;
     border: #ddd solid 1px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 .re-toolbar{
@@ -13,25 +11,9 @@
     left: 0;
     background: #eee;
     padding: 10px 20px;
-
-    -webkit-box-shadow: 0 2px 3px #888;
-    -moz-box-shadow: 0 2px 3px #888;
     box-shadow: 0 2px 3px #888;
-
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
-
-    -webkit-transition: all .8s;
-    -moz-transition: all .8s;
-    -ms-transition: all .8s;
-    -o-transition: all .8s;
     transition: all .8s;
-
-    -webkit-transform: translateY(-100%);
-    -moz-transform: translateY(-100%);
-    -ms-transform: translateY(-100%);
-    -o-transform: translateY(-100%);
     transform: translateY(-100%);
 }
 .re-toolbar::after{
@@ -48,10 +30,6 @@
 }
 .re-toolbar-active,
 .re-toolbar:hover{
-    -webkit-transform: translateY(0);
-    -moz-transform: translateY(0);
-    -ms-transform: translateY(0);
-    -o-transform: translateY(0);
     transform: translateY(0);
 }
 .re-tool{
@@ -60,90 +38,155 @@
     line-height: 1;
     display: inline-block;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
 }
 .re-tool:hover{
     background: #ccc;
 }
 
-/*common*/
+/*form*/
 .re-input-l,
 .re-input-m,
-.re-input-s{
+.re-input-s,
+.re-btn-l,
+.re-btn-m,
+.re-btn-s{
+    outline: none;
+    border: 1px solid;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    border-radius: 4px;
-    outline: none;
-    border: 1px solid #ccc;
+    vertical-align: middle;
 }
+.re-input-l,
+.re-input-m,
+.re-input-s{
+    color: #333;
+    background: #fff;
+    border-color: #bbb;
+}
+.re-btn-l,
+.re-btn-m,
+.re-btn-s{
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    color: #fff;
+}
+.re-input-l,
+.re-btn-l{
+    height: 35px;
+    line-height: 35px;
+    font-size: 18px;
+    padding: 0 15px;
+}
+.re-input-m,
+.re-btn-m{
+    height: 28px;
+    line-height: 28px;
+    font-size: 15px;
+    padding: 0 12px;
+}
+.re-input-s,
+.re-btn-s{
+    height: 22px;
+    line-height: 22px;
+    font-size: 12px;
+    padding: 0 8px;
+}
+
 .re-input-l:focus,
 .re-input-m:focus,
 .re-input-s:focus{
     border-color: #44a4ff;
-    -webkit-box-shadow: 0 0 2px #44a4ff;
-    -moz-box-shadow: 0 0 2px #44a4ff;
-    box-shadow: 0 0 2px #44a4ff;
-}
-.re-input-l{
-    height: 35px;
-    font-size: 18px;
-}
-.re-input-m{
-    height: 28px;
-    font-size: 16px;
-}
-.re-input-s{
-    height: 20px;
-    font-size: 14px;
-}
-
-.re-btn-l,
-.re-btn-m,
-.re-btn-s{
-    border: 1px solid #ccc;
-    background: #fff;
-    color: #333;
-    line-height: 1;
-    text-align: center;
-    cursor: pointer;
-    outline: none;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    -o-transition: all .5s;
-    transition: all .5s;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-.re-btn-l{
-    font-size: 18px;
-    padding: 6px 12px;
-}
-.re-btn-m{
-    font-size: 15px;
-    padding: 5px 10px;
-}
-.re-btn-s{
-    font-size: 12px;
-    padding: 4px 8px;
+    box-shadow: 0 0 3px #44a4ff;
 }
 .re-btn-l:hover,
 .re-btn-m:hover,
 .re-btn-s:hover{
-    border-color: #44a4ff;
-    -webkit-box-shadow: 0 0 3px #44a4ff;
-    -moz-box-shadow: 0 0 3px #44a4ff;
-    box-shadow: 0 0 3px #44a4ff;
+    background: #ddd;
+}
+.re-btn-success{
+    background-image: linear-gradient(#5cb85c 0,#419641 100%);
+    border-color: #3e8f3e;
+}
+.re-btn-success:hover{
+    background: #449d44;
+    border-color: #398439;
+}
+.re-btn-warning{
+    background-image: linear-gradient(#f0ad4e 0,#eb9316 100%);
+    border-color: #e38d13;
+}
+.re-btn-warning:hover{
+    background: #eb9316;
+    border-color: #d58512;
+}
+.re-btn-danger{
+    background-image: linear-gradient(#d06a4b 0,#c1542a 100%);
+    border-color: #b2512f;
+}
+.re-btn-danger:hover{
+    background: #c15d2e;
+    border-color: #ac562d;
+}
+.re-disabled{
+    color: #bbb !important;
+    background: #fff !important;
+    border-color: #ccc !important;
+    pointer-events: none;
 }
 
+/*tabs*/
+.re-tabs{
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #44a4ff;
+    font-size: 0;
+    white-space: nowrap;
+}
+.re-tab{
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    position: relative;
+    box-sizing: border-box;
+    padding: 4px 8px;
+    line-height: 1;
+    color: #999;
+    cursor: default;
+}
+.re-tab:first-child{
+    border-top-left-radius: 4px;
+}
+.re-tab:last-child{
+    border-right: 1px solid #ddd;
+    border-top-right-radius: 4px;
+}
+.re-tab.active{
+    border: 1px solid #44a4ff;
+    color: #333;
+}
+.re-tab.active:after{
+    content: '';
+    width: 100%;
+    height: 2px;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    position: absolute;
+}
+.re-tabbody{
+    display: none;
+}
+.re-tabbody.active{
+    display: block;
+}
 
 /*menu*/
 .re-menu{
@@ -151,19 +194,11 @@
     top: 0;
     background: #fff;
     border: 1px solid #eee;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
     border-radius: 4px;
-    -webkit-box-shadow: 0 2px 3px #888;
-    -moz-box-shadow: 0 2px 3px #888;
     box-shadow: 0 2px 3px #888;
 }
 .re-menu-item{
     cursor: pointer;
-    -webkit-transition: all .3s;
-    -moz-transition: all .3s;
-    -ms-transition: all .3s;
-    -o-transition: all .3s;
     transition: all .3s;
 }
 .re-menu-item:hover{
@@ -180,11 +215,7 @@
     max-width: 80%;
     overflow: hidden;
     background: #fff;
-    -webkit-box-shadow: 0 2px 5px #888;
-    -moz-box-shadow: 0 2px 5px #888;
     box-shadow: 0 2px 5px #888;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
     border-radius: 6px;
 }
 .re-dialog-header,
@@ -197,7 +228,8 @@
 }
 .re-dialog-header{
     border-bottom: 1px solid #ddd;
-    background: #eee;
+    background-color: #419641;
+    color: #fff;
 }
 .re-dialog-body{
     min-height: 30px;
@@ -220,15 +252,25 @@
     color: #000;
     text-align: center;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
 }
 .re-dialog-close:hover{
     color: #44a4ff;
 }
-.re-dialog-yes,
-.re-dialog-no{
-    margin: 0 10px;
+.re-dialog-footer .re-btn-m{
+    margin-left: 10px;
+}
+
+
+
+
+/* plugins tools ui */
+/*upload*/
+/*upload*/
+.re-upload-toolbar{
+    margin: 10px 0;
+}
+.re-upload-list{
+    max-height: 60vh;
+    overflow: auto;
 }

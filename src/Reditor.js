@@ -50,7 +50,6 @@ class Reditor {
                     if(typeof toolHandle === 'function'){
                         toolHandle(_this, name, e);
                     }else if((toolHandle.default) && (typeof toolHandle.default === 'function')){
-
                         toolHandle.default(_this, name, e);
                     }
                 }
