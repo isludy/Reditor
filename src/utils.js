@@ -13,6 +13,15 @@ export default {
             else return s;
         }
     },
+    has(target, context){
+        let posterity = context.getElementsByTagName('*'),
+            len = posterity.length,
+            i = 0;
+        for(; i<len; i++){
+            if(posterity[i] === target) return true;
+        }
+        return false;
+    },
     dialog(o, context){
         /*
             o = {title, body, css, yes, no, oncreated, onclose, onsure, oncancel, onhide}
@@ -20,7 +29,8 @@ export default {
         let box, header, body, footer, close, yes, no, inputs;
 
         context = context && context.nodeType === 1 ? context : document.body;
-        box = document.createElement('div');
+
+        box = document.querySelector('.re-dialog') || document.createElement('div');
         header = document.createElement('header');
         body = document.createElement('div');
         footer = document.createElement('footer');
@@ -40,6 +50,9 @@ export default {
         close.innerHTML = '&times;';
         yes.innerHTML = o.yes || '确定';
         no.innerHTML = o.no || '取消';
+
+        box.innerHTML = '';
+        box.removeAttribute('style');
 
         if(typeof o.css === 'string') box.setAttribute('style', o.css);
 
@@ -134,7 +147,8 @@ export default {
         if(typeof o !== 'object' || typeof o.items !== 'object'){
             throw 'The first parameter (options && options.items) of menu must be given!';
         }
-        let menu = document.createElement('div'),
+        let _this = this,
+            menu = document.createElement('div'),
             len = o.items.length,
             i = 0,
             item,
@@ -160,7 +174,7 @@ export default {
         context = (context) && (context.nodeType === 1) ? context : document.body;
         context.appendChild(menu);
 
-        menu.addEventListener('mouseenter', enterFn, false);
+        document.addEventListener('mouseup', upFn, false);
         menu.style.left = (o.x || 0) + 'px';
         menu.style.top  = (o.y || 0) + 'px';
 
@@ -170,18 +184,20 @@ export default {
             leaveFn();
         }
 
-        function enterFn() {
-            menu.addEventListener('mouseleave', leaveFn, false);
+        function upFn(e) {
+            if(!_this.has(e.target, menu) && e.target !== menu) leaveFn();
         }
 
         function leaveFn() {
             if(typeof o.onhide === 'function') o.onhide();
-            menu.removeEventListener('mouseenter', enterFn, false);
-            menu.removeEventListener('mouseleave', leaveFn, false);
             if (target) target.removeEventListener('click', handle, false);
+            document.removeEventListener('mouseup', upFn, false);
             context.removeChild(menu);
         }
         return menu;
+    },
+    alert(){
+        let box = document.createElement('div');
     },
     exec(name, val, range){
         if(!range || range.collapsed) return;

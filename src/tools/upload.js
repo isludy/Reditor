@@ -23,6 +23,7 @@ let body = `
             </div>
             <div id="re-upload-list-m" class="re-upload-list">manange body</div>
         </div>
+        <div class="re-upload-guide">右击预览窗可进行更多操作，菜单包含【全选】、【反选】、【编辑】、【删除当前LOGO】、【删除所有LOGO】等。</div>
     </div>`,
     choser = document.createElement('input');
 
@@ -52,15 +53,15 @@ function item(o){
     <div class="re-upload-item">
         <div class="re-upload-item-inner">
             <div class="re-upload-preview">
-                <img class="re-upload-img" src="${o.src}" alt="预览">
-                <img class="re-upload-logo" src="${o.logo}" alt="水印">
+                <div class="re-upload-imgbox">
+                    <img class="re-upload-img" src="${o.src}" alt="预览">
+                    <img class="re-upload-logo" src="${o.logo}" alt="水印">
+                </div>
             </div>
             <div class="re-upload-info">
                 <div class="re-upload-filename">${o.name}</div>
                 <textarea class="re-upload-textarea" name="desc${o.id}" placeholder="文件描述">${o.desc}</textarea>
                 <div class="re-progress"></div>
-                <label class="re-upload-checkboxs">添加水印：<input class="re-checkbox-m" name="logo${o.id}" type="checkbox"></label>
-                <button class="re-btn-m">编辑图片</button>
             </div>
         </div>
     </div>`;
