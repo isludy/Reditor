@@ -59,7 +59,8 @@ function item(o){
                 <div class="re-upload-filename">${o.name}</div>
                 <textarea class="re-upload-textarea" name="desc${o.id}" placeholder="文件描述">${o.desc}</textarea>
                 <div class="re-progress"></div>
-                <div class="re-upload-checkboxs">添加水印：<input name="logo${o.id}" type="checkbox"></div>
+                <label class="re-upload-checkboxs">添加水印：<input class="re-checkbox-m" name="logo${o.id}" type="checkbox"></label>
+                <button class="re-btn-m">编辑图片</button>
             </div>
         </div>
     </div>`;
