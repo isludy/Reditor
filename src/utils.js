@@ -13,24 +13,16 @@ export default {
             else return s;
         }
     },
-    has(target, context){
-        let posterity = context.getElementsByTagName('*'),
-            len = posterity.length,
-            i = 0;
-        for(; i<len; i++){
-            if(posterity[i] === target) return true;
-        }
-        return false;
-    },
     dialog(o, context){
         /*
-            o = {title, body, css, yes, no, oncreated, onclose, onsure, oncancel, onhide}
+            o = {title, type, body, css, yes, no, oncreated, onclose, onsure, oncancel, onhide}
         */
-        let box, header, body, footer, close, yes, no, inputs;
+        let box, wrapper, header, body, footer, close, yes, no, inputs;
 
         context = context && context.nodeType === 1 ? context : document.body;
 
-        box = document.querySelector('.re-dialog') || document.createElement('div');
+        box = document.querySelector('.re-dialog');
+        wrapper = document.createElement('div');
         header = document.createElement('header');
         body = document.createElement('div');
         footer = document.createElement('footer');
@@ -38,8 +30,11 @@ export default {
         yes = document.createElement('button');
         no = document.createElement('button');
 
+        if(o.type || !box) box = document.createElement('div');
+
         box.className = 're-dialog';
-        header.className = 're-dialog-header';
+        wrapper.className = 're-dialog-wrapper';
+        header.className = 're-dialog-header '+(o.type === 1 ? 're-danger': (o.type === 2 ? 're-warning' : 're-success'));
         body.className = 're-dialog-body';
         footer.className = 're-dialog-footer';
         close.className = 're-dialog-close';
@@ -51,10 +46,12 @@ export default {
         yes.innerHTML = o.yes || '确定';
         no.innerHTML = o.no || '取消';
 
+        if(o.type === 1) yes.style.display = no.style.display = 'none';
+
         box.innerHTML = '';
         box.removeAttribute('style');
 
-        if(typeof o.css === 'string') box.setAttribute('style', o.css);
+        if(typeof o.css === 'string') wrapper.setAttribute('style', o.css);
 
         if(o.body){
             if(typeof o.body === 'string') body.innerHTML = o.body;
@@ -66,10 +63,11 @@ export default {
         footer.appendChild(yes);
         footer.appendChild(no);
 
-        box.appendChild(header);
-        box.appendChild(body);
-        box.appendChild(footer);
+        wrapper.appendChild(header);
+        wrapper.appendChild(body);
+        wrapper.appendChild(footer);
 
+        box.appendChild(wrapper);
         context.appendChild(box);
 
         close.addEventListener('click', closeFn, false);
@@ -185,7 +183,7 @@ export default {
         }
 
         function upFn(e) {
-            if(!_this.has(e.target, menu) && e.target !== menu) leaveFn();
+            if(!menu.contains(e.target) && e.target !== menu) leaveFn();
         }
 
         function leaveFn() {
@@ -195,9 +193,6 @@ export default {
             context.removeChild(menu);
         }
         return menu;
-    },
-    alert(){
-        let box = document.createElement('div');
     },
     exec(name, val, range){
         if(!range || range.collapsed) return;

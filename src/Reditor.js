@@ -9,7 +9,6 @@ class Reditor {
             editor = document.getElementById(id);
 
         if(editor){
-            editor.className = 're';
             _this.editor = editor;
 
             _this.toolbar = _this.createToolbar(options.tools);

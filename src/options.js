@@ -44,5 +44,19 @@ export default {
             title: '文件上传与管理',
             params: true
         }
+    },
+    upload: {
+        type:{
+            image: ['jpg','jpeg','gif','png','webp','ico','bmp'],
+            video: ['mp4','ogg','webm','mkv'],
+            audio: ['mp3'],
+            other: ['pdf']
+        },
+        size: {
+            image: 2,
+            video: 1024,
+            audio: 12,
+            other: 1024
+        }
     }
 };

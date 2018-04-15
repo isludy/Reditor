@@ -44,6 +44,17 @@
     background: #ccc;
 }
 
+/*style*/
+.re-success{
+    background-color: #419641;
+}
+.re-warning{
+    background-color: #eb9316;
+}
+.re-danger{
+    background-color: #d06a4b;
+}
+
 /*form*/
 .re-input-l,
 .re-input-m,
@@ -245,15 +256,22 @@
 /*dialog*/
 .re-dialog{
     position: fixed;
-    top: 30px;
+    top: 0;
     left: 0;
-    right: 0;
-    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .5);
+}
+.re-dialog-wrapper{
     max-width: 80%;
-    overflow: hidden;
+    min-width: 240px;
     background: #fff;
     box-shadow: 0 2px 5px #888;
     border-radius: 6px;
+    overflow: hidden;
 }
 .re-dialog-header,
 .re-dialog-body,
@@ -265,8 +283,8 @@
 }
 .re-dialog-header{
     border-bottom: 1px solid #ddd;
-    background-color: #419641;
     color: #fff;
+    position: relative;
 }
 .re-dialog-body{
     min-height: 30px;
@@ -286,13 +304,13 @@
     height: 20px;
     line-height: 1;
     font-size: 20px;
-    color: #000;
+    color: #fff;
     text-align: center;
     cursor: pointer;
     user-select: none;
 }
 .re-dialog-close:hover{
-    color: #44a4ff;
+    color: #1e231d;
 }
 .re-dialog-footer .re-btn-m{
     margin-left: 10px;
