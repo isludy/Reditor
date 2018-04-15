@@ -10,7 +10,7 @@ for(; i<len; i++){
         css: 'font-size:'+params[i]+'px;margin:10px;white-space:nowrap;',
         html: params[i]+'px',
         data: {
-            fontsize: params[i]+'px'
+            fontsize: params[i]
         }
     });
 }
@@ -20,7 +20,7 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec('font-size', target.getAttribute('data-'+name), reditor._range);
+            utils.exec(name, target.data(name), reditor._range);
         }
     });
 }

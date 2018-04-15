@@ -1,5 +1,6 @@
 import utils from "../utils";
 import options from "../options";
+
 let body = `
     <div id="re-upload" class="re-upload">
         <div class="re-tabs">

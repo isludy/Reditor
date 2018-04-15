@@ -27,10 +27,6 @@ export default {
             title: '背景色',
             params: colors
         },
-        'border': {
-            title: '边框',
-            params: ['1px solid #333','1px solid #a00','2px solid #acc']
-        },
         'justifyleft': '左对齐',
         'justifycenter': '居中对齐',
         'justifyright': '右对齐',

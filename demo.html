@@ -7,13 +7,20 @@
     <link rel="stylesheet" href="themes/defualt.css">
 </head>
 <body>
-<div id="reditor" class="a b c"></div>
-<div id="t">
-    <div id="d"></div>
-</div>
+<div id="reditor"></div>
+<button id="btn">btn</button>
 <script src="dist/main.js"></script>
 <script>
-    new Reditor('reditor');
+    // document.execCommand('styleWithCss', null, true);
+    //
+    // document.getElementById('btn').onclick = function () {
+    //     // document.execCommand('backcolor',null,'red');
+    //     // document.execCommand('bold');
+    //     document.execCommand('fontname',null,'simhei');
+    // }
+
+    var edt =  new Reditor('reditor');
+
 </script>
 </body>
 </html>

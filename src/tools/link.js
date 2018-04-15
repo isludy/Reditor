@@ -26,7 +26,7 @@ export default (reditor)=>{
 				return false;
             }
 
-			utils.exec('link', url+'__target_'+target, reditor._range);
+			utils.exec('createLink', url+'__target_'+target, reditor._range);
 
 			a = reditor.edit.querySelectorAll('a[href$="__target_'+target+'"]');
 			reg = new RegExp('__target_'+target+'[\/]?$','g');
