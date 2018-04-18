@@ -6,13 +6,10 @@ export default {
      */
     range(range){
         let sel = window.getSelection();
-        if(range){
+        if(range instanceof Range){
             if(sel.rangeCount > 0)
                 sel.removeAllRanges();
-            if(range.rangeCount)
-                sel.addRange(range.getRangeAt(0));
-            else
-                sel.addRange(range);
+            sel.addRange(range);
         }else{
             if(sel.rangeCount)
                 return sel.getRangeAt(0);
