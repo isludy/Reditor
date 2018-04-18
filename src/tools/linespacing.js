@@ -20,7 +20,7 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec('line-height', target.getAttribute('data-'+name), reditor._range);
+            utils.exec('line-height', target.getAttribute('data-'+name), reditor.range);
         }
     });
 }

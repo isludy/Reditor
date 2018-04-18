@@ -20,7 +20,7 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec(name, target.data(name), reditor._range);
+            utils.exec(name, target.data(name), reditor.range, true);
         }
     });
 }

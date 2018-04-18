@@ -22,11 +22,11 @@ export default (reditor)=>{
 
 			if(!/^http[s]?:\/\//.test(url)) {
 				alert('输入的地址不完整，地址开头缺少http://或https://。');
-				utils.range(reditor._range);
+				utils.range(reditor.range);
 				return false;
             }
 
-			utils.exec('createLink', url+'__target_'+target, reditor._range);
+			utils.exec('createLink', url+'__target_'+target, reditor.range, true);
 
 			a = reditor.edit.querySelectorAll('a[href$="__target_'+target+'"]');
 			reg = new RegExp('__target_'+target+'[\/]?$','g');

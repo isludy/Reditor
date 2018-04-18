@@ -11,16 +11,16 @@
 <button id="btn">btn</button>
 <script src="dist/main.js"></script>
 <script>
-    // document.execCommand('styleWithCss', null, true);
-    //
-    // document.getElementById('btn').onclick = function () {
-    //     // document.execCommand('backcolor',null,'red');
-    //     // document.execCommand('bold');
-    //     document.execCommand('fontname',null,'simhei');
-    // }
-
     var edt =  new Reditor('reditor');
-
+    btn.onclick = function(){
+        document.cmd('copy');
+    };
+    document.onpaste = function(e){
+        var data = e.clipboardData;
+        console.log(data.getData('text/html'));
+    }
 </script>
+
+
 </body>
 </html>

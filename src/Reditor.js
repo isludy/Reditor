@@ -39,11 +39,11 @@ class Reditor {
         function handle(e){
             let name = e.currentTarget.attr('data-name');
             _this.edit.focus();
-            utils.range(_this._range);
+            utils.range(_this.range);
             if(name && document.activeElement === _this.edit){
                 if(tools[name].params === undefined){
                     document.cmd(name);
-                    _this._range = utils.range();
+                    _this.range = utils.range();
                 }else{
                     let toolHandle = RC('./'+name+'.js');
                     if(typeof toolHandle === 'function'){
@@ -64,23 +64,13 @@ class Reditor {
         edit.className = 're-edit';
         edit.contentEditable = true;
         edit.on('mouseup', ()=>{
-            _this._range = utils.range();
+            _this.range = utils.range();
+        });
+        document.on('keydown', (e)=>{
+            if(e.keyCode === 13 || !edit.childNodes.length)
+                document.cmd('formatBlock',false,'p');
         });
         return edit;
-    }
-    static range(rg){
-        let s = window.getSelection();
-        if(rg){
-            if(s.rangeCount > 0)  s.removeAllRanges();
-            if(rg.rangeCount){
-                s.addRange(rg.getRangeAt(0))
-            }else{
-                s.addRange(rg);
-            }
-        }else{
-            if(s.rangeCount) return s.getRangeAt(0);
-            else return s;
-        }
     }
 }
 

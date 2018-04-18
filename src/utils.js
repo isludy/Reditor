@@ -1,21 +1,23 @@
 export default {
     /**
      * 获取或设置range
-     * @param rg {Range} 传入range时为设置，无参时获取
+     * @param range {Range,Selection} 传入range时为设置，无参时获取
      * @returns s {Range} 无参数时返回range
      */
-    range(rg){
-        let s = window.getSelection();
-        if(rg){
-            if(s.rangeCount > 0)  s.removeAllRanges();
-            if(rg.rangeCount){
-                s.addRange(rg.getRangeAt(0))
-            }else{
-                s.addRange(rg);
-            }
+    range(range){
+        let sel = window.getSelection();
+        if(range){
+            if(sel.rangeCount > 0)
+                sel.removeAllRanges();
+            if(range.rangeCount)
+                sel.addRange(range.getRangeAt(0));
+            else
+                sel.addRange(range);
         }else{
-            if(s.rangeCount) return s.getRangeAt(0);
-            else return s;
+            if(sel.rangeCount)
+                return sel.getRangeAt(0);
+            else
+                return document.createRange();
         }
     },
     /**
@@ -221,39 +223,39 @@ export default {
      * 代替execCommand命令来完成文档的一些复杂操作
      * @param name {String} 一般是style键名
      * @param val {String} 一般是style值
-     * @param range {Range}
+     * @param range {Range,Selection} range对象
+     * @param native {boolean} 使用原生命令，默认false。execCommand支持的话，最好使用原生命令
      */
-    exec(name, val, range){
+    exec(name, val, range, native=false){
         if(!range || range.collapsed) return;
-
         this.range(range);
-
-        document.cmd(name, false, val);
-
-        // if(!islink){
-        //     let spans = document.find('a[href="'+uniqid+'"]'),
-        //         len=spans.length,
-        //         i = 0,
-        //         span,
-        //
-        //         inner,
-        //         jlen,
-        //         j = 0;
-        //
-        //     for(; i<len; i++){
-        //         //移除内部节点的相同样式
-        //         inner = spans[i].find('*');
-        //         jlen = inner.length;
-        //         for(; j<jlen; j++){
-        //             inner[j].style[name] = '';
-        //         }
-        //         span = document.create('span');
-        //         span.style[name] = val;
-        //
-        //         span.innerHTML = spans[i].innerHTML;
-        //
-        //         spans[i].parentNode.replaceChild(span, spans[i]);
-        //     }
-        // }
+        if(native)
+            document.cmd(name, false, val);
+        else{
+            // document.cmd()
+            /*
+            //TODO:遗留的问题，如果选区跨过块级元素的单边，由于DocumentFragment自动补全，会生产换行。
+             let  span = document.createElement("span"),
+                 frag = range.extractContents();
+             console.log(range);
+             span.style[name] = val;
+             frag.childNodes.forEach(child=>{
+                 if(child.nodeType === 3){
+                     let newSpan = span.cloneNode();
+                     newSpan.style[name] = val;
+                     newSpan.innerHTML = child.data;
+                     frag.replaceChild(newSpan, child);
+                 }else if(child.nodeType === 1){
+                     child.style[name] = val;
+                     //TODO:后代元素有相同样式时，权重问题
+                     // let son = child.find('*');
+                 }
+             });
+             span.appendChild(frag);
+             range.insertNode(span);
+             span.insertAdjacentHTML('beforebegin', span.innerHTML);
+             span.remove();
+             */
+        }
     }
 }
