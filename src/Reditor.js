@@ -15,7 +15,16 @@ class Reditor {
             _this.editor.append(_this.toolbar, _this.edit);
         }
         //使用styleWidthCss模式
-        document.cmd('styleWithCss', false, true);
+        try{
+            document.cmd('styleWithCss', false, true);
+        }catch (e) {
+            utils.dialog({
+                title: '注意!',
+                css: 'max-width:320px',
+                body: '您使用的浏览器（可能是IE）体验会比较差，建议使用其他现代浏览器。',
+                type: 1
+            });
+        }
     }
     createToolbar(tools){
         let _this = this,
@@ -65,6 +74,11 @@ class Reditor {
         edit.contentEditable = true;
         edit.on('mouseup', ()=>{
             _this.range = utils.range();
+        });
+        edit.on('mousedown', ()=>{
+            try{
+                _this.range.detach();
+            }catch (e) {}
         });
         document.on('keydown', (e)=>{
             if(e.keyCode === 13 || !edit.childNodes.length)

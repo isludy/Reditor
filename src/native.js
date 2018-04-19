@@ -18,8 +18,14 @@ if(!HTMLCollection.prototype.forEach) HTMLCollection.prototype.forEach = forEach
 if(!NodeList.prototype.forEach) NodeList.prototype.forEach = forEach;
 
 // event
-EventTarget.prototype.on = EventTarget.prototype.addEventListener;
-EventTarget.prototype.off = EventTarget.prototype.removeEventListener;
+if(typeof EventTarget !== 'undefined'){
+    EventTarget.prototype.on = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.off = EventTarget.prototype.removeEventListener;
+}else{
+    Document.prototype.on = Element.prototype.on = Element.prototype.addEventListener;
+    Document.prototype.off = Element.prototype.off = Element.prototype.removeEventListener;
+}
+
 HTMLCollection.prototype.on = NodeList.prototype.on = function(type, handle, capture){
     this.forEach((v)=>{
         v.on(type, handle, (capture || false));
@@ -32,8 +38,8 @@ HTMLCollection.prototype.off = NodeList.prototype.off = function(type, handle, c
 };
 
 //document : create -> createElement, id -> getElementById, cmd -> execCommand
-Document.prototype.create = Document.prototype.createElement;
-Document.prototype.cmd = Document.prototype.execCommand;
+document.create = document.createElement;
+document.cmd = document.execCommand;
 Document.prototype.find = HTMLElement.prototype.find = function(selector){
     let nodes;
     if(/^#/.test(selector)){

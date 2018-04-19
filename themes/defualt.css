@@ -3,6 +3,13 @@
     width: 100%;
     border: #ddd solid 1px;
     box-sizing: border-box;
+    outline: none;
+}
+.re-edit:focus{
+    -webkit-box-shadow: 0 0 2px #44a4ff;
+    -moz-box-shadow: 0 0 2px #44a4ff;
+    box-shadow: 0 0 2px #44a4ff;
+    border-color: #44a4ff;
 }
 .re-toolbar{
     position: fixed;
@@ -13,6 +20,8 @@
     padding: 10px 20px;
     box-shadow: 0 1px 3px #adafb1;
     box-sizing: border-box;
+    -webkit-transition: all .8s;
+    -webkit-transform: translateY(-100%);
     transition: all .8s;
     transform: translateY(-100%);
 }
@@ -30,6 +39,7 @@
 }
 .re-toolbar-active,
 .re-toolbar:hover{
+    -webkit-transform: translateY(0);
     transform: translateY(0);
 }
 .re-tool{

@@ -20,7 +20,11 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec(name, target.data(name), reditor.range, true);
+            utils.exec({
+                cmdName: name,
+                cmdValue: target.data(name),
+                range: reditor.range
+            });
         }
     });
 }

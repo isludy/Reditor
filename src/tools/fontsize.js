@@ -20,7 +20,15 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec('font-size', target.data(name), reditor.range);
+            utils.exec({
+                name: 'font-size',
+                value: target.data(name),
+                cmdName: 'fontsize',
+                cmdValue: 1,
+                range: reditor.range,
+                context: reditor.edit,
+                selector: ['[style*="font-size: x-small"]','font[size="1"]']
+            });
         }
     });
 }

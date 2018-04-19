@@ -4,7 +4,7 @@ export default {
      * @param range {Range,Selection} 传入range时为设置，无参时获取
      * @returns s {Range} 无参数时返回range
      */
-    range(range){
+    range(range = null){
         let sel = window.getSelection();
         if(range instanceof Range){
             if(sel.rangeCount > 0)
@@ -19,11 +19,12 @@ export default {
     },
     /**
      * 创建弹窗
-     * @param o {Object} 必需 {
-     *      title: 标题,
-     *      type: 默认普通弹窗，另外的值有 1，2,
-     *      body: 内容,
-     *      css: 弹窗样式,
+     * @param o {Object} 必需
+     * {
+     *      title: {String} 标题,
+     *      type: {Number} 默认普通弹窗，另外的值有 1，2,
+     *      body: {Node,Element,String} 内容,
+     *      css: {String,Object} 弹窗样式,
      *      yes: “确定”按钮的内容,
      *      no: “取消”按钮的内容,
      *      oncreated, onclose, onsure, oncancel, onhide //事件函数
@@ -65,7 +66,12 @@ export default {
         box.innerHTML = '';
         box.removeAttr('style');
 
-        if(typeof o.css === 'string') wrapper.attr('style', o.css);
+        if(typeof o.css === 'string')
+            wrapper.attr('style', o.css);
+        else if(typeof o.css === 'object')
+            for(let k in o.css)
+                if(o.css.hasOwnProperty(k))
+                    wrapper.style[k] = o.css[k];
 
         if(o.body){
             if(typeof o.body === 'string') body.innerHTML = o.body;
@@ -151,11 +157,12 @@ export default {
     },
     /**
      * 用于创建菜单
-     * @param o {Object}必需 {
+     * @param o {Object}必需
+     * {
      *      items:[{
-     *          css: 项的style,
-     *          html: 项的html,
-     *          data: 项的attribute，用来保存execCommand命令需要的值
+     *          css: {String,Object} 项的style,
+     *          html: {String} 项的html,
+     *          data: {String} 项的attribute，用来保存execCommand命令需要的值
      *      }],
      *      x: 菜单的left,
      *      y: 菜单的top,
@@ -185,8 +192,15 @@ export default {
                 }
             }
             div.className = 're-menu-item';
-            if (typeof item.css === 'string') div.attr('style', item.css);
+            if (typeof item.css === 'string')
+                div.attr('style', item.css);
+            else if(typeof item.css === 'object')
+                for(let k in item.css)
+                    if(item.css.hasOwnProperty(k))
+                        div.style[k] = item.css[k];
+
             if (typeof item.html === 'string') div.innerHTML = item.html;
+
             div.on('click', handle, false);
             menu.append(div);
         }
@@ -218,41 +232,40 @@ export default {
     },
     /**
      * 代替execCommand命令来完成文档的一些复杂操作
-     * @param name {String} 一般是style键名
-     * @param val {String} 一般是style值
-     * @param range {Range,Selection} range对象
-     * @param native {boolean} 使用原生命令，默认false。execCommand支持的话，最好使用原生命令
+     * @param o {Object}
+     * {
+     *      range: {Range,Selection} range对象
+     *      name: {String} css样式名
+     *      value: {String,Number} 一般是style值，即最终要添加的样式
+     *      cmdName: {String} execCommand命令
+     *      cmdValue: {String,Number} 提供给execCommand的参数
+     *      selector: {Array} 替换标签的选择器
+     *      context: {Node,Element} 一般是editor.edit
+     *  }
      */
-    exec(name, val, range, native=false){
-        if(!range || range.collapsed) return;
-        this.range(range);
-        if(native)
-            document.cmd(name, false, val);
-        else{
-            // document.cmd()
-            /*
-            //TODO:遗留的问题，如果选区跨过块级元素的单边，由于DocumentFragment自动补全，会生产换行。
-             let  span = document.createElement("span"),
-                 frag = range.extractContents();
-             console.log(range);
-             span.style[name] = val;
-             frag.childNodes.forEach(child=>{
-                 if(child.nodeType === 3){
-                     let newSpan = span.cloneNode();
-                     newSpan.style[name] = val;
-                     newSpan.innerHTML = child.data;
-                     frag.replaceChild(newSpan, child);
-                 }else if(child.nodeType === 1){
-                     child.style[name] = val;
-                     //TODO:后代元素有相同样式时，权重问题
-                     // let son = child.find('*');
-                 }
-             });
-             span.appendChild(frag);
-             range.insertNode(span);
-             span.insertAdjacentHTML('beforebegin', span.innerHTML);
-             span.remove();
-             */
+    exec(o){
+        if(!o.range || o.range.collapsed) return;
+        this.range(o.range);
+        document.cmd(o.cmdName, false, o.cmdValue);
+        if(o.value && o.name && o.context && o.selector){
+            o.selector.forEach(selector=>{
+                let nodes = o.context.find(selector);
+                if(nodes) {
+                    if (nodes.length)
+                        nodes.forEach(setStyle);
+                    else
+                        setStyle(nodes);
+                }
+            });
+        }
+        function setStyle(node){
+            node.style[o.name] = o.value;
+            if(node.tagName === 'FONT'){
+                let span = document.create('span');
+                span.attr('style', node.attr('style'));
+                span.innerHTML = node.innerHTML;
+                node.parentNode.replaceChild(span, node);
+            }
         }
     }
 }

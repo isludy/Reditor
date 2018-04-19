@@ -20,7 +20,28 @@ export default function(reditor, name, e){
         x: e.clientX,
         y: e.clientY,
         onclick(target){
-            utils.exec('line-height', target.getAttribute('data-'+name), reditor.range);
+            if(!reditor.range || reditor.range.collapsed) return;
+            let node, newRange, cmp;
+            node = reditor.range.startContainer;
+            if(node){
+                while (node.nodeType !== 1 || node.tagName !== 'P'){
+                    node = node.parentNode;
+                }
+                node.style.lineHeight = target.getAttribute('data-'+name);
+
+                if(!node.nextSibling) return;
+                newRange = utils.range();
+                newRange.selectNode(node.nextSibling);
+                cmp = newRange.compareBoundaryPoints(Range.END_TO_START, reditor.range);
+                while(cmp < 1) {
+                    node = node.nextSibling;
+                    node.style.lineHeight = target.getAttribute('data-' + name);
+                    newRange.detach();
+                    if(!node.nextSibling) return;
+                    newRange.selectNode(node.nextSibling);
+                    cmp = newRange.compareBoundaryPoints(Range.END_TO_START, reditor.range);
+                }
+            }
         }
     });
 }
