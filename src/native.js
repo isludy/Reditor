@@ -47,9 +47,7 @@ Document.prototype.find = HTMLElement.prototype.find = function(selector){
         if(nodes) return nodes;
     }
     nodes = this.querySelectorAll(selector);
-    if(nodes.length === 1)
-        return nodes[0];
-    else if(nodes.length > 1)
+    if(nodes.length)
         return nodes;
     return null;
 };
@@ -145,4 +143,24 @@ HTMLCollection.prototype.removeClass = NodeList.prototype.removeClass = function
 HTMLCollection.prototype.toggleClass = NodeList.prototype.toggleClass = function (name) {
     for(let i=0, len = this.length; i<len; i++)
         this[i].toggleClass(name);
+};
+
+//URL
+window.createURL = function(blob){
+    return window[ window.URL ? 'URL' : 'webkitURL']['createObjectURL'](blob);
+};
+window.revokeURL = function(url){
+    return window[ window.URL ? 'URL' : 'webkitURL']['revokeObjectURL'](url);
+};
+
+//Math format filesize
+Math.fsize = function(bit, fixed=2){
+    if(bit < 1024)
+        return bit+'B';
+    else if(bit < 1048576)
+        return (bit/1024).toFixed(fixed)+'KB';
+    else if(bit < 1073741824)
+        return (bit/1048576).toFixed(fixed)+'MB';
+    else
+        return (bit/1073741824).toFixed(fixed)+'GB';
 };

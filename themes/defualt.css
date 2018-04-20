@@ -165,21 +165,55 @@
 .re-checkbox-m,
 .re-checkbox-s{
     vertical-align: middle;
+    position: relative;
+    line-height: 1;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    overflow: hidden;
+}
+.re-checkbox-input{
+    position: absolute;
+    width: 100%;
+    height: 100%;
     margin: 0;
+    opacity: 0;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+}
+.re-checkbox-input+i{
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #aaa;
+    border: 1px solid;
+    border-radius: 3px;
+    background: #fff;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 0;
+}
+.re-checkbox-input:checked+i{
+    display: block;
+    color: #44a4ff;
+    font-size: inherit;
 }
 .re-checkbox-l{
     width: 24px;
     height: 24px;
+    font-size: 22px;
 }
 .re-checkbox-m{
     width: 18px;
     height: 18px;
+    font-size: 16px;
 }
 .re-checkbox-s{
     width: 14px;
     height: 14px;
+    font-size: 12px;
 }
-
 
 .re-disabled{
     color: #bbb !important;
@@ -244,6 +278,22 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     overflow: hidden;
+}
+
+/*close icon*/
+.re-close{
+    color: #4faaff;
+    background: #fff;
+    font-size: 16px;
+    border-radius: 100%;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+}
+.re-close:hover{
+    color: #b2512f;
 }
 
 /*menu*/
@@ -326,7 +376,6 @@
     margin-left: 10px;
 }
 
-
 /* plugins tools ui */
 /*upload*/
 .re-upload-toolbar{
@@ -345,14 +394,20 @@
     font-size: 14px;
     box-sizing: border-box;
     padding: .8vw;
+    position: relative;
 }
 .re-upload-item-inner{
-    box-sizing: border-box;
     box-shadow: #aebbc7 0 0 4px;
     border-radius: 4px;
     overflow: hidden;
     background: #fff;
     padding: 10px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+}
+.re-upload-checkbox{
+    margin: 0 5px 5px 0;
 }
 .re-upload-preview{
     height: 15vw;
@@ -412,15 +467,6 @@
 .re-upload-textarea:focus{
     border-color: #44a4ff;
     box-shadow: #44a4ff 0 0 3px;
-}
-.re-upload-checkboxs{
-    margin: 10px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    padding: 4px;
-    line-height: 1;
 }
 .re-upload-guide{
     font-size: 14px;

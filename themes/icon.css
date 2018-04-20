@@ -44,3 +44,9 @@
 .icon-link:before{content: '\e90c';}
 .icon-unlink:before{content: '\e916';}
 .icon-upload:before{content: '\e934';}
+
+.icon-checkbox1:before{content: '\ea10';}
+.icon-checkbox2:before{content: '\ea11';}
+
+.icon-close1:before{content: '\ea0d';}
+.icon-close2:before{content: '\ea0f';}

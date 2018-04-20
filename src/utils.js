@@ -96,7 +96,8 @@ export default {
         function sureFn(e){
             e.params = {};
             inputs = body.find('[name]');
-            for(let i=0, len=inputs.length; i<len; i++) e.params[ inputs[i].name ] = inputs[i].value;
+            for(let i=0, len=inputs.length; i<len; i++)
+                e.params[ inputs[i].name ] = (inputs[i].type==='checkbox' || inputs[i].type==='radio') ? inputs[i].checked : inputs[i].value;
             if(typeof o.onsure === 'function') o.onsure(e);
             destory();
         }

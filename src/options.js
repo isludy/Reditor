@@ -53,6 +53,7 @@ export default {
             video: 1024,
             audio: 12,
             other: 1024
-        }
+        },
+        path: 'http://localhost/demo/data.php'
     }
 };
