@@ -7,7 +7,7 @@ let params = options.tools['fontsize'].params,
     items = [];
 for(; i<len; i++){
     items.push({
-        css: 'font-size:'+params[i]+'px;margin:10px;white-space:nowrap;',
+        css: 'font-size:'+params[i]+'px;white-space:nowrap;',
         html: params[i]+'px',
         data: {
             fontsize: params[i]+'px'

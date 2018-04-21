@@ -49,7 +49,7 @@ export default {
             other: ['pdf']
         },
         size: {
-            image: 2,
+            image: 1,
             video: 1024,
             audio: 12,
             other: 1024

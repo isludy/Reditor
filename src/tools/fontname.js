@@ -7,7 +7,7 @@ let params = options.tools['fontname'].params,
     items = [];
 for(; i<len; i++){
     items.push({
-        css: 'font-family:'+params[i]+';margin:10px;white-space:nowrap;',
+        css: 'font-family:'+params[i]+';white-space:nowrap;',
 		html: params[i],
         data: {
             fontname: params[i]

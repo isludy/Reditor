@@ -23,6 +23,8 @@
 .icon-home1:before{content: '\e900';}
 .icon-home2:before{content: '\e901';}
 .icon-home3:before{content: '\e902';}
+.icon-image1:before{content: '\e90d';}
+.icon-image2:before{content: '\e90e';}
 
 .icon-bold:before{content: '\ea62';}
 .icon-italic:before{content: '\ea64';}

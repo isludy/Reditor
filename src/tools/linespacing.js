@@ -7,7 +7,7 @@ let params = options.tools['linespacing'].params,
     items = [];
 for(; i<len; i++){
     items.push({
-        css: 'margin:10px;white-space:nowrap;font-size:14px;',
+        css: 'white-space:nowrap;font-size:14px;',
         html: params[i]+' 倍',
         data: {
             linespacing: params[i]

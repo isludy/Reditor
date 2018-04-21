@@ -163,7 +163,7 @@ export default {
      *      items:[{
      *          css: {String,Object} 项的style,
      *          html: {String} 项的html,
-     *          data: {String} 项的attribute，用来保存execCommand命令需要的值
+     *          data: {String} 项的attribute，例如用来保存execCommand命令需要的值
      *      }],
      *      x: 菜单的left,
      *      y: 菜单的top,

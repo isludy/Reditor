@@ -1,40 +1,17 @@
-import utils from "../utils";
-import options from "../options";
+import utils from '../utils';
+import options from '../options';
+import item from './upload/item';
+import {xhr, formData} from "./upload/ajax";
 
-//上传窗口主体
-let body = `
-    <div id="re-upload" class="re-upload">
-        <div class="re-tabs">
-            <span class="re-tab active" data-tab="upload">上传</span>
-            <span class="re-tab" data-tab="manage">管理</span>
-        </div>
-        <div class="re-tabbody active" data-tabbody="upload">
-            <div class="re-upload-toolbar">
-                <button id="re-upload-choser" class="re-btn-m re-btn-success">添加</button>
-                <button id="re-upload-start" class="re-btn-m re-btn-warning">上传</button>
-                <button id="re-upload-clear" class="re-btn-m re-btn-danger">清空</button>
-            </div>
-            <div id="re-upload-list-u" class="re-upload-list">upload body</div>
-        </div>
-        <div class="re-tabbody" data-tabbody="manage">
-            <div class="re-upload-toolbar">
-                <button class="re-btn-m re-btn-danger">清空</button>
-                <button class="re-btn-m re-btn-success">查看今天</button>
-                <button class="re-btn-m re-btn-success">查看昨天</button>
-                <button class="re-btn-m re-btn-success">查看前天</button>
-            </div>
-            <div id="re-upload-list-m" class="re-upload-list">manange body</div>
-        </div>
-    </div>`,
+let dialog,
     choser = document.createElement('input'),
     typeLimit = [],    //用来保存可支持的文件类型，以方便判断
     opt = options.upload,
-    formData = new FormData(),
-    xhr = new XMLHttpRequest(),
-    status = 0, //上传状态: 0表示等待，1表示上传中
-    uList,
-    mList,
+    list,
     tab,
+    uInners,
+    mInners,
+    logos,
     choserBtn,
     startBtn,
     clearBtn;
@@ -64,7 +41,7 @@ choser.on('change', ()=>{
             if(!typeLimit.includes(ext)){
                 utils.dialog({
                     type: 1,
-                    css: 'max-width: 360px; top: 100px;',
+                    css: 'max-width: 360px;',
                     title: '格式错误',
                     body: `不支持“${ext}”，仅支持以下类型：
                     <ul>
@@ -80,7 +57,7 @@ choser.on('change', ()=>{
             if( size > opt.size[type]){
                 utils.dialog({
                     type: 1,
-                    css: 'max-width: 360px; top: 100px;',
+                    css: 'max-width: 360px;',
                     title: '文件大小超出',
                     body: `文件“${file.name}”大小（${size}MB）超出上限，文件大小上限详情如下：
                     <ul>
@@ -99,133 +76,131 @@ choser.on('change', ()=>{
                 src: window.createURL(file),
                 desc: '',
                 name: file.name,
-                panel: 0
+                logo: './themes/logo.png'
             });
             //加入到formData备以上传
             formData.append('id'+i, file);
         }
-        uList.innerHTML = items;
+        if(items){
+            list[0].innerHTML = items;
+            uInners = list[0].find('.re-upload-item-inner');
+            uInners.on('click', selectHandle);
+            logos = list[0].find('.re-upload-logo');
+            logos.on('contextmenu', logoHandle);
+        }
     }
 },false);
 
-//生成item的html，upload和manage面板都通用
-function item(o){
-    return `
-    <div class="re-upload-item">
-        <i class="re-close icon icon-close1"></i>
-        <div class="re-upload-item-inner">
-            选择：
-            <span class="re-upload-checkbox re-checkbox-s">
-                <input class="re-checkbox-input" type="checkbox" checked name="id${o.id}">
-                <i class="icon icon-checkbox1"></i>
-            </span>
-            ${
-                o.panel ? '' : '水印：\
-            <span class="re-upload-checkbox re-checkbox-s">\
-                <input class="re-checkbox-input" type="checkbox" checked name="logo'+o.id+'">\
-                <i class="icon icon-checkbox1"></i>\
-            </span>'
-            }
-            <div class="re-upload-preview">
-                <div class="re-upload-imgbox">
-                    ${o.type === 'video' ? '<video controls': '<img'} class="re-upload-img" src="${o.src}">${o.type === 'video' ? '</video>' : ''}
-                </div>
-            </div>
-            <div class="re-upload-info">
-                <div class="re-upload-filename">${o.name}</div>
-                <textarea class="re-upload-textarea" name="desc${o.id}" placeholder="文件描述">${o.desc}</textarea>
-            </div>
-        </div>
-    </div>`;
-}
-
-//处理开始上传
-xhr.on('loadstart', ()=>{
-    status = 1;
-    startBtn.innerText = '取消';
-    choserBtn.addClass('re-disabled');
-    clearBtn.addClass('re-disabled');
-    uList.find('.re-close').addClass('re-disabled');
-});
-//处理上传进度
-xhr.upload.on('progress',e=>{
-    console.log(e.total,e.loaded);
-});
-//处理上传成功
-xhr.on('load', ()=>{
-    console.log(xhr.response);
-});
-//处理上传失败
-xhr.on('error', ()=>{
-    utils.dialog({
-        title: '上传失败',
-        css: 'max-width: 320px',
-        body: '上传时发生错误！',
-        type: 1
-    });
-});
-//处理取消上传
-xhr.on('abort', ()=>{
-    utils.dialog({
-        title: '上传取消',
-        css: 'max-width: 320px',
-        body: '上传已被取消！',
-        type: 1
-    });
-});
-//处理上传超时
-xhr.on('timeout', ()=>{
-    utils.dialog({
-        title: '上传超时',
-        css: 'max-width: 320px',
-        body: '上传超时！可能网络原因，稍后重试！',
-        type: 1
-    });
-});
-//处理上传结果
-xhr.on('loadend', ()=>{
-    status = 0;
-    startBtn.innerText = '上传';
-});
-
+//选择文件
 function fireChoser(){
+    try{
+        uInners.on('click', selectHandle);
+    }catch (err){}
     document.body.append(choser);
     choser.value = '';
     choser.click();
     choser.remove();
 }
+//开始上传
 function fireStart(){
-    let uBtns = uList.parentNode.find('.re-btn-m'),
-        uClose = uList.find('.re-close');
-    switch (status) {
-        case 0:
-            xhr.open('post', opt.path, true);
-            xhr.send(formData);
-            break;
-        case 1:
-            xhr.abort();
-            break;
+    xhr.open('post', opt.path, true);
+    xhr.send(formData);
+}
+//清除
+function fireClear() {
+    try{
+        uInners.on('click', selectHandle);
+    }catch (err){}
+    list[0].innerHTML = '';
+}
+//处理选择与反选
+function selectHandle(e){
+    if(!/textarea/i.test(e.target.tagName)){
+        if(e.ctrlKey){
+            this.toggleClass('active');
+            let inners = this.parentNode.parentNode.find('.re-upload-item-inner');
+            if(this.hasClass('active'))
+                inners.addClass('active');
+            else
+                inners.removeClass('active');
+        }else{
+            this.toggleClass('active');
+        }
     }
 }
-function fireClear() {
-    if(status === 1)
-        return false;
-    else{
-        uList.innerHTML = '';
-    }
+//logo的右击菜单
+function logoHandle(e){
+    e.preventDefault();
+    let _this = e.currentTarget;
+    utils.menu({
+        x: e.x,
+        y: e.y,
+        items: [{
+            html: '删除水印',
+            data: {name: 'del'}
+        },{
+            html: '添加水印',
+            data: {name: 'add'}
+        },{
+            html: '全部删除水印',
+            data: {name: 'delAll'}
+        },{
+            html: '全部添加水印',
+            data: {name: 'addAll'}
+        }],
+        onclick(target){
+            switch (target.data('name')){
+                case 'del':
+                    _this.removeClass('active');
+                    break;
+                case 'add':
+                    _this.addClass('active');
+                    break;
+                case 'delAll':
+                    list[0].find('.re-upload-logo').removeClass('active');
+                    break;
+                case 'addAll':
+                    list[0].find('.re-upload-logo').addClass('active');
+                    break;
+            }
+        }
+    });
 }
 export default (reditor)=>{
     utils.dialog({
         title: '文件上传与管理',
         css: 'width: 80%',
-        body,
+        body: `
+        <div id="re-upload" class="re-upload">
+            <div class="re-tabs">
+                <span class="re-tab active" data-tab="upload">上传</span>
+                <span class="re-tab" data-tab="manage">管理</span>
+            </div>
+            <div class="re-tabbody active" data-tabbody="upload">
+                <div class="re-upload-toolbar">
+                    <button id="re-upload-choser" class="re-btn-m re-btn-success">添加</button>
+                    <button id="re-upload-start" class="re-btn-m re-btn-warning">上传</button>
+                    <button id="re-upload-clear" class="re-btn-m re-btn-danger">清空</button>
+                </div>
+                <div class="re-upload-list"></div>
+            </div>
+            <div class="re-tabbody" data-tabbody="manage">
+                <div class="re-upload-toolbar">
+                    <button class="re-btn-m re-btn-danger">清空</button>
+                    <button class="re-btn-m re-btn-success">查看今天</button>
+                    <button class="re-btn-m re-btn-success">查看昨天</button>
+                    <button class="re-btn-m re-btn-success">查看前天</button>
+                </div>
+                <div class="re-upload-list"></div>
+            </div>
+        </div>`,
         oncreated(){
+            dialog = document.find('#re-upload');
             //创建tab
-            tab = utils.tab('re-upload');
+            tab = utils.tab(dialog);
 
             //获取上传、管理列表
-            uList = document.find('#re-upload-list-u');
-            mList = document.find('#re-upload-list-m');
+            list = dialog.find('.re-upload-list');
 
             //获取上传面板按钮，并绑定事件
             choserBtn = document.find('#re-upload-choser');

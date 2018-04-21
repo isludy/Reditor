@@ -7,7 +7,7 @@ let params = options.tools['forecolor'].params,
     items = [];
 for(; i<len; i++){
     items.push({
-        css: 'color:'+params[i]+';width:100px;height:15px;margin:5px;border:#ddd 1px solid; background-color: '+params[i]+';',
+        css: 'width:100px;height:15px;margin:2px 5px;padding:0;border:#ddd 1px solid; background-color: '+params[i]+';',
         data: {
             forecolor: params[i]
         }
