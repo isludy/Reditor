@@ -164,3 +164,14 @@ Math.fsize = function(bit, fixed=2){
     else
         return (bit/1073741824).toFixed(fixed)+'GB';
 };
+
+//FormData
+FormData.prototype.deleteAll = function(){
+    if(this.delete){
+        let key, keys = this.keys();
+        console.log(keys);
+        for(key of keys)
+            this.delete(key);
+        console.log(keys);
+    }
+};

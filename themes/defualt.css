@@ -337,6 +337,7 @@
     box-shadow: 0 2px 5px #888;
     border-radius: 6px;
     overflow: hidden;
+    position: relative;
 }
 .re-dialog-header,
 .re-dialog-body,
@@ -373,6 +374,7 @@
     text-align: center;
     cursor: pointer;
     user-select: none;
+    z-index: 1;
 }
 .re-dialog-close:hover{
     color: #1e231d;

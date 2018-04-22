@@ -1,7 +1,7 @@
 import utils from '../utils';
 import options from '../options';
 import item from './upload/item';
-import {xhr, formData} from "./upload/ajax";
+import ajax from "./upload/ajax";
 
 let dialog,
     choser = document.createElement('input'),
@@ -71,7 +71,7 @@ choser.on('change', ()=>{
             }
             //生成html
             items += item({
-                id: i,
+                id: 'reid'+i,
                 type,
                 src: window.createURL(file),
                 desc: '',
@@ -79,7 +79,7 @@ choser.on('change', ()=>{
                 logo: './themes/logo.png'
             });
             //加入到formData备以上传
-            formData.append('id'+i, file);
+            ajax.append('reid'+i, file);
         }
         if(items){
             list[0].innerHTML = items;
@@ -91,10 +91,14 @@ choser.on('change', ()=>{
     }
 },false);
 
-//选择文件
+ajax.then = function(data){
+    console.log(data)
+};
+
+//添加文件
 function fireChoser(){
     try{
-        uInners.on('click', selectHandle);
+        uInners.off('click', selectHandle);
     }catch (err){}
     document.body.append(choser);
     choser.value = '';
@@ -103,13 +107,23 @@ function fireChoser(){
 }
 //开始上传
 function fireStart(){
-    xhr.open('post', opt.path, true);
-    xhr.send(formData);
+    uInners.forEach(inner=>{
+        let reid = inner.data('reid');
+        if(!inner.hasClass('active'))
+            ajax.delete(reid);
+        else{
+            ajax.set(reid, 'logo', inner.find('.re-upload-logo').hasClass('active'));
+            ajax.set(reid, 'desc', (inner.find('textarea')[0].value || ''));
+        }
+    });
+    ajax.send('post', opt.path, true);
 }
 //清除
 function fireClear() {
     try{
-        uInners.on('click', selectHandle);
+        uInners.off('click', selectHandle);
+        logos.off('click', logoHandle);
+        ajax.delete();
     }catch (err){}
     list[0].innerHTML = '';
 }

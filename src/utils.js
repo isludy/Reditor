@@ -22,20 +22,17 @@ export default {
      * @param o {Object} 必需
      * {
      *      title: {String} 标题,
-     *      type: {Number} 默认普通弹窗，另外的值有 1，2,
-     *      body: {Node,Element,String} 内容,
-     *      css: {String,Object} 弹窗样式,
+     *      type: {Number} 默认普通弹窗，另外的值有: -1, 1, 2,
+     *      body: {String} 内容,
+     *      css: {String} 弹窗样式,
      *      yes: “确定”按钮的内容,
      *      no: “取消”按钮的内容,
      *      oncreated, onclose, onsure, oncancel, onhide //事件函数
      * }
      * @param context {Node} 可选 上下文，默认body
      */
-    dialog(o, context){
+    dialog(o, context=document.body){
         let box, wrapper, header, body, footer, close, yes, no, inputs;
-
-        context = context && context.nodeType === 1 ? context : document.body;
-
         box = document.find('.re-dialog');
         wrapper = document.create('div');
         header = document.create('header');
@@ -46,6 +43,8 @@ export default {
         no = document.create('button');
 
         if(o.type || !box) box = document.create('div');
+        if(o.type > 0) yes.style.display = no.style.display = 'none';
+        if(o.type === -1) yes.style.display = 'none';
 
         box.className = 're-dialog';
         wrapper.className = 're-dialog-wrapper';
@@ -56,31 +55,54 @@ export default {
         yes.className = 're-btn-success re-btn-m';
         no.className = 're-btn-warning re-btn-m';
 
-        header.innerHTML = o.title || '弹窗';
         close.innerHTML = '&times;';
         yes.innerHTML = o.yes || '确定';
         no.innerHTML = o.no || '取消';
-
-        if(o.type === 1) yes.style.display = no.style.display = 'none';
-
         box.innerHTML = '';
         box.removeAttr('style');
 
-        if(typeof o.css === 'string')
-            wrapper.attr('style', o.css);
-        else if(typeof o.css === 'object')
-            for(let k in o.css)
-                if(o.css.hasOwnProperty(k))
-                    wrapper.style[k] = o.css[k];
-
-        if(o.body){
-            if(typeof o.body === 'string') body.innerHTML = o.body;
-            if(o.body.nodeType === 1) body.append(o.body);
+        function htmlObserv(name, node){
+            node.innerHTML = o[name];
+            Object.defineProperty(o, name, {
+                set(newVal){
+                    if(newVal !== node.innerHTML)
+                        node.innerHTML = newVal;
+                },
+                get(){
+                    return node.innerHTML;
+                }
+            });
         }
 
-        header.append(close);
+        if(typeof o.title === 'string')
+            htmlObserv('title', header);
+        else
+            header.innerHTML = '弹窗';
+
+        if(typeof o.css === 'string'){
+            let oldCss = o.css;
+            wrapper.attr('style', o.css);
+            Object.defineProperty(o, 'css', {
+                set(newVal){
+                    if(newVal !== oldCss)
+                        oldCss = newVal;
+                    wrapper.attr('style', oldCss);
+                },
+                get(){
+                    return oldCss;
+                }
+            });
+        }
+
+        if(typeof o.body === 'string')
+            htmlObserv('body', body);
+        if(typeof o.yes === 'string')
+            htmlObserv('yes', yes);
+        if(typeof o.no === 'string')
+            htmlObserv('no', no);
+
         footer.append(yes, no);
-        wrapper.append(header, body, footer);
+        wrapper.append(close, header, body, footer);
         box.append(wrapper);
         context.append(box);
 
@@ -110,6 +132,7 @@ export default {
         }
 
         if(typeof o.oncreated === 'function') o.oncreated();
+        return box;
     },
     /**
      * 创建tab菜单

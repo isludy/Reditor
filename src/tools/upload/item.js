@@ -3,11 +3,11 @@ export default (o)=>{
     return `
     <div class="re-upload-item">
         <i class="re-close icon icon-close1"></i>
-        <div class="re-upload-item-inner" data-re-id="${o.id}">
+        <div class="re-upload-item-inner" data-reid="${o.id}">
             <div class="re-upload-preview alpha">
                 <div class="re-upload-imgbox">
                     ${o.type === 'video' ? '<video controls': '<img'} class="re-upload-img" src="${o.src}">${o.type === 'video' ? '</video>' : ''}
-                    ${o.type === 'image' ? '<img class="re-upload-logo active" src="'+o.logo+'">' : ''}
+                    ${o.type === 'image' ? '<img data-reid="'+o.id+'" class="re-upload-logo active" src="'+o.logo+'">' : ''}
                 </div>
             </div>
             <div class="re-upload-info">
