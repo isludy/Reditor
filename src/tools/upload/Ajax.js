@@ -37,7 +37,7 @@ Ajax = {
             opt.title = '操作失败';
             opt.body = '空文件夹，无法提交！';
             opt.no = '关闭';
-            status = 3;
+            status = 4;
             if(typeof Ajax.catch === 'function') Ajax.catch(status);
             return;
         }
@@ -73,9 +73,24 @@ xhr.upload.on('progress',e=>{
 });
 //处理上传成功
 xhr.on('load', ()=>{
-    status = 0;
-    opt.title = '上传成功';
-    opt.body = '上传成功！';
+    try{
+        let data = typeof xhr.response === 'object' ? xhr.response : JSON.parse(xhr.response);
+        if(data.code > 0){
+            status = 3;
+            opt.title = '上传失败';
+            opt.body = '失败消息：' + data.msg;
+        }else{
+            if(typeof Ajax.then === 'function')
+                Ajax.then(data, xhr.status, xhr);
+            opt.title = '上传成功';
+            opt.body = '上传成功！';
+        }
+
+    }catch (err){
+        status = 3;
+        opt.title = '失败';
+        opt.body = '后台处理失败！消息：'+xhr.response;
+    }
 });
 //处理上传失败
 xhr.on('error', ()=>{
@@ -91,16 +106,10 @@ xhr.on('timeout', ()=>{
 });
 //处理上传结果
 xhr.on('loadend', ()=>{
-    if(status === 0){
-        if(typeof Ajax.then === 'function'){
-            Ajax.then(xhr.response, xhr.status, xhr);
-            opt.no = '完成';
-        }
-    }else{
-        if(typeof Ajax.catch === 'function') {
+    if(status > 0){
+        if(typeof Ajax.catch === 'function')
             Ajax.catch(status);
-            opt.no = '关闭';
-        }
+        opt.no = '关闭';
     }
 });
 

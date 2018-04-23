@@ -193,5 +193,4 @@ export default (reditor)=>{
             }catch (e) {}
         }
     });
-
 }
