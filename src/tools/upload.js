@@ -1,17 +1,14 @@
 import utils from '../utils';
 import options from '../options';
-import item from './upload/item';
-import ajax from "./upload/ajax";
+import Item from './upload/Item';
+import Ajax from './upload/Ajax';
 
 let dialog,
     choser = document.createElement('input'),
     typeLimit = [],    //用来保存可支持的文件类型，以方便判断
     opt = options.upload,
-    list,
     tab,
-    uInners,
-    mInners,
-    logos,
+    list,
     choserBtn,
     startBtn,
     clearBtn;
@@ -21,22 +18,25 @@ choser.multiple = true;
 
 //将支持的所有类型都加入到typeLimit
 for(let type in opt.type){
-    if(opt.type.hasOwnProperty(type))
+    if(opt.type.hasOwnProperty(type)){
         opt.type[type].forEach(function(v){
             typeLimit.push(v);
         });
+    }
 }
 
 //input type=file的change事件
 choser.on('change', ()=>{
-    let file, len, i=0, ext, type, size, items = '';
+    let file, len, i=0, ext, type, size, fragMent,id;
     if(choser.files){
         len = choser.files.length;
+        fragMent = document.createDocumentFragment();
         for(; i<len; i++){
             file = choser.files[i];
             ext = file.name.slice(file.name.lastIndexOf('.')+1).toLowerCase();
             type = file.type.split(/\//g)[0];
             size = (file.size/1048576).toFixed(2);//MB
+            id = 're'+file.lastModified+file.size;
             //判断文件类型
             if(!typeLimit.includes(ext)){
                 utils.dialog({
@@ -69,37 +69,41 @@ choser.on('change', ()=>{
                 });
                 break;
             }
+            //判断相同的文件
+            if(Ajax.files[id]){
+                utils.dialog({
+                    type: 1,
+                    css: 'max-width: 360px;',
+                    title: '文件重复',
+                    body: '文件“'+file.name+'”可能是重复的，请检查。'
+                });
+                break;
+            }
             //生成html
-            items += item({
-                id: 'reid'+i,
+            fragMent.appendChild(Item.create({
+                id,
                 type,
                 src: window.createURL(file),
                 desc: '',
                 name: file.name,
                 logo: './themes/logo.png'
-            });
-            //加入到formData备以上传
-            ajax.append('reid'+i, file);
+            }));
+            //添加要上传的数据到ajax，以备上传
+            Ajax.files[id] = {
+                file,
+                query: {
+                    desc: '',
+                    logo: true
+                }
+            }
         }
-        if(items){
-            list[0].innerHTML = items;
-            uInners = list[0].find('.re-upload-item-inner');
-            uInners.on('click', selectHandle);
-            logos = list[0].find('.re-upload-logo');
-            logos.on('contextmenu', logoHandle);
-        }
+        list[0].append(fragMent);
+        fragMent = null;
     }
 },false);
 
-ajax.then = function(data){
-    console.log(data)
-};
-
 //添加文件
 function fireChoser(){
-    try{
-        uInners.off('click', selectHandle);
-    }catch (err){}
     document.body.append(choser);
     choser.value = '';
     choser.click();
@@ -107,79 +111,32 @@ function fireChoser(){
 }
 //开始上传
 function fireStart(){
-    uInners.forEach(inner=>{
-        let reid = inner.data('reid');
-        if(!inner.hasClass('active'))
-            ajax.delete(reid);
-        else{
-            ajax.set(reid, 'logo', inner.find('.re-upload-logo').hasClass('active'));
-            ajax.set(reid, 'desc', (inner.find('textarea')[0].value || ''));
-        }
+    //更新上传的数据
+    list[0].children.forEach(child=>{
+        Ajax.files[child.id].query.desc = child.find('.re-upload-textarea')[0].value;
+        Ajax.files[child.id].query.logo = child.find('.re-upload-logo').hasClass('active');
     });
-    ajax.send('post', opt.path, true);
+    //启动
+    Ajax.send('post', opt.path);
 }
 //清除
-function fireClear() {
-    try{
-        uInners.off('click', selectHandle);
-        logos.off('click', logoHandle);
-        ajax.delete();
-    }catch (err){}
-    list[0].innerHTML = '';
+function fireClear(){
+    Item.remove(list[0]);
+    console.log(Ajax.files);
 }
-//处理选择与反选
-function selectHandle(e){
-    if(!/textarea/i.test(e.target.tagName)){
-        if(e.ctrlKey){
-            this.toggleClass('active');
-            let inners = this.parentNode.parentNode.find('.re-upload-item-inner');
-            if(this.hasClass('active'))
-                inners.addClass('active');
-            else
-                inners.removeClass('active');
-        }else{
-            this.toggleClass('active');
-        }
-    }
-}
-//logo的右击菜单
-function logoHandle(e){
-    e.preventDefault();
-    let _this = e.currentTarget;
-    utils.menu({
-        x: e.x,
-        y: e.y,
-        items: [{
-            html: '删除水印',
-            data: {name: 'del'}
-        },{
-            html: '添加水印',
-            data: {name: 'add'}
-        },{
-            html: '全部删除水印',
-            data: {name: 'delAll'}
-        },{
-            html: '全部添加水印',
-            data: {name: 'addAll'}
-        }],
-        onclick(target){
-            switch (target.data('name')){
-                case 'del':
-                    _this.removeClass('active');
-                    break;
-                case 'add':
-                    _this.addClass('active');
-                    break;
-                case 'delAll':
-                    list[0].find('.re-upload-logo').removeClass('active');
-                    break;
-                case 'addAll':
-                    list[0].find('.re-upload-logo').addClass('active');
-                    break;
-            }
-        }
-    });
-}
+
+//处理上传错误
+// Ajax.catch = function(status){
+//     console.log(status)
+// };
+
+//处理上传成功
+Ajax.then = function(data){
+    console.log(data);
+    list[0].children.addClass('active');
+};
+
+
 export default (reditor)=>{
     utils.dialog({
         title: '文件上传与管理',

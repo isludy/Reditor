@@ -18,6 +18,51 @@ export default {
         }
     },
     /**
+     * 判断是否空对象
+     * @param o
+     * @returns {boolean}
+     */
+    isEmpty(o){
+        return JSON.stringify(o) === '{}';
+    },
+    /**
+     * 监听数据模型改变node的一些属性
+     * @param node 数据改变时，影响的节点
+     * @param attr 影响的节点属性
+     * @param obj  数据模型
+     * @param name 监听的属性
+     * @param fn 回调
+     */
+    observe(node, attr, obj, name, fn){
+        if(/(style)|(^data-*)|(name)/i.test(attr)){
+            node.attr('style', obj[name]);
+            Object.defineProperty(obj, 'css', {
+                set(newVal){
+                    if(newVal !== node.attr('style')){
+                        node.attr('style', newVal);
+                        if(typeof fn === 'function') fn(newVal);
+                    }
+                },
+                get(){
+                    return node.attr('style');
+                }
+            });
+        }else{
+            node[attr] = obj[name];
+            Object.defineProperty(obj, name, {
+                set(newVal){
+                    if(newVal !== node[attr]){
+                        node[attr] = newVal;
+                        if(typeof fn === 'function') fn(newVal);
+                    }
+                },
+                get(){
+                    return node[attr];
+                }
+            });
+        }
+    },
+    /**
      * 创建弹窗
      * @param o {Object} 必需
      * {
@@ -55,51 +100,23 @@ export default {
         yes.className = 're-btn-success re-btn-m';
         no.className = 're-btn-warning re-btn-m';
 
+        header.innerHTML = '弹窗';
         close.innerHTML = '&times;';
         yes.innerHTML = o.yes || '确定';
         no.innerHTML = o.no || '取消';
         box.innerHTML = '';
         box.removeAttr('style');
 
-        function htmlObserv(name, node){
-            node.innerHTML = o[name];
-            Object.defineProperty(o, name, {
-                set(newVal){
-                    if(newVal !== node.innerHTML)
-                        node.innerHTML = newVal;
-                },
-                get(){
-                    return node.innerHTML;
-                }
-            });
-        }
-
         if(typeof o.title === 'string')
-            htmlObserv('title', header);
-        else
-            header.innerHTML = '弹窗';
-
-        if(typeof o.css === 'string'){
-            let oldCss = o.css;
-            wrapper.attr('style', o.css);
-            Object.defineProperty(o, 'css', {
-                set(newVal){
-                    if(newVal !== oldCss)
-                        oldCss = newVal;
-                    wrapper.attr('style', oldCss);
-                },
-                get(){
-                    return oldCss;
-                }
-            });
-        }
-
+            this.observe(header,'innerHTML', o, 'title');
+        if(typeof o.css === 'string')
+            this.observe(wrapper, 'style', o, 'css');
         if(typeof o.body === 'string')
-            htmlObserv('body', body);
+            this.observe(body,'innerHTML', o, 'body');
         if(typeof o.yes === 'string')
-            htmlObserv('yes', yes);
+            this.observe(yes,'innerHTML', o, 'yes');
         if(typeof o.no === 'string')
-            htmlObserv('no', no);
+            this.observe(no,'innerHTML', o, 'no');
 
         footer.append(yes, no);
         wrapper.append(close, header, body, footer);

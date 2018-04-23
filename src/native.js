@@ -37,9 +37,10 @@ HTMLCollection.prototype.off = NodeList.prototype.off = function(type, handle, c
     });
 };
 
-//document : create -> createElement, id -> getElementById, cmd -> execCommand
+//document : create -> createElement, cmd -> execCommand
 document.create = document.createElement;
 document.cmd = document.execCommand;
+//find, siblings
 Document.prototype.find = HTMLElement.prototype.find = function(selector){
     let nodes;
     if(/^#/.test(selector)){
@@ -163,15 +164,4 @@ Math.fsize = function(bit, fixed=2){
         return (bit/1048576).toFixed(fixed)+'MB';
     else
         return (bit/1073741824).toFixed(fixed)+'GB';
-};
-
-//FormData
-FormData.prototype.deleteAll = function(){
-    if(this.delete){
-        let key, keys = this.keys();
-        console.log(keys);
-        for(key of keys)
-            this.delete(key);
-        console.log(keys);
-    }
 };
