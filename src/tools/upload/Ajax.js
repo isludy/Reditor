@@ -27,7 +27,7 @@ Ajax = {
                 delete this.files[k];
         }
     },
-    send(type, path, bool = true) {
+    upload(path) {
         status = 0;
         opt.title = '准备就绪';
         opt.body = '准备就绪，马上开始！';
@@ -48,8 +48,13 @@ Ajax = {
             fd.append(k, file.file);
             fd.append(k, JSON.stringify(file.query));
         }
-        xhr.open(type, path, bool);
+        xhr.open('post', path+'?Reditor=upload', true);
         xhr.send(fd);
+    },
+    search(date, path){
+        status = 0;
+        xhr.open('get', path+'?Reditor=manage&date='+date, true);
+        xhr.send();
     },
     stop(){
         try{

@@ -7,11 +7,14 @@ let dialog,
     choser = document.createElement('input'),
     typeLimit = [],    //用来保存可支持的文件类型，以方便判断
     opt = options.upload,
+    date = new Date(),
     tab,
     list,
     choserBtn,
     startBtn,
-    clearBtn;
+    clearBtn,
+    dateInput,
+    seartchBtn;
 
 choser.type = 'file';
 choser.multiple = true;
@@ -114,10 +117,12 @@ function fireStart(){
     //更新上传的数据
     list[0].children.forEach(child=>{
         Ajax.files[child.id].query.desc = child.find('.re-upload-textarea')[0].value;
-        Ajax.files[child.id].query.logo = child.find('.re-upload-logo').hasClass('active');
+
+        //TODO: 实现本地添加水印
+        // Ajax.files[child.id].query.logo = child.find('.re-upload-logo').hasClass('active');
     });
     //启动
-    Ajax.send('post', opt.path);
+    Ajax.upload(opt.path);
 }
 //清除
 function fireClear(){
@@ -133,9 +138,24 @@ function fireClear(){
 //处理上传成功
 Ajax.then = function(data){
     console.log(data);
-    list[0].children.addClass('active');
+    // list[0].children.addClass('active');
 };
 
+
+//处理理管面板查询文件
+function fireSearch(){
+    console.log(dateInput.value)
+    if(/\d{8}/.test(dateInput.value)){
+        Ajax.search(dateInput.value, opt.path);
+    }else{
+        utils.dialog({
+            title: '日期错误',
+            css: 'max-width:360px',
+            body: '输入用于查询的日期错误，必须是8位数字，如：'+date.format('Ymd'),
+            type: 1
+        });
+    }
+}
 
 export default (reditor)=>{
     utils.dialog({
@@ -149,18 +169,16 @@ export default (reditor)=>{
             </div>
             <div class="re-tabbody active" data-tabbody="upload">
                 <div class="re-upload-toolbar">
-                    <button id="re-upload-choser" class="re-btn-m re-btn-success">添加</button>
-                    <button id="re-upload-start" class="re-btn-m re-btn-warning">上传</button>
-                    <button id="re-upload-clear" class="re-btn-m re-btn-danger">清空</button>
+                    <button id="re-upload-u-choser" class="re-btn-m re-btn-success">添加</button>
+                    <button id="re-upload-u-start" class="re-btn-m re-btn-warning">上传</button>
+                    <button id="re-upload-u-clear" class="re-btn-m re-btn-danger">清空</button>
                 </div>
                 <div class="re-upload-list"></div>
             </div>
             <div class="re-tabbody" data-tabbody="manage">
                 <div class="re-upload-toolbar">
-                    <button class="re-btn-m re-btn-danger">清空</button>
-                    <button class="re-btn-m re-btn-success">查看今天</button>
-                    <button class="re-btn-m re-btn-success">查看昨天</button>
-                    <button class="re-btn-m re-btn-success">查看前天</button>
+                    <input id="re-upload-m-date" class="re-input-m" type="text" placeholder="输入日期">
+                    <button id="re-upload-m-search" class="re-btn-m re-btn-success">查看</button>
                 </div>
                 <div class="re-upload-list"></div>
             </div>
@@ -174,12 +192,17 @@ export default (reditor)=>{
             list = dialog.find('.re-upload-list');
 
             //获取上传面板按钮，并绑定事件
-            choserBtn = document.find('#re-upload-choser');
-            startBtn = document.find('#re-upload-start');
-            clearBtn = document.find('#re-upload-clear');
-            choserBtn.on('click', fireChoser, false);
-            startBtn.on('click', fireStart, false);
-            clearBtn.on('click', fireClear, false);
+            choserBtn = document.find('#re-upload-u-choser');
+            startBtn = document.find('#re-upload-u-start');
+            clearBtn = document.find('#re-upload-u-clear');
+            choserBtn.on('click', fireChoser);
+            startBtn.on('click', fireStart);
+            clearBtn.on('click', fireClear);
+
+            //获取管理面板查询按钮，并绑定事件
+            dateInput = document.find('#re-upload-m-date');
+            seartchBtn = document.find('#re-upload-m-search');
+            seartchBtn.on('click', fireSearch);
         },
         onsure(e){
 

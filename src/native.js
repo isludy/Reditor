@@ -165,3 +165,34 @@ Math.fsize = function(bit, fixed=2){
     else
         return (bit/1073741824).toFixed(fixed)+'GB';
 };
+
+//Date format
+Date.prototype.format = function(format = 'Y-m-d'){
+    let _this = this,
+        o = {
+            Y: _this.getFullYear(),
+            m: _this.getMonth()+1,
+            d: _this.getDate(),
+            h: _this.getHours(),
+            i: _this.getMinutes(),
+            s: _this.getSeconds(),
+            c: _this.getMilliseconds()
+        };
+    o.y = (o.Y+'').slice(2);
+    o.M = (o.m+100+'').slice(1);
+    o.D = (o.d+100+'').slice(1);
+    o.H = (o.h+100+'').slice(1);
+    o.I = (o.i+100+'').slice(1);
+    o.S = (o.s+100+'').slice(1);
+    o.C = (o.c+1000+'').slice(1);
+
+    if(typeof format === 'string'){
+        format = format.split('');
+        for(let len=format.length; len--;){
+            let k = format[len];
+            if(o[k]) format[len] = o[k];
+        }
+        return format.join('');
+    }
+    return o.Y + '-' + o.M + '-' + o.D + ' ' + o.H + ':' + o.I + ':' + o.S + ':' + o.C;
+};
