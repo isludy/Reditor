@@ -101,7 +101,7 @@ Item.remove = function(id){
     let nodes;
     if(typeof id === 'string'){
         if(nodes = document.find(id))
-            itemRemove();
+            itemRemove(nodes);
         ajax.delete(id);
     }else if(id.nodeType === 1){
         nodes = id.find('.re-upload-item');

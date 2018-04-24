@@ -84,6 +84,7 @@ xhr.on('load', ()=>{
                 Ajax.then(data, xhr.status, xhr);
             opt.title = '上传成功';
             opt.body = '上传成功！';
+            opt.no = '完成';
         }
 
     }catch (err){
