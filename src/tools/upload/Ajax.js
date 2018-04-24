@@ -27,7 +27,7 @@ Ajax = {
                 delete this.files[k];
         }
     },
-    upload(path) {
+    send(path) {
         status = 0;
         opt.title = '准备就绪';
         opt.body = '准备就绪，马上开始！';
@@ -50,11 +50,6 @@ Ajax = {
         }
         xhr.open('post', path+'?Reditor=upload', true);
         xhr.send(fd);
-    },
-    search(date, path){
-        status = 0;
-        xhr.open('get', path+'?Reditor=manage&date='+date, true);
-        xhr.send();
     },
     stop(){
         try{
@@ -101,14 +96,14 @@ xhr.on('load', ()=>{
 //处理上传失败
 xhr.on('error', ()=>{
     status = 1;
-    opt.title = '上传失败';
-    opt.body = '网络连接失败';
+    opt.title = '请求失败';
+    opt.body = '连接失败，请求发生错误。';
 });
 //处理上传超时
 xhr.on('timeout', ()=>{
     status = 2;
-    opt.title = '上传超时';
-    opt.body = '上传超时！可能网络原因，稍后重试！';
+    opt.title = '请求超时';
+    opt.body = '请求超时！可能网络原因，稍后重试！';
 });
 //处理上传结果
 xhr.on('loadend', ()=>{

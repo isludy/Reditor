@@ -2,6 +2,7 @@ import utils from '../utils';
 import options from '../options';
 import Item from './upload/Item';
 import Ajax from './upload/Ajax';
+import Mange from './upload/Manage';
 
 let dialog,
     choser = document.createElement('input'),
@@ -122,7 +123,7 @@ function fireStart(){
         // Ajax.files[child.id].query.logo = child.find('.re-upload-logo').hasClass('active');
     });
     //启动
-    Ajax.upload(opt.path);
+    Ajax.send(opt.path);
 }
 //清除
 function fireClear(){
@@ -138,15 +139,15 @@ function fireClear(){
 //处理上传成功
 Ajax.then = function(data){
     console.log(data);
-    // list[0].children.addClass('active');
+    list[0].children.addClass('active');
 };
 
 
-//处理理管面板查询文件
+//处理管理面板查询文件
 function fireSearch(){
     console.log(dateInput.value)
     if(/\d{8}/.test(dateInput.value)){
-        Ajax.search(dateInput.value, opt.path);
+        Mange.send(dateInput.value, opt.path);
     }else{
         utils.dialog({
             title: '日期错误',
@@ -156,6 +157,10 @@ function fireSearch(){
         });
     }
 }
+//处理管理面板请求数据成功
+Mange.then = function(data){
+   console.log(data);
+};
 
 export default (reditor)=>{
     utils.dialog({
@@ -203,6 +208,7 @@ export default (reditor)=>{
             dateInput = document.find('#re-upload-m-date');
             seartchBtn = document.find('#re-upload-m-search');
             seartchBtn.on('click', fireSearch);
+            dateInput.value = date.format('YMD');
         },
         onsure(e){
 
