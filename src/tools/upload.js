@@ -127,34 +127,34 @@ function fireStart(){
     //更新上传的数据
     list[0].children.forEach(child=>{
         Ajax.files[child.id].query.desc = child.find('.re-upload-textarea')[0].value;
-        //TODO: 实现本地添加水印
-        Logo.canvasFile(child.find('.re-upload-img')[0], child.find('.re-upload-logo')[0], (file)=>{
-            console.log(Ajax.files[child.id].file);
-            Ajax.files[child.id].file = file;
-            console.log(file);
-        });
     });
-    //启动
-    // setTimeout(function(){
-    //     Ajax.send(opt.path);
-    // },1000);
-
+    //添加水印
+    let logoImgs = list[0].find('.re-upload-logo.active'),
+        i = 0;
+    function recursion(logoImg){
+        Logo.canvasFile(logoImg, file=>{
+            Ajax.files[ logoImg.attr('data-file-id') ].file = file;
+            i++;
+            if(logoImgs[i]){
+                recursion(logoImgs[i]);
+            }else{
+                //启动上传
+                Ajax.send(opt.path);
+            }
+        });
+    }
+    recursion(logoImgs[0]);
 }
 //清除
 function fireClear(){
     Item.remove(list[0]);
-    console.log(Ajax.files);
 }
-
-//处理上传错误
-// Ajax.catch = function(status){
-//     console.log(status)
-// };
 
 //处理上传成功
 Ajax.then = function(data){
+    list[0].children.addClass('re-uploaded active');
+    list[0].find('textarea').attr('disabled','disabled');
     console.log(data);
-    list[0].children.addClass('active');
 };
 
 

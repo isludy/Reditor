@@ -59,7 +59,7 @@ export default {
             path: './themes/logo.png',
             targetWidth: 600,
             width: 120,
-            alpha: 50,
+            alpha: 65,
             position: 5
         }
     }

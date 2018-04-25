@@ -13,6 +13,10 @@ function itemSelect(e){
         itemRemove(this);
         ajax.delete(this.id);
     }else if(!/textarea|input|button/i.test(target.tagName)){
+        //未上传时，不可选
+        if(!this.hasClass('re-uploaded'))
+            return false;
+        //按ctrl全选/反选
         if(e.ctrlKey){
             this.toggleClass('active');
             items = this.parentNode.find('.re-upload-item');
@@ -20,7 +24,9 @@ function itemSelect(e){
                 items.addClass('active');
             else
                 items.removeClass('active');
-        }else{
+        }
+        //单选/反选
+        else{
             this.toggleClass('active');
         }
     }
@@ -44,9 +50,12 @@ function itemRemove(item){
 
 function itemView(o){
     if(o.type === 'image'){
-        return `
-        <img class="re-upload-img" src="${o.src}" data-mime="${o.mime}" data-name="${o.name}">
+        return `<img class="re-upload-img" src="${o.src}">
         <img class="re-upload-logo active" src="${o.logo.path}"
+            data-file-id="${o.id}"
+            data-target-src="${o.src}"
+            data-target-mime="${o.mime}"
+            data-target-name="${o.name}"
             data-target-width="${o.logo.targetWidth}"
             data-logo-width="${o.logo.width}"
             data-logo-alpha="${o.logo.alpha}"
@@ -63,18 +72,20 @@ Item.create = function(o){
     item.className = 're-upload-item';
     item.id = o.id;
     item.innerHTML = `
-    <i class="re-close icon icon-close1"></i>
     <div class="re-upload-item-inner">
+        <i class="re-close icon icon-close1"></i>
         <div class="re-upload-preview alpha">
             <div class="re-upload-imgbox">
                 ${itemView(o)}
             </div>
+            <div class="re-upload-tick">已上传</div>
         </div>
         <div class="re-upload-info">
             <div class="re-upload-filename">${o.name}</div>
             <textarea class="re-upload-textarea" name="desc" placeholder="文件描述">${o.desc}</textarea>
         </div>
     </div>`;
+
     //处理选择与反选
     item.on('click', itemSelect);
     if(o.logo) item.on('contextmenu', itemMenu);
