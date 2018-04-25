@@ -82,17 +82,16 @@ xhr.on('load', ()=>{
             opt.title = '上传失败';
             opt.body = '失败消息：' + data.msg;
         }else{
-            if(typeof Ajax.then === 'function')
-                Ajax.then(data, xhr.status, xhr);
             opt.title = '上传成功';
             opt.body = '上传成功！';
             opt.no = '完成';
+            if(typeof Ajax.then === 'function')
+                Ajax.then(data, xhr.status, xhr);
         }
-
     }catch (err){
         status = 3;
         opt.title = '失败';
-        opt.body = '后台处理失败！消息：'+xhr.response;
+        opt.body = '后台处理失败！消息：'+err;
     }
 });
 //处理上传失败

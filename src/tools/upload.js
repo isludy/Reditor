@@ -29,6 +29,10 @@ for(let type in opt.type){
         });
     }
 }
+//准备本地缓存
+if(!window.localStorage.getItem('ReditorUpload')){
+    window.localStorage.setItem('ReditorUpload','[]');
+}
 
 //input type=file的change事件
 choser.on('change', ()=>{
@@ -151,10 +155,40 @@ function fireClear(){
 }
 
 //处理上传成功
-Ajax.then = function(data){
+Ajax.then = function(res){
+    //改变状态
     list[0].children.addClass('re-uploaded active');
+    //禁止编辑文件描述。
     list[0].find('textarea').attr('disabled','disabled');
-    console.log(data);
+    //添加到本地缓存，改变url为远程url，并插入到管理面板
+    let store = JSON.parse(window.localStorage.getItem('ReditorUpload')),
+        udate = new Date(),
+        item,
+        id,
+        type,
+        url,
+        desc,
+        name;
+    for(let k in res.data){
+        item = document.find('#'+k);
+        udate.setTime(res.data[k].query.date);
+        desc = res.data[k].query.desc;
+        url = res.data[k].url
+        item.find('textarea').value = desc;
+        item.find('.re-upload-img')[0].src = url;
+        name = url.slice(url.lastIndexOf('/')+1);
+        id = name.slice(0, name.lastIndexOf('.'));
+        type = 'image';
+        list[1].prepend(Item.create({
+            id,
+            type,
+            src: url,
+            desc,
+            name: udate.format('Y-M-D H:I:S')
+        }));
+        store.push(res.data[k]);
+    }
+    window.localStorage.setItem('ReditorUpload', JSON.stringify(store));
 };
 
 
@@ -167,7 +201,7 @@ function fireSearch(){
         utils.dialog({
             title: '日期错误',
             css: 'max-width:360px',
-            body: '输入用于查询的日期错误，必须是8位数字，如：'+date.format('Ymd'),
+            body: '输入用于查询的日期错误，必须是8位数字，如：'+date.format('YMD'),
             colorType: 'danger',
             overlay: true,
             yes: false,

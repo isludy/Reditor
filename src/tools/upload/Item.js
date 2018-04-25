@@ -33,11 +33,12 @@ function itemSelect(e){
 }
 //项的logo等的右击菜单
 function itemMenu(e){
-    let _this = this,
-        target = e.target;
+    let target = e.target;
     if(target.hasClass('re-upload-logo')){
         e.preventDefault();
-        Logo.contextMenu(e.x, e.y, target, _this);
+        if(this.hasClass('re-uploaded'))
+            return false;
+        Logo.contextMenu(e.x, e.y, target, this);
     }
 }
 
@@ -50,8 +51,9 @@ function itemRemove(item){
 
 function itemView(o){
     if(o.type === 'image'){
-        return `<img class="re-upload-img" src="${o.src}">
-        <img class="re-upload-logo active" src="${o.logo.path}"
+        let view = '<img class="re-upload-img" src="'+o.src+'">';
+        if(o.logo)
+            view += `<img class="re-upload-logo active" src="${o.logo.path}"
             data-file-id="${o.id}"
             data-target-src="${o.src}"
             data-target-mime="${o.mime}"
@@ -60,6 +62,7 @@ function itemView(o){
             data-logo-width="${o.logo.width}"
             data-logo-alpha="${o.logo.alpha}"
             data-logo-position="${o.logo.position}" alt="logo">`;
+        return view;
     } else if(o.type === 'video' || o.type === 'audio'){
         return '<video class="re-upload-img" controls src="'+o.src+'">浏览器不支持</video>';
     }else{

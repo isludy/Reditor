@@ -53,11 +53,15 @@ Document.prototype.find = HTMLElement.prototype.find = function(selector){
     return null;
 };
 
-//append, remove
+//append, prepend, remove
 if(!HTMLElement.prototype.append)
     HTMLElement.prototype.append = function () {
         for(let i=0, len=arguments.length; i<len; i++) this.appendChild(arguments[i]);
     };
+HTMLElement.prototype.prepend = function(){
+    for(let i=0, len=arguments.length; i<len; i++)
+        this.insertBefore(arguments[i], this.childNodes[0]);
+};
 
 if(!HTMLElement.prototype.remove)
     HTMLElement.prototype.remove = function () {
