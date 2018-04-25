@@ -67,11 +67,12 @@ export default {
      * @param o {Object} 必需
      * {
      *      title: {String} 标题,
-     *      type: {Number} 默认普通弹窗，另外的值有: -1, 1, 2,
+     *      colorType: {String} header的样式颜色名，默认success，另外有warning, danger。也可自定义名称如: info，然后添加 .re-info{}到样式中
+     *      overlay: {boolean} 是否可以叠加弹窗，默认false。
      *      body: {String} 内容,
      *      css: {String} 弹窗样式,
-     *      yes: “确定”按钮的内容,
-     *      no: “取消”按钮的内容,
+     *      yes: {String,boolean} “确定”按钮的内容, 如果是false，则隐藏按钮
+     *      no: {String,boolean} “取消”按钮的内容, 如果是false，则隐藏按钮
      *      oncreated, onclose, onsure, oncancel, onhide //事件函数
      * }
      * @param context {Node} 可选 上下文，默认body
@@ -87,13 +88,13 @@ export default {
         yes = document.create('button');
         no = document.create('button');
 
-        if(o.type || !box) box = document.create('div');
-        if(o.type > 0) yes.style.display = no.style.display = 'none';
-        if(o.type === -1) yes.style.display = 'none';
+        if(o.overlay || !box) box = document.create('div');
+        if(o.yes === false) yes.style.display = 'none';
+        if(o.no === false) no.style.display = 'none';
 
         box.className = 're-dialog';
         wrapper.className = 're-dialog-wrapper';
-        header.className = 're-dialog-header '+(o.type === 1 ? 're-danger': (o.type === 2 ? 're-warning' : 're-success'));
+        header.className = 're-dialog-header '+(o.colorType ? 're-'+o.colorType : 're-success');
         body.className = 're-dialog-body';
         footer.className = 're-dialog-footer';
         close.className = 're-dialog-close';
@@ -148,7 +149,7 @@ export default {
             if(typeof o.onhide === 'function') o.onhide();
         }
 
-        if(typeof o.oncreated === 'function') o.oncreated();
+        if(typeof o.oncreated === 'function') o.oncreated(box);
         return box;
     },
     /**

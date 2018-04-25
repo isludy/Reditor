@@ -7,7 +7,9 @@ let xhr = new XMLHttpRequest(),
 
 //上传进度弹窗配置
 opt = {
-    type: -1,
+    colorType: 'warning',
+    overlay: true,
+    yes: false,
     css: 'position: absolute;max-width:360px;',
     oncancel(){
         xhr.abort();

@@ -196,3 +196,20 @@ Date.prototype.format = function(format = 'Y-m-d'){
     }
     return o.Y + '-' + o.M + '-' + o.D + ' ' + o.H + ':' + o.I + ':' + o.S + ':' + o.C;
 };
+
+//HTMLCanvasElement上的一些方法
+/**
+ * canvas 转 File对象
+ * @param name {String} 文件名
+ * @param type {String} mime类型
+ * @returns {File}
+ */
+HTMLCanvasElement.prototype.toFile = function(name = 'file.png', type = 'image/png'){
+    let data, binary, len, i;
+    data = this.toDataURL(type);
+    data = window.atob( data.replace(/^data:(image\/[\w-]+);base64,/, '') );
+    binary = new Uint8Array(len = data.length);
+    for(i=0; i<len; i++)
+        binary[i] = data.charCodeAt(i);
+    return new File([binary], name ,{type, endings:'transparent'});
+};

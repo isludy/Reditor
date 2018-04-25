@@ -22,7 +22,10 @@ class Reditor {
                 title: '提醒!',
                 css: 'max-width:320px',
                 body: '您使用的浏览器（可能是IE）体验会比较差，建议使用其他现代浏览器。',
-                type: 1
+                colorType: 'warning',
+                overlay: true,
+                yes: false,
+                no: false
             });
         }
     }

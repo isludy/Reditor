@@ -54,6 +54,13 @@ export default {
             audio: 12,
             other: 1024
         },
-        path: 'http://localhost/demo/data.php'
+        path: 'http://localhost/demo/data.php',
+        logo: {
+            path: './themes/logo.png',
+            targetWidth: 600,
+            width: 120,
+            alpha: 50,
+            position: 5
+        }
     }
 };

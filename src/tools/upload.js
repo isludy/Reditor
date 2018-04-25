@@ -3,6 +3,7 @@ import options from '../options';
 import Item from './upload/Item';
 import Ajax from './upload/Ajax';
 import Mange from './upload/Manage';
+import Logo from './upload/Logo';
 
 let dialog,
     choser = document.createElement('input'),
@@ -44,9 +45,12 @@ choser.on('change', ()=>{
             //判断文件类型
             if(!typeLimit.includes(ext)){
                 utils.dialog({
-                    type: 1,
                     css: 'max-width: 360px;',
                     title: '格式错误',
+                    colorType: 'danger',
+                    overlay: true,
+                    yes: false,
+                    no: false,
                     body: `不支持“${ext}”，仅支持以下类型：
                     <ul>
                         <li>图片：${opt.type.image.join(', ')}</li>
@@ -60,9 +64,12 @@ choser.on('change', ()=>{
             //判断文件大小
             if( size > opt.size[type]){
                 utils.dialog({
-                    type: 1,
+                    colorType: 'danger',
+                    overlay: true,
                     css: 'max-width: 360px;',
                     title: '文件大小超出',
+                    yes: false,
+                    no: false,
                     body: `文件“${file.name}”大小（${size}MB）超出上限，文件大小上限详情如下：
                     <ul>
                         <li>图片：${opt.size.image}(MB)</li>
@@ -76,9 +83,12 @@ choser.on('change', ()=>{
             //判断相同的文件
             if(Ajax.files[id]){
                 utils.dialog({
-                    type: 1,
+                    colorType: 'danger',
                     css: 'max-width: 360px;',
+                    overlay: true,
                     title: '文件重复',
+                    yes: false,
+                    no: false,
                     body: '文件“'+file.name+'”可能是重复的，请检查。'
                 });
                 break;
@@ -87,18 +97,17 @@ choser.on('change', ()=>{
             fragMent.appendChild(Item.create({
                 id,
                 type,
+                ext,
+                mime: file.type,
                 src: window.createURL(file),
                 desc: '',
                 name: file.name,
-                logo: './themes/logo.png'
+                logo: opt.logo
             }));
             //添加要上传的数据到ajax，以备上传
             Ajax.files[id] = {
                 file,
-                query: {
-                    desc: '',
-                    logo: true
-                }
+                query: {desc: ''}
             }
         }
         list[0].append(fragMent);
@@ -118,12 +127,18 @@ function fireStart(){
     //更新上传的数据
     list[0].children.forEach(child=>{
         Ajax.files[child.id].query.desc = child.find('.re-upload-textarea')[0].value;
-
         //TODO: 实现本地添加水印
-        // Ajax.files[child.id].query.logo = child.find('.re-upload-logo').hasClass('active');
+        Logo.canvasFile(child.find('.re-upload-img')[0], child.find('.re-upload-logo')[0], (file)=>{
+            console.log(Ajax.files[child.id].file);
+            Ajax.files[child.id].file = file;
+            console.log(file);
+        });
     });
     //启动
-    Ajax.send(opt.path);
+    // setTimeout(function(){
+    //     Ajax.send(opt.path);
+    // },1000);
+
 }
 //清除
 function fireClear(){
@@ -153,7 +168,10 @@ function fireSearch(){
             title: '日期错误',
             css: 'max-width:360px',
             body: '输入用于查询的日期错误，必须是8位数字，如：'+date.format('Ymd'),
-            type: 1
+            colorType: 'danger',
+            overlay: true,
+            yes: false,
+            no: false
         });
     }
 }
