@@ -96,7 +96,8 @@ class File{
             }
 
             //move file from temp to folder
-            $rename = md5_file($ftmp) . strrchr($file['name'], '.');
+            $md5 = md5_file($ftmp);
+            $rename =  $md5 . strrchr($file['name'], '.');
             $savePath = $this->servRoot . $this->folder . '/' . $rename;
             if (!move_uploaded_file($ftmp, $savePath)){
                 $this->json['code'] = 1;
@@ -104,18 +105,18 @@ class File{
                 return json_encode($this->json);
             }
 
-            //response data
+            //response data & save user log
             $url = $this->webRoot . $this->folder . '/' . $rename;
             $query = isset($_POST[$id]) ? $_POST[$id] : '{}';
             $query = json_decode($query, true);
+            $query['name'] = $file['name'];
+            $query['type'] = $file['type'];
+            $query['url'] = $url;
             $query['date'] = time()*1000;
-            $resData = array(
-                'url' => $url,
-                'query' => $query
-            );
-            $this->json['data'][$id] = $resData;
-            //save user log
-            fwrite($dataTable, '#'.json_encode($resData));
+            $query['subid'] = $id;
+            $query['resid'] = $md5;
+            $this->json['data'][] = $query;
+            fwrite($dataTable, '#"'.$md5.'":'.json_encode($query));
         }
 
         $this->json['code'] = 0;
@@ -131,10 +132,9 @@ class File{
             return json_encode($this->json);
         }
         $userData = file_get_contents($userDataPath);
-        $lines = preg_split("/#+/", substr($userData, 1));
-        foreach ($lines as $k => $line){
-            $this->json['data'][$k] = json_decode($line, true);
-        }
+        $lines = str_replace('#', ',', substr($userData, 1));
+        $lines = json_decode('{'.$lines.'}', 'true');
+        $this->json['data'] = $lines;
         $this->json['code'] = 0;
         $this->json['message'] = 'ok';
         return json_encode($this->json);
