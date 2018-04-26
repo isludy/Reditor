@@ -16,6 +16,22 @@ function forEach(fn){
 if(!Array.prototype.forEach) Array.prototype.forEach = forEach;
 if(!HTMLCollection.prototype.forEach) HTMLCollection.prototype.forEach = forEach;
 if(!NodeList.prototype.forEach) NodeList.prototype.forEach = forEach;
+//监听数组，添加onbeforechange和onafterchange事件
+let nativeMethods = {};
+['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach( method =>{
+    nativeMethods[ method ] = Array.prototype[ method ];
+    Array.prototype[ method ] = function(){
+        if(typeof this.onbeforechange === 'function')
+            this.onbeforechange.apply(this, arguments);
+
+        let r = nativeMethods[ method ].apply(this, arguments);
+
+        if(typeof this.onafterchange === 'function')
+            this.onafterchange.apply(this, arguments);
+
+        return r;
+    }
+});
 
 // event
 if(typeof EventTarget !== 'undefined'){

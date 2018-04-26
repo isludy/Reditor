@@ -35,14 +35,6 @@ Ajax = {
         opt.body = '准备就绪，马上开始！';
         opt.no = '取消';
         utils.dialog(opt);
-        if(utils.isEmpty(this.files)) {
-            opt.title = '操作失败';
-            opt.body = '空文件夹，无法提交！';
-            opt.no = '关闭';
-            status = 4;
-            if(typeof Ajax.catch === 'function') Ajax.catch(status);
-            return;
-        }
 
         let fd = new FormData(), file;
         for(let k in this.files){
@@ -91,7 +83,7 @@ xhr.on('load', ()=>{
     }catch (err){
         status = 3;
         opt.title = '失败';
-        opt.body = '后台处理失败！消息：'+err;
+        opt.body = '失败！响应的数据错误。消息：'+err.message;
     }
 });
 //处理上传失败

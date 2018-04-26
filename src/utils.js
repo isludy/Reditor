@@ -66,6 +66,7 @@ export default {
      * 创建弹窗
      * @param o {Object} 必需
      * {
+     *      id: {String} 规定弹窗id名，弹窗内框架元素将以此名扩展相应连缀添加id
      *      title: {String} 标题,
      *      colorType: {String} header的样式颜色名，默认success，另外有warning, danger。也可自定义名称如: info，然后添加 .re-info{}到样式中
      *      overlay: {boolean} 是否可以叠加弹窗，默认false。
@@ -78,55 +79,69 @@ export default {
      * @param context {Node} 可选 上下文，默认body
      */
     dialog(o, context=document.body){
-        let box, wrapper, header, body, footer, close, yes, no, inputs;
-        box = document.find('.re-dialog');
-        wrapper = document.create('div');
-        header = document.create('header');
-        body = document.create('div');
-        footer = document.create('footer');
-        close = document.create('b');
-        yes = document.create('button');
-        no = document.create('button');
+        let nodes = {
+            dialog: document.find('.re-dialog'),
+            wrapper: document.create('div'),
+            header: document.create('header'),
+            body: document.create('div'),
+            footer: document.create('footer'),
+            close: document.create('b'),
+            yes: document.create('button'),
+            no: document.create('button')
+        };
+        let inputs;
 
-        if(o.overlay || !box) box = document.create('div');
-        if(o.yes === false) yes.style.display = 'none';
-        if(o.no === false) no.style.display = 'none';
+        if(o.overlay || !nodes.dialog) nodes.dialog = document.create('div');
+        if(o.yes === false) nodes.yes.style.display = 'none';
+        if(o.no === false) nodes.no.style.display = 'none';
 
-        box.className = 're-dialog';
-        wrapper.className = 're-dialog-wrapper';
-        header.className = 're-dialog-header '+(o.colorType ? 're-'+o.colorType : 're-success');
-        body.className = 're-dialog-body';
-        footer.className = 're-dialog-footer';
-        close.className = 're-dialog-close';
-        yes.className = 're-btn-success re-btn-m';
-        no.className = 're-btn-warning re-btn-m';
+        if(!o.yes) o.yes = '确定';
+        if(!o.no) o.no = '取消';
+        nodes.header.innerHTML = '弹窗';
+        nodes.close.innerHTML = '&times;';
+        nodes.dialog.innerHTML = '';
+        nodes.dialog.removeAttr('style');
 
-        header.innerHTML = '弹窗';
-        close.innerHTML = '&times;';
-        yes.innerHTML = o.yes || '确定';
-        no.innerHTML = o.no || '取消';
-        box.innerHTML = '';
-        box.removeAttr('style');
+        for(let n in nodes){
+            if(o.id){
+                if(n !== 'dialog')
+                    nodes[n].id = o.id + '-' + n;
+                else
+                    nodes[n].id = o.id;
+            }
 
-        if(typeof o.title === 'string')
-            this.observe(header,'innerHTML', o, 'title');
-        if(typeof o.css === 'string')
-            this.observe(wrapper, 'style', o, 'css');
-        if(typeof o.body === 'string')
-            this.observe(body,'innerHTML', o, 'body');
-        if(typeof o.yes === 'string')
-            this.observe(yes,'innerHTML', o, 'yes');
-        if(typeof o.no === 'string')
-            this.observe(no,'innerHTML', o, 'no');
+            switch (n){
+                case 'dialog':
+                    nodes[n].className = 're-dialog';
+                    break;
+                case 'header':
+                    nodes[n].className = 're-dialog-header '+(o.colorType ? 're-'+o.colorType : 're-success');
+                    if(o.title) this.observe(nodes[n],'innerHTML', o, 'title');
+                    break;
+                case 'yes':
+                    nodes[n].className = 're-btn-success re-btn-m';
+                    break;
+                case 'no':
+                    nodes[n].className = 're-btn-warning re-btn-m';
+                    break;
+                default:
+                    nodes[n].className = 're-dialog-'+n;
+                    if(n === 'wrapper') this.observe(nodes[n], 'style', o, 'css');
+            }
+            if(['body','yes','no'].includes(n)){
+                this.observe(nodes[n],'innerHTML', o, n);
+            }
 
-        footer.append(yes, no);
-        wrapper.append(close, header, body, footer);
-        box.append(wrapper);
-        context.append(box);
+        }
 
-        close.on('click', closeFn, false);
-        yes.on('click', sureFn, false);
-        no.on('click', closeFn, false);
+        nodes.footer.append(nodes.yes, nodes.no);
+        nodes.wrapper.append(nodes.close, nodes.header, nodes.body, nodes.footer);
+        nodes.dialog.append(nodes.wrapper);
+        context.append(nodes.dialog);
+
+        nodes.close.on('click', closeFn, false);
+        nodes.yes.on('click', sureFn, false);
+        nodes.no.on('click', closeFn, false);
 
         function closeFn(e){
             if(typeof o.oncancel === 'function') o.oncancel(e);
@@ -135,22 +150,22 @@ export default {
         }
         function sureFn(e){
             e.params = {};
-            inputs = body.find('[name]');
+            inputs = nodes.body.find('[name]');
             for(let i=0, len=inputs.length; i<len; i++)
                 e.params[ inputs[i].name ] = (inputs[i].type==='checkbox' || inputs[i].type==='radio') ? inputs[i].checked : inputs[i].value;
             if(typeof o.onsure === 'function') o.onsure(e);
             destory();
         }
         function destory(){
-            close.off('click', closeFn, false);
-            yes.off('click', sureFn, false);
-            no.off('click', closeFn, false);
-            context.removeChild(box);
+            nodes.close.off('click', closeFn, false);
+            nodes.yes.off('click', sureFn, false);
+            nodes.no.off('click', closeFn, false);
+            context.removeChild(nodes.dialog);
             if(typeof o.onhide === 'function') o.onhide();
         }
 
-        if(typeof o.oncreated === 'function') o.oncreated(box);
-        return box;
+        if(typeof o.oncreated === 'function') o.oncreated(nodes.dialog);
+        return nodes.dialog;
     },
     /**
      * 创建tab菜单

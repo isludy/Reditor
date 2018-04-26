@@ -502,6 +502,9 @@
 .re-uploaded .re-upload-tick{
     display: block;
 }
+.re-uploaded .re-upload-logo{
+    display: none;
+}
 @media (min-width: 1400px) {
     .re-upload-item{
         width: 25%;

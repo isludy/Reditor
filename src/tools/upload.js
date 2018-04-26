@@ -5,11 +5,12 @@ import Ajax from './upload/Ajax';
 import Mange from './upload/Manage';
 import Logo from './upload/Logo';
 
-let dialog,
+let panel,
     choser = document.createElement('input'),
     typeLimit = [],    //用来保存可支持的文件类型，以方便判断
     opt = options.upload,
     date = new Date(),
+    dlBtns,
     tab,
     list,
     choserBtn,
@@ -109,10 +110,7 @@ choser.on('change', ()=>{
                 logo: opt.logo
             }));
             //添加要上传的数据到ajax，以备上传
-            Ajax.files[id] = {
-                file,
-                query: {desc: ''}
-            }
+            Ajax.files[id] = {file}
         }
         list[0].append(fragMent);
         fragMent = null;
@@ -128,9 +126,23 @@ function fireChoser(){
 }
 //开始上传
 function fireStart(){
+    if(utils.isEmpty(Ajax.files)) {
+        utils.dialog({
+            title: '操作失败',
+            body: '空文件夹，无法提交！',
+            no: '关闭',
+            colorType: 'danger',
+            css: 'max-width:360px;',
+            yes: false,
+            overlay: true
+        });
+        return;
+    }
     //更新上传的数据
     list[0].children.forEach(child=>{
-        Ajax.files[child.id].query.desc = child.find('.re-upload-textarea')[0].value;
+         Ajax.files[child.id].query = {
+            desc: child.find('.re-upload-textarea')[0].value
+         }
     });
     //添加水印
     let logoImgs = list[0].find('.re-upload-logo.active'),
@@ -147,7 +159,11 @@ function fireStart(){
             }
         });
     }
-    recursion(logoImgs[0]);
+    if(logoImgs && logoImgs[0]){
+        recursion(logoImgs[0]);
+    }else{
+        Ajax.send(opt.path);
+    }
 }
 //清除
 function fireClear(){
@@ -156,10 +172,13 @@ function fireClear(){
 
 //处理上传成功
 Ajax.then = function(res){
-    //改变状态
+    //改变状态，禁止编辑文件描述。
     list[0].children.addClass('re-uploaded active');
-    //禁止编辑文件描述。
     list[0].find('textarea').attr('disabled','disabled');
+    //清空Ajax.files，以阻止重复上传
+    Ajax.delete();
+    console.log(res);
+    /*
     //添加到本地缓存，改变url为远程url，并插入到管理面板
     let store = JSON.parse(window.localStorage.getItem('ReditorUpload')),
         udate = new Date(),
@@ -189,6 +208,7 @@ Ajax.then = function(res){
         store.push(res.data[k]);
     }
     window.localStorage.setItem('ReditorUpload', JSON.stringify(store));
+    */
 };
 
 
@@ -216,6 +236,7 @@ Mange.then = function(data){
 
 export default (reditor)=>{
     utils.dialog({
+        id: 're-dialog-upload',
         title: '文件上传与管理',
         css: 'width: 80%',
         body: `
@@ -241,12 +262,17 @@ export default (reditor)=>{
             </div>
         </div>`,
         oncreated(){
-            dialog = document.find('#re-upload');
+            panel = document.find('#re-upload');
+            //默认禁止掉确定【按钮】
+            dlBtns = panel.parentNode.parentNode.find('.re-dialog-footer');//.find('button');
+            console.log(panel,dlBtns);
+            // dlBtns[0].disabled = true;
+            // dlBtns[0].addClass('re-disabled');
             //创建tab
-            tab = utils.tab(dialog);
+            tab = utils.tab(panel);
 
             //获取上传、管理列表
-            list = dialog.find('.re-upload-list');
+            list = panel.find('.re-upload-list');
 
             //获取上传面板按钮，并绑定事件
             choserBtn = document.find('#re-upload-u-choser');
