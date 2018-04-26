@@ -46,7 +46,7 @@ export default {
             image: ['jpg','jpeg','gif','png','webp','ico','bmp'],
             video: ['mp4','ogg','webm','mkv'],
             audio: ['mp3'],
-            other: ['pdf']
+            other: ['pdf','txt']
         },
         size: {
             image: 1,

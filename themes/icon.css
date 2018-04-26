@@ -23,6 +23,7 @@
 .icon-home1:before{content: '\e900';}
 .icon-home2:before{content: '\e901';}
 .icon-home3:before{content: '\e902';}
+
 .icon-image1:before{content: '\e90d';}
 .icon-image2:before{content: '\e90e';}
 
@@ -52,3 +53,10 @@
 
 .icon-close1:before{content: '\ea0d';}
 .icon-close2:before{content: '\ea0f';}
+
+.icon-file1:before{content: '\e922';}
+.icon-file2:before{content: '\e923';}
+.icon-file3:before{content: '\e924';}
+.icon-file4:before{content: '\e925';}
+.icon-file5:before{content: '\e926';}
+.icon-file6:before{content: '\e904';}

@@ -4,13 +4,14 @@ import Item from './upload/Item';
 import Ajax from './upload/Ajax';
 import Mange from './upload/Manage';
 import Logo from './upload/Logo';
+import Status from './upload/Status';
 
 let panel,
     choser = document.createElement('input'),
     typeLimit = [],    //用来保存可支持的文件类型，以方便判断
     opt = options.upload,
     date = new Date(),
-    dlBtns,
+    yesBtn,
     tab,
     list,
     choserBtn,
@@ -113,6 +114,11 @@ choser.on('change', ()=>{
             Ajax.files[id] = {file}
         }
         list[0].append(fragMent);
+        if(utils.isEmpty(Ajax.files)){
+            Status.off(startBtn);
+        }else{
+            Status.on(startBtn);
+        }
         fragMent = null;
     }
 },false);
@@ -263,11 +269,6 @@ export default (reditor)=>{
         </div>`,
         oncreated(){
             panel = document.find('#re-upload');
-            //默认禁止掉确定【按钮】
-            dlBtns = panel.parentNode.parentNode.find('.re-dialog-footer');//.find('button');
-            console.log(panel,dlBtns);
-            // dlBtns[0].disabled = true;
-            // dlBtns[0].addClass('re-disabled');
             //创建tab
             tab = utils.tab(panel);
 
@@ -281,6 +282,12 @@ export default (reditor)=>{
             choserBtn.on('click', fireChoser);
             startBtn.on('click', fireStart);
             clearBtn.on('click', fireClear);
+
+            //获取确定【按钮】
+            yesBtn = document.find('#re-dialog-upload-yes');
+
+            //设置初始状态
+            Status.off(yesBtn,startBtn,clearBtn);
 
             //获取管理面板查询按钮，并绑定事件
             dateInput = document.find('#re-upload-m-date');

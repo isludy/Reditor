@@ -45,13 +45,15 @@ function itemMenu(e){
 function itemRemove(item){
     item.off('click', itemSelect);
     item.off('contextmenu', itemMenu);
-    window.revokeURL(item.find('.re-upload-img')[0].attr('src'));
+    try{
+        window.revokeURL(item.find('.re-upload-img')[0].attr('src'));
+    }catch(err){}
     item.remove();
 }
 
 function itemView(o){
     if(o.type === 'image'){
-        let view = '<img class="re-upload-img" src="'+o.src+'">';
+        let view = '<div class="re-upload-img" style="background:url('+o.src+') no-repeat center;background-size:contain;"></div>';
         if(o.logo)
             view += `<img class="re-upload-logo active" src="${o.logo.path}"
             data-file-id="${o.id}"
@@ -66,7 +68,7 @@ function itemView(o){
     } else if(o.type === 'video' || o.type === 'audio'){
         return '<video class="re-upload-img" controls src="'+o.src+'">浏览器不支持</video>';
     }else{
-        return '';
+        return '<div class="re-upload-other-file">.'+o.ext+'</div>';
     }
 }
 
@@ -78,9 +80,7 @@ Item.create = function(o){
     <div class="re-upload-item-inner">
         <i class="re-close icon icon-close1"></i>
         <div class="re-upload-preview alpha">
-            <div class="re-upload-imgbox">
-                ${itemView(o)}
-            </div>
+            ${itemView(o)}
             <div class="re-upload-tick">已上传</div>
         </div>
         <div class="re-upload-info">

@@ -429,27 +429,10 @@
     overflow: hidden;
     position: relative;
     border: 1px solid #ddd;
-    text-align: center;
-    white-space: nowrap;
-    background-color: #dedede;
-}
-.re-upload-preview:after{
-    content: '';
-    display: inline-block;
-    vertical-align: middle;
-    height: 100%;
-    width: 0;
-}
-.re-upload-imgbox{
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-    max-width: 100%;
-    max-height: 100%;
 }
 .re-upload-img{
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     display: block;
 }
 .re-upload-logo{
@@ -461,6 +444,19 @@
 }
 .re-upload-logo.active{
     opacity: 1;
+}
+.re-upload-other-file{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100%;
+    height: 2em;
+    line-height: 2em;
+    background: #76b176;
+    font-size: 36px;
+    text-align: center;
+    color: #f9f9f9;
 }
 .re-upload-info{
     box-sizing: border-box;
