@@ -18,7 +18,15 @@ if(!Array.prototype.includes){
  * @type {Function}
  */
 Document.prototype.find = HTMLElement.prototype.find = function(selector){
-    return this.querySelectorAll(selector);
+    if(/^#[^\s]+$/.test(selector)){
+        return [document.getElementById(selector.slice(1))];
+    }else if(/^\.[^\s]+$/.test(selector)){
+        return document.getElementsByClassName(selector.slice(1));
+    }else if(/^(\w+|\*)$/.test(selector)){
+        return document.getElementsByTagName(selector);
+    }else{
+        return this.querySelectorAll(selector);
+    }
 };
 /**
  * 给节点集合、数组添加each遍历
@@ -28,31 +36,38 @@ Document.prototype.find = HTMLElement.prototype.find = function(selector){
 NodeList.prototype.each  = HTMLCollection.prototype.each = Array.prototype.each = function(fn){
     if(typeof fn === 'function')
         for(let i=0, len=this.length, callback; i<len; i++){
-            callback = fn.call(this[i], i, this[i]);
+            callback = fn.call(this[i], this[i], i);
             if( callback === 'continue') continue;
             if( (callback === 'break') || ('boolean' === typeof callback)) break;
         }
 };
 /**
  * 绑定事件，当数组中push、pop、shift、unshift、splice、sort、reverse被调用时，触发绑定的回调函数
- * @param type 两个值：before、after，分别是变化前和变化后
+ * @param type 两个值：before、after，分别是变化前和变化后; 如果是Dom节点集合，则视为普通事件绑定
  * @param fn 回调
  * @type {Function}
  */
 Array.prototype.on = function (type,fn) {
-    if(!/before|after/.test(type)) throw 'Error parameter of "'+type+'". Only supports "before" or "after".';
-    if(!this.__before__){
-        Object.defineProperty(this, '__before__',{
-            value: []
-        });
+    if(/before|after/.test(type)){
+        if(!this.__before__){
+            Object.defineProperty(this, '__before__',{
+                value: []
+            });
+        }
+        if(!this.__after__){
+            Object.defineProperty(this, '__after__',{
+                value: []
+            });
+        }
+        if('function' === typeof fn){
+            this['__'+type+'__'].push(fn);
+        }
     }
-    if(!this.__after__){
-        Object.defineProperty(this, '__after__',{
-            value: []
-        });
-    }
-    if('function' === typeof fn){
-        this['__'+type+'__'].push(fn);
+    //如果Array是dom节点集合，则绑定普通事件
+    else{
+        for(let l = this.length; l--; )
+            if(this[l] && this[l].nodeType === 1)
+                this[l].addEventListener(type, fn, (arguments[2] || false));
     }
 };
 /**
@@ -63,18 +78,22 @@ Array.prototype.on = function (type,fn) {
  */
 Array.prototype.off = function (type, fn){
     let arr;
-    if(!type || !/before|after/.test(type)){
+    if(!type){
         arr = this['__before__'];
         arr.splice(0,arr.length);
         arr = this['__after__'];
         arr.splice(0,arr.length);
-    }else{
+    }else if(/before|after/.test(type)){
         arr = this['__'+type+'__'];
         if(!fn){
             arr.splice(0, arr.length);
         }else{
             arr.splice(arr.indexOf(fn),1);
         }
+    }else{
+        for(let l=this.length; l--;)
+            if(this[l] && this[l].nodeType === 1)
+                this[l].removeEventListener(type, fn, (arguments[2] || false));
     }
 };
 /**
@@ -117,7 +136,7 @@ if('undefined' !== typeof EventTarget){
  * @type {Function}
  */
 HTMLCollection.prototype.on = NodeList.prototype.on = function(type, handle, capture){
-    this.forEach((v)=>{
+    this.each((v)=>{
         v.on(type, handle, (capture || false));
     });
 };
@@ -126,7 +145,7 @@ HTMLCollection.prototype.on = NodeList.prototype.on = function(type, handle, cap
  * @type {Function}
  */
 HTMLCollection.prototype.off = NodeList.prototype.off = function(type, handle, capture){
-    this.forEach((v)=>{
+    this.each((v)=>{
         v.off(type, handle, (capture || false));
     });
 };
@@ -166,24 +185,53 @@ if(!HTMLElement.prototype.remove)
         this.parentNode.removeChild(this);
     };
 /**
+ * 对before做兼容
+ * @type {Function}
+ */
+if(!HTMLElement.prototype.before)
+    HTMLElement.prototype.before = function (){
+        let args = arguments,
+            len=args.length,
+            i = 0;
+        for(; i < len; i++)
+            if(args[i].nodeType === 1 || args[i].nodeType === 3){
+                this.parentNode.insertBefore(args[i], this);
+            }else if('string' === typeof args[i]){
+                this.parentNode.insertBefore(document.createTextNode(args[i]), this);
+            }
+    };
+/**
+ * 对after做兼容
+ * @type {Function}
+ */
+if(!HTMLElement.prototype.after)
+    HTMLElement.prototype.after = function (){
+        let args = arguments,
+            len=args.length;
+        for(; len--;)
+            if(args[len].nodeType === 1 || args[len].nodeType === 3){
+                this.parentNode.insertBefore(args[len], this.nextSibling);
+            }else if('string' === typeof args[len]){
+                this.parentNode.insertBefore(document.createTextNode(args[len]), this.nextSibling);
+            }
+    };
+
+/**
  * 添加attr方法
  * @param name {String}
  * @param val {String,Number}
  * @type {Function}
  */
 HTMLElement.prototype.attr = function(name, val){
-    if(!val) return this.getAttribute(name);
-    else this.setAttribute(name, val);
+    if(!val)
+        return this.getAttribute(name);
+    else
+        this.setAttribute(name, val);
 };
-/**
- * 添加data方法
- * @param name {String}
- * @param val {String,Number}
- * @type {Function}
- */
-HTMLElement.prototype.data = function(name, val){
-    if(!val) return this.getAttribute('data-'+name);
-    else this.setAttribute('data-'+name, val);
+HTMLCollection.prototype.attr = NodeList.prototype.attr = function(name, val){
+    this.each((v)=>{
+        v.attr(name, val);
+    });
 };
 /**
  * 添加removeAttr方法
@@ -193,43 +241,46 @@ HTMLElement.prototype.data = function(name, val){
 HTMLElement.prototype.removeAttr = function(name){
     this.removeAttribute(name);
 };
-/**
- * 集合添加attr方法
- * @param name {String}
- * @param val {String,Number}
- * @type {Function}
- */
-HTMLCollection.prototype.attr = NodeList.prototype.attr = function(name, val){
-    this.forEach((v)=>{
-        v.attr(name, val);
-    });
-};
-/**
- * 集合添加removeAttr方法
- * @param name {String}
- * @type {Function}
- */
 HTMLCollection.prototype.removeAttr = NodeList.prototype.removeAttr = function(name){
-    this.forEach((v)=>{
+    this.each((v)=>{
         v.removeAttr(name);
     });
 };
 /**
- * 集合添加data方法
+ * 添加data方法
  * @param name {String}
  * @param val {String,Number}
  * @type {Function}
  */
+HTMLElement.prototype.data = function(name, val){
+    if(!val)
+        return this.getAttribute('data-'+name);
+    else
+        this.setAttribute('data-'+name, val);
+};
 HTMLCollection.prototype.data = NodeList.prototype.data = function(name, val){
-    this.forEach((v)=>{
+    this.each((v)=>{
         v.data(name, val);
     });
 };
 
-// hasClass, addClass, removeClass, toggleClass
+/**
+ * 添加hasClass
+ * @param name
+ * @return {boolean}
+ */
 HTMLElement.prototype.hasClass = function(name){
     return this.className.split(/\s+/g).includes(name);
 };
+HTMLCollection.prototype.hasClass = NodeList.prototype.hasClass = function (name) {
+    for(let i=0, len = this.length; i<len; i++)
+        if(this[i].hasClass(name)) return true;
+    return false;
+};
+/**
+ * 添加addClass
+ * @type {Function}
+ */
 HTMLElement.prototype.addClass = function(){
     let classList = this.className.split(/\s+/g),
         arg = arguments,
@@ -240,6 +291,14 @@ HTMLElement.prototype.addClass = function(){
             classList.push(arg[i]);
     this.className = classList.join(' ');
 };
+HTMLCollection.prototype.addClass = NodeList.prototype.addClass = function () {
+    for(let i=0, len = this.length; i<len; i++)
+        this[i].addClass(...arguments);
+};
+/**
+ * 添加removeClass
+ * @type {Function}
+ */
 HTMLElement.prototype.removeClass = function(){
     let classList = this.className.split(/\s+/g),
         arg = arguments,
@@ -250,6 +309,15 @@ HTMLElement.prototype.removeClass = function(){
             classList.splice(classList.indexOf(arg[i]), 1);
     this.className = classList.join(' ');
 };
+HTMLCollection.prototype.removeClass = NodeList.prototype.removeClass = function () {
+    for(let i=0, len = this.length; i<len; i++)
+        this[i].removeClass(...arguments);
+};
+/**
+ * 添加toggleClass
+ * @param name
+ * @type {Function}
+ */
 HTMLElement.prototype.toggleClass = function(name){
     if(this.classList)
         this.classList.toggle(name);
@@ -262,25 +330,16 @@ HTMLElement.prototype.toggleClass = function(name){
         this.className = classList.join(' ');
     }
 };
-HTMLCollection.prototype.hasClass = NodeList.prototype.hasClass = function (name) {
-    for(let i=0, len = this.length; i<len; i++)
-        if(this[i].hasClass(name)) return true;
-    return false;
-};
-HTMLCollection.prototype.addClass = NodeList.prototype.addClass = function () {
-    for(let i=0, len = this.length; i<len; i++)
-        this[i].addClass(...arguments);
-};
-HTMLCollection.prototype.removeClass = NodeList.prototype.removeClass = function () {
-    for(let i=0, len = this.length; i<len; i++)
-        this[i].removeClass(...arguments);
-};
 HTMLCollection.prototype.toggleClass = NodeList.prototype.toggleClass = function (name) {
     for(let i=0, len = this.length; i<len; i++)
         this[i].toggleClass(name);
 };
 
-//URL
+/**
+ * 简化并做兼容createObjectURL
+ * @param blob
+ * @return {*}
+ */
 window.createURL = function(blob){
     return window[ window.URL ? 'URL' : 'webkitURL']['createObjectURL'](blob);
 };
