@@ -1,17 +1,22 @@
 /**
  * 文件上传面板与管理面板里的列表项的创建。
  */
-import ajax from './Ajax';
 import Logo from './Logo';
 
 let Item = {};
+
+Object.defineProperty(Item, 'handlers', {
+    value: [],
+    configurable: false,
+    enumerable: false,
+    writable: false
+});
 
 //项的选择与反选、关闭按钮等的事件函数
 function itemSelect(e){
     let target = e.target, items;
     if(target.hasClass('re-close')){
         itemRemove(this);
-        ajax.delete(this.id);
     }else if(!/textarea|input|button/i.test(target.tagName)){
         //未上传时，不可选
         if(!this.hasClass('re-uploaded'))
@@ -49,6 +54,9 @@ function itemRemove(item){
         window.revokeURL(item.find('.re-upload-img')[0].attr('src'));
     }catch(err){}
     item.remove();
+    Item.handlers.forEach(fn=>{
+        fn.call(item);
+    })
 }
 
 function itemView(o){
@@ -94,19 +102,23 @@ Item.create = function(o){
     if(o.logo) item.on('contextmenu', itemMenu);
     return item;
 };
+
 Item.remove = function(id){
     let nodes;
     if(typeof id === 'string'){
         if(nodes = document.find(id))
             itemRemove(nodes);
-        ajax.delete(id);
     }else if(id.nodeType === 1){
         nodes = id.find('.re-upload-item');
         if(nodes && nodes.length)
             nodes.forEach(child=>{
                 itemRemove(child);
             });
-        ajax.delete();
     }
+};
+
+Item.onremove = function(fn){
+    if('function' === typeof fn)
+        this.handlers.push(fn)
 };
 export default Item;
