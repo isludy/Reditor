@@ -1,111 +1,225 @@
 /**
- * 兼容、扩展、缩写原生的一些东西
+ * 为了方便操作，对原生进行一些修改
+ * 扩展或兼容新方法
  */
-// includes
+/**
+ * Array的incudes兼容性
+ * @param target
+ * @type {Function}
+ * @return {boolean}
+ */
 if(!Array.prototype.includes){
     Array.prototype.includes = function (target) {
         return this.indexOf(target) !== -1;
     };
 }
-// forEach
-function forEach(fn){
+/**
+ * 查找节点,统一使用nodeList
+ * @type {Function}
+ */
+Document.prototype.find = HTMLElement.prototype.find = function(selector){
+    return this.querySelectorAll(selector);
+};
+/**
+ * 给节点集合、数组添加each遍历
+ * @param {Function} 回调，支持return 'continue'/'break'/true/false 来达到跳过、中止循环
+ * @type {Function}
+ */
+NodeList.prototype.each  = HTMLCollection.prototype.each = Array.prototype.each = function(fn){
     if(typeof fn === 'function')
-        for(let i=0, len=this.length; i<len; i++)
-            fn(this[i], i);
-}
-if(!Array.prototype.forEach) Array.prototype.forEach = forEach;
-if(!HTMLCollection.prototype.forEach) HTMLCollection.prototype.forEach = forEach;
-if(!NodeList.prototype.forEach) NodeList.prototype.forEach = forEach;
-//监听数组，添加onbeforechange和onafterchange事件
-let nativeMethods = {};
+        for(let i=0, len=this.length, callback; i<len; i++){
+            callback = fn.call(this[i], i, this[i]);
+            if( callback === 'continue') continue;
+            if( (callback === 'break') || ('boolean' === typeof callback)) break;
+        }
+};
+/**
+ * 绑定事件，当数组中push、pop、shift、unshift、splice、sort、reverse被调用时，触发绑定的回调函数
+ * @param type 两个值：before、after，分别是变化前和变化后
+ * @param fn 回调
+ * @type {Function}
+ */
+Array.prototype.on = function (type,fn) {
+    if(!/before|after/.test(type)) throw 'Error parameter of "'+type+'". Only supports "before" or "after".';
+    if(!this.__before__){
+        Object.defineProperty(this, '__before__',{
+            value: []
+        });
+    }
+    if(!this.__after__){
+        Object.defineProperty(this, '__after__',{
+            value: []
+        });
+    }
+    if('function' === typeof fn){
+        this['__'+type+'__'].push(fn);
+    }
+};
+/**
+ * 解除事件
+ * @param type 如果无值或不是before/after，则移除全部
+ * @param fn 指定移除的函数，如果无值，则移除对应type的所有
+ * @type {Function}
+ */
+Array.prototype.off = function (type, fn){
+    let arr;
+    if(!type || !/before|after/.test(type)){
+        arr = this['__before__'];
+        arr.splice(0,arr.length);
+        arr = this['__after__'];
+        arr.splice(0,arr.length);
+    }else{
+        arr = this['__'+type+'__'];
+        if(!fn){
+            arr.splice(0, arr.length);
+        }else{
+            arr.splice(arr.indexOf(fn),1);
+        }
+    }
+};
+/**
+ * 开始处理监听，原理:
+ * 1、把原生方法备份到nativeMethods中，
+ * 2、重新一一构建对应的方法，在其中加入监听代码
+ * 3、执行备份的原生方法，只要把this指针再给回这些备份的方法，即可还原原生方法。
+ */
+let nativeMethods = Object.create(null);
 ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach( method =>{
     nativeMethods[ method ] = Array.prototype[ method ];
     Array.prototype[ method ] = function(){
-        if(typeof this.onbeforechange === 'function')
-            this.onbeforechange.apply(this, arguments);
-
+        if('object' === typeof this.__before__){
+            for(let bl = this.__before__.length; bl--;)
+                this.__before__[bl].call(this);
+        }
         let r = nativeMethods[ method ].apply(this, arguments);
-
-        if(typeof this.onafterchange === 'function')
-            this.onafterchange.apply(this, arguments);
-
+        if('object' === typeof this.__after__){
+            for(let al = this.__after__.length; al--;)
+                this.__after__[al].call(this);
+        }
         return r;
     }
 });
 
-// event
-if(typeof EventTarget !== 'undefined'){
+/**
+ * 简化原生事件绑定方法
+ * on & off => addEventListener & removeEventListener
+ * @type {Function}
+ */
+if('undefined' !== typeof EventTarget){
     EventTarget.prototype.on = EventTarget.prototype.addEventListener;
     EventTarget.prototype.off = EventTarget.prototype.removeEventListener;
 }else{
     Document.prototype.on = Element.prototype.on = Element.prototype.addEventListener;
     Document.prototype.off = Element.prototype.off = Element.prototype.removeEventListener;
 }
-
+/**
+ * 节点集合批量绑定事件
+ * @type {Function}
+ */
 HTMLCollection.prototype.on = NodeList.prototype.on = function(type, handle, capture){
     this.forEach((v)=>{
         v.on(type, handle, (capture || false));
     });
 };
+/**
+ * 节点集合批量解除事件
+ * @type {Function}
+ */
 HTMLCollection.prototype.off = NodeList.prototype.off = function(type, handle, capture){
     this.forEach((v)=>{
         v.off(type, handle, (capture || false));
     });
 };
-
-//document : create -> createElement, cmd -> execCommand
-document.create = document.createElement;
-document.cmd = document.execCommand;
-//find, siblings
-Document.prototype.find = HTMLElement.prototype.find = function(selector){
-    let nodes;
-    if(/^#/.test(selector)){
-        nodes = this.getElementById(selector.slice(1));
-        if(nodes) return nodes;
-    }
-    nodes = this.querySelectorAll(selector);
-    if(nodes.length)
-        return nodes;
-    return null;
-};
-
-//append, prepend, remove
+/**
+ * 简化Document上createElement方法
+ * @type {Function}
+ * @return {Node,Element}
+ */
+Document.prototype.create = Document.prototype.createElement;
+/**
+ * 简化Document上execCommand方法
+ * @type {Function}
+ */
+Document.prototype.cmd = Document.prototype.execCommand;
+/**
+ * 对append做兼容
+ * @type {Function}
+ */
 if(!HTMLElement.prototype.append)
     HTMLElement.prototype.append = function () {
         for(let i=0, len=arguments.length; i<len; i++) this.appendChild(arguments[i]);
     };
+/**
+ * 添加prepend方法
+ * @type {Function}
+ */
 HTMLElement.prototype.prepend = function(){
     for(let i=0, len=arguments.length; i<len; i++)
         this.insertBefore(arguments[i], this.childNodes[0]);
 };
-
+/**
+ * 对remove做兼容
+ * @type {Function}
+ */
 if(!HTMLElement.prototype.remove)
     HTMLElement.prototype.remove = function () {
         this.parentNode.removeChild(this);
     };
-
-// attr, data, removeAttr
+/**
+ * 添加attr方法
+ * @param name {String}
+ * @param val {String,Number}
+ * @type {Function}
+ */
 HTMLElement.prototype.attr = function(name, val){
     if(!val) return this.getAttribute(name);
     else this.setAttribute(name, val);
 };
+/**
+ * 添加data方法
+ * @param name {String}
+ * @param val {String,Number}
+ * @type {Function}
+ */
 HTMLElement.prototype.data = function(name, val){
     if(!val) return this.getAttribute('data-'+name);
     else this.setAttribute('data-'+name, val);
 };
+/**
+ * 添加removeAttr方法
+ * @param name {String}
+ * @type {Function}
+ */
 HTMLElement.prototype.removeAttr = function(name){
     this.removeAttribute(name);
 };
+/**
+ * 集合添加attr方法
+ * @param name {String}
+ * @param val {String,Number}
+ * @type {Function}
+ */
 HTMLCollection.prototype.attr = NodeList.prototype.attr = function(name, val){
     this.forEach((v)=>{
         v.attr(name, val);
     });
 };
+/**
+ * 集合添加removeAttr方法
+ * @param name {String}
+ * @type {Function}
+ */
 HTMLCollection.prototype.removeAttr = NodeList.prototype.removeAttr = function(name){
     this.forEach((v)=>{
         v.removeAttr(name);
     });
 };
+/**
+ * 集合添加data方法
+ * @param name {String}
+ * @param val {String,Number}
+ * @type {Function}
+ */
 HTMLCollection.prototype.data = NodeList.prototype.data = function(name, val){
     this.forEach((v)=>{
         v.data(name, val);
@@ -173,8 +287,12 @@ window.createURL = function(blob){
 window.revokeURL = function(url){
     return window[ window.URL ? 'URL' : 'webkitURL']['revokeObjectURL'](url);
 };
-
-//Math format filesize
+/**
+ * 格式化字节
+ * @param bit
+ * @param fixed
+ * @return {string}
+ */
 Math.fsize = function(bit, fixed=2){
     if(bit < 1024)
         return bit+'B';
@@ -186,7 +304,11 @@ Math.fsize = function(bit, fixed=2){
         return (bit/1073741824).toFixed(fixed)+'GB';
 };
 
-//Date format
+/**
+ * 格式化时间
+ * @param format
+ * @return {string}
+ */
 Date.prototype.format = function(format = 'Y-m-d'){
     let _this = this,
         o = {
@@ -217,11 +339,11 @@ Date.prototype.format = function(format = 'Y-m-d'){
     return o.Y + '-' + o.M + '-' + o.D + ' ' + o.H + ':' + o.I + ':' + o.S + ':' + o.C;
 };
 
-//HTMLCanvasElement上的一些方法
 /**
  * canvas 转 File对象
  * @param name {String} 文件名
  * @param type {String} mime类型
+ * @type {Function}
  * @returns {File}
  */
 HTMLCanvasElement.prototype.toFile = function(name = 'file.png', type = 'image/png'){

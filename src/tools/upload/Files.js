@@ -4,18 +4,11 @@
  */
 class Files {
     constructor(){
-        let _this = this;
         Object.defineProperty(this, 'items', {
-            configurable: false,
-            enumerable: false,
             value: Object.create(null),
-            writable: false
         });
         Object.defineProperty(this, 'handlers', {
-            configurable: false,
-            enumerable: false,
             value: [],
-            writable: false
         });
     }
     set(k,v){
