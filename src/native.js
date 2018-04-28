@@ -14,8 +14,9 @@ if(!Array.prototype.includes){
     };
 }
 /**
- * 查找节点,统一使用nodeList
+ * 查找节点,统一使用集合
  * @type {Function}
+ * @return {NodeList,HTMLCollection,Array}
  */
 Document.prototype.find = HTMLElement.prototype.find = function(selector){
     if(/^#[^\s]+$/.test(selector)){
@@ -28,9 +29,25 @@ Document.prototype.find = HTMLElement.prototype.find = function(selector){
         return this.querySelectorAll(selector);
     }
 };
+NodeList.prototype.find  = HTMLCollection.prototype.find = Array.prototype.find = function(selector){
+    let arr = [],
+        len = this.length,
+        i = 0,
+        jlen,
+        j,
+        tmp;
+    for(; i<len; i++){
+        tmp = this[i].find(selector);
+        for(jlen=tmp.length, j=0; j<jlen; j++){
+            arr.push(tmp[j]);
+        }
+    }
+    return arr;
+};
+
 /**
  * 给节点集合、数组添加each遍历
- * @param {Function} 回调，支持return 'continue'/'break'/true/false 来达到跳过、中止循环
+ * @param fn {Function} 回调，支持return 'continue'/'break'/true/false 来达到跳过、中止循环
  * @type {Function}
  */
 NodeList.prototype.each  = HTMLCollection.prototype.each = Array.prototype.each = function(fn){
@@ -168,6 +185,9 @@ if(!HTMLElement.prototype.append)
     HTMLElement.prototype.append = function () {
         for(let i=0, len=arguments.length; i<len; i++) this.appendChild(arguments[i]);
     };
+NodeList.prototype.append  = HTMLCollection.prototype.append = Array.prototype.append = function(){
+    for(let i=0, len=arguments.length; i<len; i++) this[0].appendChild(arguments[i]);
+};
 /**
  * 添加prepend方法
  * @type {Function}
@@ -228,7 +248,7 @@ HTMLElement.prototype.attr = function(name, val){
     else
         this.setAttribute(name, val);
 };
-HTMLCollection.prototype.attr = NodeList.prototype.attr = function(name, val){
+HTMLCollection.prototype.attr = NodeList.prototype.attr = Array.prototype.attr = function(name, val){
     this.each((v)=>{
         v.attr(name, val);
     });
@@ -241,7 +261,7 @@ HTMLCollection.prototype.attr = NodeList.prototype.attr = function(name, val){
 HTMLElement.prototype.removeAttr = function(name){
     this.removeAttribute(name);
 };
-HTMLCollection.prototype.removeAttr = NodeList.prototype.removeAttr = function(name){
+HTMLCollection.prototype.removeAttr = NodeList.prototype.removeAttr = Array.prototype.removeAttr = function(name){
     this.each((v)=>{
         v.removeAttr(name);
     });
@@ -258,7 +278,7 @@ HTMLElement.prototype.data = function(name, val){
     else
         this.setAttribute('data-'+name, val);
 };
-HTMLCollection.prototype.data = NodeList.prototype.data = function(name, val){
+HTMLCollection.prototype.data = NodeList.prototype.data = Array.prototype.data = function(name, val){
     this.each((v)=>{
         v.data(name, val);
     });
@@ -272,7 +292,7 @@ HTMLCollection.prototype.data = NodeList.prototype.data = function(name, val){
 HTMLElement.prototype.hasClass = function(name){
     return this.className.split(/\s+/g).includes(name);
 };
-HTMLCollection.prototype.hasClass = NodeList.prototype.hasClass = function (name) {
+HTMLCollection.prototype.hasClass = NodeList.prototype.hasClass = Array.prototype.hasClass = function (name) {
     for(let i=0, len = this.length; i<len; i++)
         if(this[i].hasClass(name)) return true;
     return false;
@@ -291,7 +311,7 @@ HTMLElement.prototype.addClass = function(){
             classList.push(arg[i]);
     this.className = classList.join(' ');
 };
-HTMLCollection.prototype.addClass = NodeList.prototype.addClass = function () {
+HTMLCollection.prototype.addClass = NodeList.prototype.addClass = Array.prototype.addClass = function () {
     for(let i=0, len = this.length; i<len; i++)
         this[i].addClass(...arguments);
 };
@@ -309,7 +329,7 @@ HTMLElement.prototype.removeClass = function(){
             classList.splice(classList.indexOf(arg[i]), 1);
     this.className = classList.join(' ');
 };
-HTMLCollection.prototype.removeClass = NodeList.prototype.removeClass = function () {
+HTMLCollection.prototype.removeClass = NodeList.prototype.removeClass = Array.prototype.removeClass = function () {
     for(let i=0, len = this.length; i<len; i++)
         this[i].removeClass(...arguments);
 };
@@ -330,7 +350,7 @@ HTMLElement.prototype.toggleClass = function(name){
         this.className = classList.join(' ');
     }
 };
-HTMLCollection.prototype.toggleClass = NodeList.prototype.toggleClass = function (name) {
+HTMLCollection.prototype.toggleClass = NodeList.prototype.toggleClass = Array.prototype.toggleClass = function (name) {
     for(let i=0, len = this.length; i<len; i++)
         this[i].toggleClass(name);
 };

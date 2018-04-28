@@ -6,7 +6,7 @@ const RC =  require.context('./tools', false, /\.js$/);
 class Reditor {
     constructor(id){
         let _this = this,
-            editor = document.find('#'+id);
+            editor = document.find('#'+id)[0];
 
         if(editor){
             _this.editor = editor;
