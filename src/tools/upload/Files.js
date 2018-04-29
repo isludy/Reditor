@@ -23,6 +23,14 @@ class Files {
         else
             return this.items;
     }
+    format(){
+        let fd = new FormData();
+        for(let k in this.items){
+            fd.append(k, this.items[k].file);
+            fd.append(k, JSON.stringify(this.items[k].query));
+        }
+        return fd;
+    }
     remove(k){
         if(k !== undefined){
             delete(this.items[k]);
@@ -51,4 +59,4 @@ class Files {
         }
     }
 }
-export default Files;
+export default new Files();

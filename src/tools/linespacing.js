@@ -27,7 +27,7 @@ export default function(reditor, name, e){
                 while (node.nodeType !== 1 || node.tagName !== 'P'){
                     node = node.parentNode;
                 }
-                node.style.lineHeight = target.getAttribute('data-'+name);
+                node.style.lineHeight = target.attr('data-'+name);
 
                 if(!node.nextSibling) return;
                 newRange = utils.range();
@@ -35,7 +35,7 @@ export default function(reditor, name, e){
                 cmp = newRange.compareBoundaryPoints(Range.END_TO_START, reditor.range);
                 while(cmp < 1) {
                     node = node.nextSibling;
-                    node.style.lineHeight = target.getAttribute('data-' + name);
+                    node.style.lineHeight = target.attr('data-' + name);
                     newRange.detach();
                     if(!node.nextSibling) return;
                     newRange.selectNode(node.nextSibling);

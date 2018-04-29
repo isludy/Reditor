@@ -20,21 +20,14 @@ opt = {
 };
 
 Ajax = {
-    send(files,path) {
+    send(formData,path) {
         status = 0;
         opt.title = '准备就绪';
         opt.body = '准备就绪，马上开始！';
         opt.no = '取消';
         utils.dialog(opt);
-
-        let fd = new FormData(), file;
-        for(let k in files){
-            file = files[k];
-            fd.append(k, file.file);
-            fd.append(k, JSON.stringify(file.query));
-        }
         xhr.open('post', path+'?Reditor=upload', true);
-        xhr.send(fd);
+        xhr.send(formData);
     },
     stop(){
         try{

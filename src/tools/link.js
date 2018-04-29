@@ -20,8 +20,15 @@ export default (reditor)=>{
 				target = e.params.target,
 				a, reg, len, i;
 
-			if(!/^http[s]?:\/\//.test(url)) {
-				alert('输入的地址不完整，地址开头缺少http://或https://。');
+			if(!/^http[s]?:\/\/[^.\s]+\.\S+/.test(url)) {
+				utils.dialog({
+					overlay: true,
+					title: '地址错误',
+					body: '输入的超链接地地不符合。<br>注意：<br>1.不能缺少http://或https://头。<br>2.不能为空链接。',
+					colorType: 'danger',
+					yes: false,
+					no: false
+				});
 				utils.range(reditor.range);
 				return false;
             }
@@ -32,14 +39,16 @@ export default (reditor)=>{
 				range: reditor.range
             });
 
-			a = reditor.edit.querySelectorAll('a[href$="__target_'+target+'"]');
-			reg = new RegExp('__target_'+target+'[\/]?$','g');
-			len = a.length;
-			i = 0;
+			a = reditor.edit.re('a[href$="__target_'+target+'"]');
+			if(a){
+                reg = new RegExp('__target_'+target+'[\/]?$','g');
+                len = a.length;
+                i = 0;
 
-			for(; i<len; i++){
-				a[i].href = a[i].href.replace(reg, '');
-				if(target === '_blank') a[i].target = '_blank';
+                for(; i<len; i++){
+                    a[i].href = a[i].href.replace(reg, '');
+                    if(target === '_blank') a[i].target = '_blank';
+                }
 			}
 		}
 	});

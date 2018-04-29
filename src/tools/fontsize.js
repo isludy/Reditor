@@ -22,7 +22,7 @@ export default function(reditor, name, e){
         onclick(target){
             utils.exec({
                 name: 'font-size',
-                value: target.data(name),
+                value: target.attr('data-'+name),
                 cmdName: 'fontsize',
                 cmdValue: 1,
                 range: reditor.range,

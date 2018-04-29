@@ -2,7 +2,7 @@ export default {
     /**
      * 获取或设置range
      * @param range {Range,Selection} 传入range时为设置，无参时获取
-     * @returns s {Range} 无参数时返回range
+     * @returns {Range} 无参数时返回range
      */
     range(range = null){
         let sel = window.getSelection();
@@ -80,11 +80,11 @@ export default {
      */
     dialog(o, context=document.body){
         let nodes = {
-            dialog: document.find('.re-dialog'),
+            dialog: document.re('.re-dialog'),
             wrapper: document.create('div'),
-            header: document.create('header'),
+            header: document.create('div'),
             body: document.create('div'),
-            footer: document.create('footer'),
+            footer: document.create('div'),
             close: document.create('b'),
             yes: document.create('button'),
             no: document.create('button')
@@ -150,11 +150,12 @@ export default {
         }
         function sureFn(e){
             e.params = {};
-            inputs = nodes.body.find('[name]');
+            inputs = nodes.body.re('[name]');
             for(let i=0, len=inputs.length; i<len; i++)
                 e.params[ inputs[i].name ] = (inputs[i].type==='checkbox' || inputs[i].type==='radio') ? inputs[i].checked : inputs[i].value;
-            if(typeof o.onsure === 'function') o.onsure(e);
-            destory();
+            let callback;
+            if(typeof o.onsure === 'function') callback = o.onsure(e);
+            if(callback !== false) destory();
         }
         function destory(){
             nodes.close.off('click', closeFn, false);
@@ -176,16 +177,16 @@ export default {
         let context, tabs, tabbody, data, len, i=0;
 
         if(typeof id === 'string'){
-            context = document.find('#'+id);
+            context = document.re('#'+id);
         }else if(id && id.nodeType === 1){
             context = id;
         }else{
-            throw 'The parameter of tab must be id or element!';
+            throw new Error('The parameter of tab must be id or element!');
         }
 
         id = null;
-        tabs = context.find('[data-tab]');
-        tabbody = context.find('[data-tabbody]');
+        tabs = context.re('[data-tab]');
+        tabbody = context.re('[data-tabbody]');
         len = tabbody.length;
 
         tabs.on('click', handle, false);
@@ -228,7 +229,7 @@ export default {
      * @param context {Node} 可选 上下文，默认body
      * @returns menu {Node} 菜单节点
      */
-    menu(o, context) {
+    menu(o, context = document.body) {
         if(typeof o !== 'object' || typeof o.items !== 'object'){
             throw 'The first parameter (options && options.items) of menu must be given!';
         }
@@ -261,8 +262,6 @@ export default {
             div.on('click', handle, false);
             menu.append(div);
         }
-
-        context = (context) && (context.nodeType === 1) ? context : document.body;
         context.append(menu);
 
         document.on('mouseup', upFn, false);
@@ -305,11 +304,11 @@ export default {
         this.range(o.range);
         document.cmd(o.cmdName, false, o.cmdValue);
         if(o.value && o.name && o.context && o.selector){
-            o.selector.forEach(selector=>{
-                let nodes = o.context.find(selector);
+            o.selector.each(selector=>{
+                let nodes = o.context.re(selector);
                 if(nodes) {
                     if (nodes.length)
-                        nodes.forEach(setStyle);
+                        nodes.each(setStyle);
                     else
                         setStyle(nodes);
                 }

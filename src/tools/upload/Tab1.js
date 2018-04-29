@@ -7,6 +7,12 @@ import Ajax from "./Ajax";
 import Files from "./Files";
 import Status from "./Status";
 
+class Tab1{
+    constructor(){
+
+    }
+}
+
 const inputEl = document.createElement('input'),
     opt = options.upload,
     typeLimit = [],

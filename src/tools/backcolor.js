@@ -21,7 +21,7 @@ export default (reditor, name, e)=>{
         onclick(target){
             utils.exec({
                 cmdName: name,
-                cmdValue: target.data(name),
+                cmdValue: target.attr('data-'+name),
                 range: reditor.range
             });
         }
