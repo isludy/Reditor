@@ -55,10 +55,11 @@ export default (reditor)=>{
 
             //获取上传、管理列表
             let list = panel.re('.re-upload-list');
-
+            console.log(new Tab1());
+/*
             //获取上传面板按钮，并绑定事件
             Tab1.init(list[0]);
-
+*/
             //获取确定【按钮】
             yesBtn = document.re('#re-dialog-upload-yes');
 
@@ -72,7 +73,7 @@ export default (reditor)=>{
         },
         onhide(){
             tab.destory();
-            Tab1.destory();
+            // Tab1.destory();
         }
     });
 }

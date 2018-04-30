@@ -4,15 +4,19 @@ import Item from "./Item";
 import options from '../../options';
 import Logo from "./Logo";
 import Ajax from "./Ajax";
-import Files from "./Files";
 import Status from "./Status";
 
-class Tab1{
-    constructor(){
+import Files from "./Files";
 
+class Tab1 extends Files{
+    constructor(list){
+        super();
+    }
+    render(){
+        console.log(this.items);
     }
 }
-
+/*
 const inputEl = document.createElement('input'),
     opt = options.upload,
     typeLimit = [],
@@ -245,7 +249,7 @@ Ajax.then = function(res){
         store.push(res.data[k]);
     }
     window.localStorage.setItem('ReditorUpload', JSON.stringify(store));
-    */
-};
+    *//*
+};*/
 
 export default Tab1;
