@@ -89,7 +89,6 @@ export default {
             yes: document.create('button'),
             no: document.create('button')
         };
-        let inputs;
 
         if(o.overlay || !nodes.dialog) nodes.dialog = document.create('div');
         if(o.yes === false) nodes.yes.style.display = 'none';
@@ -149,10 +148,6 @@ export default {
             destory();
         }
         function sureFn(e){
-            e.params = {};
-            inputs = nodes.body.re('[name]');
-            for(let i=0, len=inputs.length; i<len; i++)
-                e.params[ inputs[i].name ] = (inputs[i].type==='checkbox' || inputs[i].type==='radio') ? inputs[i].checked : inputs[i].value;
             let callback;
             if(typeof o.onsure === 'function') callback = o.onsure(e);
             if(callback !== false) destory();
@@ -171,7 +166,7 @@ export default {
     /**
      * 创建tab菜单
      * @param id {String, Node} 必须 选择器或节点
-     * @returns {{destory: destory}} 用于注销相关事件，最好养成退出后注销的习惯，即使元素节点可能先被销毁。
+     * @returns {Object} 用于注销相关事件，最好养成退出后注销的习惯，即使元素节点可能先被销毁。
      */
     tab(id){
         let context, tabs, tabbody, data, len, i=0;
@@ -205,13 +200,15 @@ export default {
             }
         }
 
-        function destory(){
-            try{
-                tabs.off('click', handle, false);
-            }catch (e) {}
-        }
-
-        return {destory};
+        return {
+            tabs: tabs,
+            bodys: tabbody,
+            destroy(){
+                try{
+                    tabs.off('click', handle, false);
+                }catch (e) {}
+            }
+        };
     },
     /**
      * 用于创建菜单

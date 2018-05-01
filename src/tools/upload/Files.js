@@ -37,14 +37,10 @@ for(let type in opt.type){
 }
 class Files {
     constructor(){
-        Object.defineProperty(this, 'items', {
-            value: Object.create(null),
-        });
-        Object.defineProperty(this, 'handlers', {
-            value: [],
-        });
+        Object.defineProperty(this, 'items', {value: Object.create(null)});
+        Object.defineProperty(this, 'handlers', {value: []});
     }
-    set(k,v){
+    set(v){
         let file = v.file,
             ext = file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase(),
             type = file.type.split(/\//g)[0],
@@ -71,9 +67,16 @@ class Files {
             utils.dialog(errorOpt);
             return;
         }
-        this.items[k] = v;
-        this.handlers.forEach(fn=>{
-            fn.call(this);
+
+        v.info = {
+            ext,
+            type,
+            mime: file.type,
+            size
+        };
+        this.items[id] = v;
+        this.handlers.each(fn=>{
+            fn.call(this, 0, id);
         });
     }
     get(k){
@@ -97,8 +100,8 @@ class Files {
             for(k in this.items)
                 delete(this.items[k]);
         }
-        this.handlers.forEach(fn=>{
-            fn.call(this);
+        this.handlers.each(fn=>{
+            fn.call(this, 1, k);
         });
     }
     on(fn){
@@ -118,4 +121,4 @@ class Files {
         }
     }
 }
-export default Files;
+export default new Files();

@@ -1,24 +1,7 @@
 import utils from '../utils';
-import options from '../options';
-import Mange from './upload/Manage';
-import Status from './upload/Status';
 import Tab1 from './upload/Tab1';
 
-let panel,
-    opt = options.upload,
-    date = new Date(),
-    yesBtn,
-    tab,
-    dateInput,
-    seartchBtn;
-
-//准备本地缓存
-if(!window.localStorage.getItem('ReditorUpload')){
-    window.localStorage.setItem('ReditorUpload','[]');
-}
-
-
-
+let tab;
 
 export default (reditor)=>{
     utils.dialog({
@@ -26,7 +9,7 @@ export default (reditor)=>{
         title: '文件上传与管理',
         css: 'width: 80%',
         body: `
-        <div id="re-upload" class="re-upload">
+        <div class="re-upload">
             <div class="re-tabs">
                 <span class="re-tab active" data-tab="upload">上传</span>
                 <span class="re-tab" data-tab="manage">管理</span>
@@ -34,10 +17,10 @@ export default (reditor)=>{
             <div class="re-tabbody active" data-tabbody="upload">
                 <div class="re-upload-toolbar">
                     <button id="re-upload-u-choser" class="re-btn-m re-btn-success">添加</button>
-                    <button id="re-upload-u-start" class="re-btn-m re-btn-warning">上传</button>
+                    <button id="re-upload-u-upload" class="re-btn-m re-btn-warning">上传</button>
                     <button id="re-upload-u-clear" class="re-btn-m re-btn-danger">清空</button>
                 </div>
-                <div class="re-upload-list"></div>
+                <div id="re-upload-u-list" class="re-upload-list"></div>
             </div>
             <div class="re-tabbody" data-tabbody="manage">
                 <div class="re-upload-toolbar">
@@ -47,33 +30,21 @@ export default (reditor)=>{
                 <div class="re-upload-list"></div>
             </div>
         </div>`,
-        oncreated(){
-            panel = document.re('#re-upload');
-            console.log(panel);
-            //创建tab
-            tab = utils.tab(panel);
-
-            //获取上传、管理列表
-            let list = panel.re('.re-upload-list');
-            console.log(new Tab1());
-/*
-            //获取上传面板按钮，并绑定事件
-            Tab1.init(list[0]);
-*/
-            //获取确定【按钮】
-            yesBtn = document.re('#re-dialog-upload-yes');
-
-            //设置初始状态
-            Status.off(yesBtn);
-
-
+        oncreated(box){
+            tab = utils.tab(box);
+            Tab1.init({
+                choser: '#re-upload-u-choser',
+                upload: '#re-upload-u-upload',
+                clear: '#re-upload-u-clear',
+                list: '#re-upload-u-list'
+            });
         },
         onsure(e){
 
         },
         onhide(){
-            tab.destory();
-            // Tab1.destory();
+            tab.destroy();
+            Tab1.destroy();
         }
     });
 }

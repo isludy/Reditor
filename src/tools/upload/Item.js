@@ -3,14 +3,78 @@
  */
 import Logo from './Logo';
 
-let Item = {};
+class Item{
+    constructor(o){
+        Object.defineProperty(this, 'handlers', {value: []});
+        let item = document.create('div');
+        item.className = 're-upload-item';
+        item.id = o.id;
+        item.innerHTML = `
+        <div class="re-upload-item-inner">
+            <i class="re-close icon icon-close1"></i>
+            <div class="re-upload-preview alpha">
+                ${itemView(o)}
+                <div class="re-upload-tick">已上传</div>
+            </div>
+            <div class="re-upload-info">
+                <div class="re-upload-filename">${o.name}</div>
+                <textarea class="re-upload-textarea" name="desc" placeholder="文件描述">${o.desc}</textarea>
+            </div>
+        </div>`;
+        item.on('click', Item.clickHandler);
+        if(o.logo) item.on('contextmenu', Item.menuHandler);
+        this.item = item;
+        this.blob = o.src;
+    }
+    on(type,fn){
+        this.item.on(type, fn);
+    }
+    off(type, fn){
+        this.item.off(type, fn);
+    }
+    remove(){
+        this.item.off('click', Item.clickHandler);
+        this.item.off('contextmenu', Item.menuHandler);
+        try{
+            window.revokeURL(this.blob);
+        }catch(err){}
+        this.item.remove();
+    }
+    static clickHandler(e){
+        let target = e.target, items;
+        if(target.hasClass('re-close')){
+            itemRemove(this);
+        }else if(!/textarea|input|button/i.test(target.tagName)){
+            //未上传时，不可选
+            if(!this.hasClass('re-uploaded'))
+                return false;
+            //按ctrl全选/反选
+            if(e.ctrlKey){
+                this.toggleClass('active');
+                items = this.parentNode.find('.re-upload-item');
+                if(this.hasClass('active'))
+                    items.addClass('active');
+                else
+                    items.removeClass('active');
+            }
+            //单选/反选
+            else{
+                this.toggleClass('active');
+            }
+        }
+    }
+    static menuHandler(){
+        let target = e.target;
+        if(target.hasClass('re-upload-logo')){
+            e.preventDefault();
+            if(this.hasClass('re-uploaded'))
+                return false;
+            Logo.contextMenu(e.x, e.y, target, this);
+        }
+    }
+}
 
-Object.defineProperty(Item, 'handlers', {
-    value: [],
-    configurable: false,
-    enumerable: false,
-    writable: false
-});
+
 
 //项的选择与反选、关闭按钮等的事件函数
 function itemSelect(e){
