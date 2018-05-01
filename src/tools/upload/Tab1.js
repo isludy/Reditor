@@ -1,3 +1,4 @@
+import Files from './Files';
 class Tab1{
     constructor(){
         let _this = this;
@@ -16,10 +17,14 @@ class Tab1{
 
             },
             clear(){
-
+                Files.remove();
             },
             input(){
-                console.log(_this.input.files);
+                let len = _this.input.files.length, i = 0, file;
+                for(; i<len; i++){
+                    file = _this.input.files[i];
+                    Files.set({file, query:{}});
+                }
             }
         };
     }
