@@ -1,4 +1,5 @@
 import Files from './Files';
+import Items from './Item';
 class Tab1{
     constructor(){
         let _this = this;
@@ -17,14 +18,21 @@ class Tab1{
 
             },
             clear(){
-                Files.remove();
+                Items.remove();
             },
             input(){
-                let len = _this.input.files.length, i = 0, file;
+                let frag = document.frag(),
+                    len = _this.input.files.length,
+                    i = 0,
+                    file,
+                    id;
                 for(; i<len; i++){
                     file = _this.input.files[i];
-                    Files.set({file, query:{}});
+                    id = 're' + file.lastModified + file.size;
+                    Files.add(id, file);
+                    frag.appendChild(Items.create(id));
                 }
+                _this.list.appendChild(frag);
             }
         };
     }

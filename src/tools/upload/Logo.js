@@ -1,16 +1,67 @@
 import utils from '../../utils';
+import Files from './Files';
 
-let canvas = document.createElement('canvas'),
-    ctx = canvas.getContext('2d'),
-    img = new Image();
+class Logos{
+    constructor(){
+        this.items = Object.create(null);
+        this.style = {
+            name: 'width:5.5em;font-size:14px;text-align:right;display:inline-block;',
+            value: 'width:5.5em;text-align:center;',
+            1: 'top:2px;left:2px;',
+            2: 'top:2px;right:2px;',
+            3: 'top:0;bottom:0;left:0;right:0;margin:auto;',
+            4: 'bottom:2px;left:2px;',
+            5: 'bottom:px;right:2px;'
+        };
+        this.canvas = document.create('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.image = new Image();
 
-canvas.attr('style','position:fixed;top:-99999px;');
-
-let Logo = {
-    contextMenu(x, y, target, item){
+        this.attrBody = `<b>预估它们在网页中实际显示的宽度：</b>
+        <p>
+            <span style="${this.style.name}">图片：</span>
+            <input class="re-input-m" type="text" name="targetWidth" style="${this.style.value}"> px
+        </p>
+        <p>
+            <span style="${this.style.name}">logo：</span>
+            <input class="re-input-m" type="text" name="width" style="${this.style.value}"> px
+        </p>
+        <hr>
+        <b>logo的其他属性设置：</b>
+        <p>
+            <span style="${this.style.name}">透明度：</span>
+            <input class="re-input-m" type="text" name="alpha" style="${this.style.value}"> %
+        </p>
+        <p>
+            <span style="${this.style.name}">位置：</span>
+            <select class="re-input-m" name="position" style="${this.style.value}">
+                <option value="1">左上</option>
+                <option value="2">右上</option>
+                <option value="3">中心</option>
+                <option value="4">左下</option>
+                <option value="5">右下</option>
+            </select>
+        </p>
+        <hr>
+        <b>将此logo属性用于所有图片：</b>
+        <p>
+            <span style="${this.style.name}">是否：</span>
+            <input class="re-checkbox-m" type="checkbox" name="useToAll">
+        </p>`;
+        this.canvas.attr('style','position:fixed;top:-99999px;');
+    }
+    create(id){
+        let el = document.createElement(id);
+        el.className = 're-upload-logo active';
+        el.setAttribute('data-re-id', id);
+        el.on('contextmenu', this.contextMenu);
+        return el;
+    }
+    contextMenu(e){
+        e.preventDefault();
         utils.menu({
-            x,
-            y,
+            x: e.clientX,
+            y: e.clientY,
             items: [{
                 html: '开启logo',
                 data: {name: 'add'}
@@ -25,124 +76,52 @@ let Logo = {
                 data: {name: 'delAll'}
             },{
                 html: '设置logo属性',
-                data: {name: 'setLogo'}
+                data: {name: 'setAttr'}
             }],
             onclick(ctg){
                 switch (ctg.data('name')){
                     case 'del':
-                        target.removeClass('active');
+                        this.removeClass('active');
                         break;
                     case 'add':
-                        target.addClass('active');
+                        this.addClass('active');
                         break;
                     case 'delAll':
-                        item.parentNode.find('.re-upload-logo').removeClass('active');
+
                         break;
                     case 'addAll':
-                        item.parentNode.find('.re-upload-logo').addClass('active');
+
                         break;
-                    case 'setLogo':
-                        let style1 = 'width:5.5em;font-size:14px;text-align:right;display:inline-block;',
-                            style2 = 'width:5.5em;text-align:center;',
-                            posStyle = [
-                                'top:2px;left:2px;',
-                                'top:2px;right:2px;',
-                                'top:0;bottom:0;left:0;right:0;margin:auto;',
-                                'bottom:2px;left:2px;',
-                                'bottom:px;right:2px;'
-                            ],
-                            logoPos = null,
-                            useToAll = null;
-                        function changeViewPos() {
-                            switch ( parseInt(this.value) ){
-                                case 1:
-                                    target.attr('style', posStyle[0]);
-                                    break;
-                                case 2:
-                                    target.attr('style', posStyle[1]);
-                                    break;
-                                case 3:
-                                    target.attr('style', posStyle[2]);
-                                    break;
-                                case 4:
-                                    target.attr('style', posStyle[3]);
-                                    break;
-                                default:
-                                    target.attr('style', posStyle[4]);
-                            }
-                        }
-                        utils.dialog({
-                            overlay: true,
-                            title: '设置logo属性',
-                            body: `
-                                <b>预估它们在网页中实际显示的宽度：</b>
-                                <p>
-                                    <span style="${style1}">图片：</span>
-                                    <input class="re-input-m" type="text" name="targetWidth" style="${style2}"> px
-                                </p>
-                                <p>
-                                    <span style="${style1}">logo：</span>
-                                    <input class="re-input-m" type="text" name="logoWidth" style="${style2}"> px
-                                </p>
-                                <hr>
-                                <b>logo的其他属性设置：</b>
-                                <p>
-                                    <span style="${style1}">透明度：</span>
-                                    <input class="re-input-m" type="text" name="logoAlpha" style="${style2}"> %
-                                </p>
-                                <p>
-                                    <span style="${style1}">位置：</span>
-                                    <select class="re-input-m" name="logoPosition" style="${style2}">
-                                        <option value="1">左上</option>
-                                        <option value="2">右上</option>
-                                        <option value="3">中心</option>
-                                        <option value="4">左下</option>
-                                        <option value="5">右下</option>
-                                    </select>
-                                </p>
-                                <hr>
-                                <b>将此logo属性用于所有图片：</b>
-                                <p>
-                                    <span style="${style1}">是否：</span>
-                                    <input class="re-checkbox-m" type="checkbox" name="useToAll">
-                                </p>`,
-                            oncreated(box){
-                                box.find('[name="targetWidth"]')[0].value = target.attr('data-target-width');
-                                box.find('[name="logoWidth"]')[0].value = target.attr('data-logo-width');
-                                box.find('[name="logoAlpha"]')[0].value = target.attr('data-logo-alpha');
+                    case 'setAttr':
 
-                                useToAll = box.find('[name="useToAll"]')[0];
-                                logoPos = box.find('[name="logoPosition"]')[0];
-                                logoPos.value = target.attr('data-logo-position');
-
-                                logoPos.on('change', changeViewPos);
-                            },
-                            onsure(e){
-                                target.attr('data-target-width', e.params.targetWidth);
-                                target.attr('data-logo-width', e.params.logoWidth);
-                                target.attr('data-logo-alpha', e.params.logoAlpha);
-                                target.attr('data-logo-position', e.params.logoPosition);
-                                if(useToAll.checked){
-                                    item.parentNode.find('.re-upload-logo').forEach(child=>{
-                                        child.attr('data-target-width', e.params.targetWidth);
-                                        child.attr('data-logo-width', e.params.logoWidth);
-                                        child.attr('data-logo-alpha', e.params.logoAlpha);
-                                        child.attr('data-logo-position', e.params.logoPosition);
-                                        child.attr('style', posStyle[parseInt(logoPos.value)-1]);
-                                    });
-                                }
-                            },
-                            onhide(){
-                                if(logoPos) logoPos.off('change', changeViewPos);
-                            }
-                        });
                         break;
                 }
             }
         });
-    },
+    }
+    setAttr(target){
+        utils.dialog({
+            overlay: true,
+            title: '设置logo属性',
+            body: this.attrBody,
+            oncreated(box){
+                let id = target.getAttribute('data-re-id'),
+                    attrs = box.re('[name]');
+                attrs.each(attr=>{
+                    attr.value = Files.items[id].info.logo[attr.name]
+                });
+            },
+            onsure(e){
+
+            },
+            onhide(){
+
+            }
+        });
+    }
     canvasFile(logoImg, fn){
         if(typeof fn === 'function'){
+            let canvas = this.canvas, img = this.image, ctx = this.ctx;
             canvas.width = 0;
             canvas.height = 0;
             img.on('load', loadedFn);
@@ -201,7 +180,7 @@ let Logo = {
             img.src = logoImg.attr('data-target-src');
         }
     }
-};
+}
 
-export default Logo;
+export default new Logos();
 

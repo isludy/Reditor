@@ -1,188 +1,65 @@
-/**
- * 文件上传面板与管理面板里的列表项的创建。
- */
-import Logo from './Logo';
+import Files from './Files';
 
-class Item{
-    constructor(o){
-        Object.defineProperty(this, 'handlers', {value: []});
-        let item = document.create('div');
+class Items{
+    constructor(){
+
+    }
+    create(id){
+        let o = Files.items[id].info,
+            item = document.create('div'),
+            html;
+
         item.className = 're-upload-item';
-        item.id = o.id;
-        item.innerHTML = `
+        item.id = id;
+
+        html = `
         <div class="re-upload-item-inner">
             <i class="re-close icon icon-close1"></i>
-            <div class="re-upload-preview alpha">
-                ${itemView(o)}
-                <div class="re-upload-tick">已上传</div>
+            <div class="re-upload-preview alpha">`;
+
+        if(o.type === 'image'){
+            html += '<div class="re-upload-img" style="background:url('+o.src+') no-repeat center;background-size:contain;"></div>';
+        } else if(o.type === 'video' || o.type === 'audio'){
+            html +='<video class="re-upload-img" controls src="'+o.src+'">浏览器不支持</video>';
+        }else{
+            html += '<div class="re-upload-other-file">.'+o.ext+'</div>';
+        }
+
+        html += `<div class="re-upload-tick">已上传</div>
             </div>
             <div class="re-upload-info">
                 <div class="re-upload-filename">${o.name}</div>
                 <textarea class="re-upload-textarea" name="desc" placeholder="文件描述">${o.desc}</textarea>
             </div>
         </div>`;
-        item.on('click', Item.clickHandler);
-        if(o.logo) item.on('contextmenu', Item.menuHandler);
-        this.item = item;
-        this.blob = o.src;
+
+        item.innerHTML = html;
+
+        item.on('click', Items.clickHandler);
+        return item;
     }
-    on(type,fn){
-        this.item.on(type, fn);
-    }
-    off(type, fn){
-        this.item.off(type, fn);
-    }
-    remove(){
-        this.item.off('click', Item.clickHandler);
-        this.item.off('contextmenu', Item.menuHandler);
+    static removeItem(item){
+        item.off('click', this.clickHandler);
         try{
-            window.revokeURL(this.blob);
+            window.revokeURL(Files.items[item.id].info.src);
         }catch(err){}
-        this.item.remove();
+        item.remove();
+        delete Files.items[item.id];
     }
     static clickHandler(e){
-        let target = e.target, items;
-        if(target.hasClass('re-close')){
-            itemRemove(this);
-        }else if(!/textarea|input|button/i.test(target.tagName)){
-            //未上传时，不可选
-            if(!this.hasClass('re-uploaded'))
-                return false;
-            //按ctrl全选/反选
-            if(e.ctrlKey){
-                this.toggleClass('active');
-                items = this.parentNode.find('.re-upload-item');
-                if(this.hasClass('active'))
-                    items.addClass('active');
-                else
-                    items.removeClass('active');
-            }
-            //单选/反选
-            else{
-                this.toggleClass('active');
-            }
-        }
-    }
-    static menuHandler(){
         let target = e.target;
-        if(target.hasClass('re-upload-logo')){
-            e.preventDefault();
-            if(this.hasClass('re-uploaded'))
-                return false;
-            Logo.contextMenu(e.x, e.y, target, this);
+        if(target.hasClass('re-close')){
+            Items.removeItem(this);
+        }
+    }
+    remove(item){
+        if(item){
+            Items.removeItem(item);
+        }else{
+            for(let k in Files.items){
+                Items.removeItem(document.getElementById(k));
+            }
         }
     }
 }
-
-
-
-//项的选择与反选、关闭按钮等的事件函数
-function itemSelect(e){
-    let target = e.target, items;
-    if(target.hasClass('re-close')){
-        itemRemove(this);
-    }else if(!/textarea|input|button/i.test(target.tagName)){
-        //未上传时，不可选
-        if(!this.hasClass('re-uploaded'))
-            return false;
-        //按ctrl全选/反选
-        if(e.ctrlKey){
-            this.toggleClass('active');
-            items = this.parentNode.find('.re-upload-item');
-            if(this.hasClass('active'))
-                items.addClass('active');
-            else
-                items.removeClass('active');
-        }
-        //单选/反选
-        else{
-            this.toggleClass('active');
-        }
-    }
-}
-//项的logo等的右击菜单
-function itemMenu(e){
-    let target = e.target;
-    if(target.hasClass('re-upload-logo')){
-        e.preventDefault();
-        if(this.hasClass('re-uploaded'))
-            return false;
-        Logo.contextMenu(e.x, e.y, target, this);
-    }
-}
-
-function itemRemove(item){
-    item.off('click', itemSelect);
-    item.off('contextmenu', itemMenu);
-    try{
-        window.revokeURL(item.find('.re-upload-img')[0].attr('src'));
-    }catch(err){}
-    item.remove();
-    Item.handlers.forEach(fn=>{
-        fn.call(item);
-    })
-}
-
-function itemView(o){
-    if(o.type === 'image'){
-        let view = '<div class="re-upload-img" style="background:url('+o.src+') no-repeat center;background-size:contain;"></div>';
-        if(o.logo)
-            view += `<img class="re-upload-logo active" src="${o.logo.path}"
-            data-file-id="${o.id}"
-            data-target-src="${o.src}"
-            data-target-mime="${o.mime}"
-            data-target-name="${o.name}"
-            data-target-width="${o.logo.targetWidth}"
-            data-logo-width="${o.logo.width}"
-            data-logo-alpha="${o.logo.alpha}"
-            data-logo-position="${o.logo.position}" alt="logo">`;
-        return view;
-    } else if(o.type === 'video' || o.type === 'audio'){
-        return '<video class="re-upload-img" controls src="'+o.src+'">浏览器不支持</video>';
-    }else{
-        return '<div class="re-upload-other-file">.'+o.ext+'</div>';
-    }
-}
-
-Item.create = function(o){
-    let item = document.create('div');
-    item.className = 're-upload-item';
-    item.id = o.id;
-    item.innerHTML = `
-    <div class="re-upload-item-inner">
-        <i class="re-close icon icon-close1"></i>
-        <div class="re-upload-preview alpha">
-            ${itemView(o)}
-            <div class="re-upload-tick">已上传</div>
-        </div>
-        <div class="re-upload-info">
-            <div class="re-upload-filename">${o.name}</div>
-            <textarea class="re-upload-textarea" name="desc" placeholder="文件描述">${o.desc}</textarea>
-        </div>
-    </div>`;
-
-    //处理选择与反选
-    item.on('click', itemSelect);
-    if(o.logo) item.on('contextmenu', itemMenu);
-    return item;
-};
-
-Item.remove = function(id){
-    let nodes;
-    if(typeof id === 'string'){
-        if(nodes = document.find(id))
-            itemRemove(nodes);
-    }else if(id.nodeType === 1){
-        nodes = id.find('.re-upload-item');
-        if(nodes && nodes.length)
-            nodes.forEach(child=>{
-                itemRemove(child);
-            });
-    }
-};
-
-Item.onremove = function(fn){
-    if('function' === typeof fn)
-        this.handlers.push(fn)
-};
-export default Item;
+export default new Items();
