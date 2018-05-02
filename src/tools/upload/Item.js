@@ -4,7 +4,7 @@ class Items{
     constructor(){
 
     }
-    create(id){
+    static create(id){
         let o = Files.items[id].info,
             item = document.create('div'),
             html;
@@ -19,6 +19,7 @@ class Items{
 
         if(o.type === 'image'){
             html += '<div class="re-upload-img" style="background:url('+o.src+') no-repeat center;background-size:contain;"></div>';
+            if(o.logo) html += '<img class="re-upload-logo active" src="'+o.logo.path+'">';
         } else if(o.type === 'video' || o.type === 'audio'){
             html +='<video class="re-upload-img" controls src="'+o.src+'">浏览器不支持</video>';
         }else{
@@ -52,7 +53,7 @@ class Items{
             Items.removeItem(this);
         }
     }
-    remove(item){
+    static remove(item){
         if(item){
             Items.removeItem(item);
         }else{
@@ -62,4 +63,4 @@ class Items{
         }
     }
 }
-export default new Items();
+export default Items;
