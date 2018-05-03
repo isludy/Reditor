@@ -8,6 +8,7 @@ const xhr = new XMLHttpRequest(),
         colorType: 'warning',
         overlay: true,
         yes: false,
+        no: false,
         css: 'position: absolute;max-width:360px;',
         oncancel(){
             xhr.abort();
@@ -21,7 +22,6 @@ const xhr = new XMLHttpRequest(),
             if(utils.isEmpty(Files.items)){
                 msg.title = '上传失败';
                 msg.body = '空文件夹，请先添加文件。';
-                msg.no = false;
                 utils.dialog(msg);
                 return;
             }
@@ -32,7 +32,9 @@ const xhr = new XMLHttpRequest(),
 
             let formData = new FormData(),
                 keys = Object.keys(Logo.items),
-                index = 0;
+                index = 0,
+                param = {},
+                names;
 
             //处理logo
             function recursion(){
@@ -64,14 +66,15 @@ const xhr = new XMLHttpRequest(),
             function addData(){
                 for(let k in Files.items){
                     formData.append(k, Files.items[k].file);
-                    formData.append(k, JSON.stringify({
-                        desc: document.getElementById(k).re('[name=desc]')[0].value
-                    }));
+                    names = document.getElementById(k).re('[name]');
+                    names.each(n=>{
+                        param[n.name] = n.value;
+                    });
+                    formData.append(k, JSON.stringify(param));
                 }
                 xhr.open('post', options.upload.path+'?Reditor=upload', true);
                 xhr.send(formData);
             }
-
             recursion();
         },
         stop(){
@@ -109,6 +112,7 @@ xhr.on('timeout', ()=>{
 });
 
 xhr.on('loadend', ()=>{
+    console.log(xhr.response);
     try{
         let data = typeof xhr.response === 'object' ? xhr.response : JSON.parse(xhr.response);
         if(data.code > 0){

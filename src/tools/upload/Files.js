@@ -71,9 +71,7 @@ class Files {
                 mime: file.type,
                 size,
                 name: file.name,
-                desc: '',
-                src: window.createURL(file),
-                logo: type === 'image'
+                src: window.createURL(file)
             }
         };
     }

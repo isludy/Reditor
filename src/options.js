@@ -61,6 +61,7 @@ export default {
             width: 120,
             alpha: 65,
             position: 5
-        }
+        },
+        form: `<texterea class="re-upload-item-textarea" name="desc" placeholder="文件描述" value="abc"></texterea>`
     }
 };

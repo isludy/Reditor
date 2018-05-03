@@ -461,6 +461,9 @@
     color: #555;
     padding: 2px 5px;
 }
+.re-upload-item-form{
+    font-size: 14px;
+}
 .re-upload-item-textarea{
     width: 100%;
     height: 3em;
