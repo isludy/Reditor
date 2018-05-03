@@ -1,5 +1,6 @@
 import Files from './Files';
 import Items from './Item';
+
 class Tab1{
     constructor(){
         let _this = this;
@@ -12,10 +13,13 @@ class Tab1{
         this.list = null;
         this.handlers = {
             choser(){
+                _this.input.value = '';
+                document.body.appendChild(_this.input);
                 _this.input.click();
+                document.body.removeChild(_this.input);
             },
             upload(){
-
+                console.log(Files.items);
             },
             clear(){
                 Items.remove();
@@ -29,7 +33,7 @@ class Tab1{
                 for(; i<len; i++){
                     file = _this.input.files[i];
                     id = 're' + file.lastModified + file.size;
-                    Files.add(id, file);
+                    if(Files.add(id, file)) continue;
                     frag.appendChild(Items.create(id));
                 }
                 _this.list.appendChild(frag);
@@ -37,10 +41,10 @@ class Tab1{
         };
     }
     init(o){
-        this.choser = document.re(o.choser);
-        this.upload = document.re(o.upload);
-        this.clear = document.re(o.clear);
-        this.list = document.re(o.list);
+        this.choser = document.getElementById(o.choser);
+        this.upload = document.getElementById(o.upload);
+        this.clear = document.getElementById(o.clear);
+        this.list = document.getElementById(o.list);
 
         this.choser.on('click', this.handlers.choser);
         this.upload.on('click', this.handlers.upload);

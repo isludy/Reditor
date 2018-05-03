@@ -1,39 +1,40 @@
 import utils from '../../utils';
+import options from '../../options';
 import Files from './Files';
 
-class Logos{
+class Logo{
     constructor(){
+        let _this = this;
         this.items = Object.create(null);
+        this.src = options.upload.logo.path;
+        this.canvas = document.create('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.image = new Image();
+        this.canvas.attr('style','position:fixed;top:-99999px;');
         this.style = {
-            name: 'width:5.5em;font-size:14px;text-align:right;display:inline-block;',
-            value: 'width:5.5em;text-align:center;',
+            name: 'width:7.5em;font-size:14px;text-align:right;display:inline-block;',
+            value: 'width:6em;text-align:center;',
             1: 'top:2px;left:2px;',
             2: 'top:2px;right:2px;',
             3: 'top:0;bottom:0;left:0;right:0;margin:auto;',
             4: 'bottom:2px;left:2px;',
-            5: 'bottom:px;right:2px;'
+            5: 'bottom:2px;right:2px;'
         };
-        this.canvas = document.create('canvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.image = new Image();
-
-        this.attrBody = `<b>预估它们在网页中实际显示的宽度：</b>
+        this.attrBody = `<b>在网页中的实际属性：</b>
         <p>
-            <span style="${this.style.name}">图片：</span>
+            <span style="${this.style.name}">上标图片宽度：</span>
             <input class="re-input-m" type="text" name="targetWidth" style="${this.style.value}"> px
         </p>
         <p>
-            <span style="${this.style.name}">logo：</span>
+            <span style="${this.style.name}">logo宽度：</span>
             <input class="re-input-m" type="text" name="width" style="${this.style.value}"> px
         </p>
-        <hr>
-        <b>logo的其他属性设置：</b>
         <p>
-            <span style="${this.style.name}">透明度：</span>
+            <span style="${this.style.name}">logo透明度：</span>
             <input class="re-input-m" type="text" name="alpha" style="${this.style.value}"> %
         </p>
         <p>
-            <span style="${this.style.name}">位置：</span>
+            <span style="${this.style.name}">logo位置：</span>
             <select class="re-input-m" name="position" style="${this.style.value}">
                 <option value="1">左上</option>
                 <option value="2">右上</option>
@@ -42,23 +43,48 @@ class Logos{
                 <option value="5">右下</option>
             </select>
         </p>
-        <hr>
-        <b>将此logo属性用于所有图片：</b>
         <p>
-            <span style="${this.style.name}">是否：</span>
-            <input class="re-checkbox-m" type="checkbox" name="useToAll">
+            <span style="${this.style.name}; color:#b2512f;">应用于所有：</span>
+            <input class="re-checkbox-m" type="checkbox" name="all">
         </p>`;
-        this.canvas.attr('style','position:fixed;top:-99999px;');
+
+        this.menuHandler = function(e){
+            e.preventDefault();
+            _this.menu(e);
+        };
     }
     create(id){
-        let el = document.createElement(id);
-        el.className = 're-upload-logo active';
-        el.setAttribute('data-re-id', id);
-        el.on('contextmenu', this.contextMenu);
-        return el;
+        let _this = this,
+            logo = document.create('img'),
+            pos;
+        logo.attr('data-re-id', id);
+        logo.className = 're-upload-item-logo active';
+        logo.src = this.src;
+        this.items[id] = {
+            el: logo,
+            targetWidth: 600,
+            width: 120,
+            alpha: 65,
+            position: 5
+        };
+        pos = this.items[id].position;
+        Object.defineProperty(this.items[id], 'position', {
+            set(n){
+                if(n !== pos){
+                    logo.attr('style', _this.style[n]);
+                    pos = n;
+                }
+            },
+            get(){
+                return pos;
+            }
+        });
+        logo.on('contextmenu', this.menuHandler);
+        return logo;
     }
-    contextMenu(e){
-        e.preventDefault();
+    menu(e){
+        let _this = this,
+            logo = e.target;
         utils.menu({
             x: e.clientX,
             y: e.clientY,
@@ -79,60 +105,90 @@ class Logos{
                 data: {name: 'setAttr'}
             }],
             onclick(ctg){
-                switch (ctg.data('name')){
+                switch (ctg.attr('data-name')){
                     case 'del':
-                        this.removeClass('active');
+                        logo.removeClass('active');
                         break;
                     case 'add':
-                        this.addClass('active');
+                        logo.addClass('active');
                         break;
                     case 'delAll':
-
+                        for(let k in _this.items)
+                            _this.items[k].el.removeClass('active');
                         break;
                     case 'addAll':
-
+                        for(let k in _this.items)
+                            _this.items[k].el.addClass('active');
                         break;
                     case 'setAttr':
-
+                        _this.setAttr(logo);
                         break;
                 }
             }
         });
     }
-    setAttr(target){
+    setAttr(logo){
+        let _this = this,
+            id = logo.attr('data-re-id'),
+            names = null,
+            all = null;
         utils.dialog({
             overlay: true,
             title: '设置logo属性',
-            body: this.attrBody,
+            body: _this.attrBody,
             oncreated(box){
-                let id = target.getAttribute('data-re-id'),
-                    attrs = box.re('[name]');
-                attrs.each(attr=>{
-                    attr.value = Files.items[id].info.logo[attr.name]
+                names = box.re('[name]');
+                names.each(n=>{
+                    if(n.name === 'all') all = n;
+                    if(_this.items[id].hasOwnProperty(n.name))
+                        n.value = _this.items[id][n.name];
                 });
             },
-            onsure(e){
-
-            },
-            onhide(){
-
+            onsure(){
+                names.each(n=>{
+                    if(all.checked){
+                        for(let k in _this.items)
+                            if( _this.items[k].hasOwnProperty(n.name) )
+                                _this.items[k][n.name] = parseFloat(n.value);
+                    }else{
+                        if(_this.items[id].hasOwnProperty(n.name))
+                            _this.items[id][n.name] = parseFloat(n.value);
+                    }
+                });
             }
         });
     }
-    canvasFile(logoImg, fn){
+    remove(id){
+        if(id){
+            this.items[id].el.off('contextmenu', this.menuHandler);
+            this.items[id].el.remove();
+            delete this.items[id];
+        }else{
+            for(let k in this.items){
+                this.items[k].el.off('contextmenu', this.menuHandler);
+                this.items[k].el.remove();
+                delete this.items[k];
+            }
+        }
+    }
+    getFile(id, fn){
         if(typeof fn === 'function'){
-            let canvas = this.canvas, img = this.image, ctx = this.ctx;
+            let item = this.items[id],
+                canvas = this.canvas,
+                img = this.image,
+                ctx = this.ctx,
+                o = Files.items[id].info;
             canvas.width = 0;
             canvas.height = 0;
             img.on('load', loadedFn);
             function loadedFn(){
                 let ow = img.width,
                     oh = img.height,
-                    tw = parseInt(logoImg.attr('data-target-width')),
-                    lw = parseInt(logoImg.attr('data-logo-width')),
-                    la = parseInt(logoImg.attr('data-logo-alpha')),
-                    lp = parseInt(logoImg.attr('data-logo-position')),
-                    lscale = logoImg.offsetHeight / logoImg.offsetWidth,
+                    tw = item.targetWidth,
+                    lw = item.width,
+                    la = item.alpha,
+                    lp = item.position,
+                    lscale = item.el.offsetHeight / item.el.offsetWidth,
                     lx,
                     ly,
                     rlw,
@@ -170,17 +226,17 @@ class Logos{
                             ly = oh - rlh - space;
                     }
                     ctx.globalAlpha = la/100;
-                    ctx.drawImage(logoImg, lx, ly, rlw, rlh);
+                    ctx.drawImage(item.el, lx, ly, rlw, rlh);
 
-                    fn( canvas.toFile(logoImg.attr('data-target-name'), logoImg.attr('data-target-mime')) );
+                    fn( canvas.toFile(o.name, o.mime) );
                     document.body.removeChild(canvas);
                 }
                 img.off('load', loadedFn);
             }
-            img.src = logoImg.attr('data-target-src');
+            img.src = o.src;
         }
     }
 }
 
-export default new Logos();
+export default new Logo();
 

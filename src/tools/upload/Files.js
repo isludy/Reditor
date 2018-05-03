@@ -1,7 +1,3 @@
-/**
- * 操作（添加，删除，更改，获取）上传文件的数据信息
- * 可绑定事件监听添加与删除
- */
 import utils from '../../utils';
 import options from '../../options';
 
@@ -51,21 +47,21 @@ class Files {
             errorOpt.title = '格式错误';
             errorOpt.body = '不支持“'+ext+'”，'+msg.type;
             utils.dialog(errorOpt);
-            return;
+            return 1;
         }
         //判断文件大小
         if (size > opt.size[type]) {
             errorOpt.title = '文件过大';
             errorOpt.body = '文件“'+file.name+'大小（'+size+'MB）超出上限，'+msg.size;
             utils.dialog(errorOpt);
-            return;
+            return 2;
         }
         //判断相同的文件
         if (this.items[id]) {
             errorOpt.title = '文件重复';
             errorOpt.body = '文件“' + file.name + '”可能是重复的，请检查。';
             utils.dialog(errorOpt);
-            return;
+            return 3;
         }
         this.items[id] = {
             file,
@@ -77,7 +73,7 @@ class Files {
                 name: file.name,
                 desc: '',
                 src: window.createURL(file),
-                logo: type === 'image' ? opt.logo : null
+                logo: type === 'image'
             }
         };
     }

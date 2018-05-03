@@ -353,12 +353,11 @@
     position: relative;
 }
 .re-dialog-body{
-    min-height: 30px;
+    min-height: 50px;
     max-height: 80%;
     overflow: auto;
 }
 .re-dialog-footer{
-    border-top: 1px solid #ddd;
     white-space: nowrap;
     text-align: right;
 }
@@ -421,55 +420,48 @@
     border-color: #a2cbfd;
     background: #e1f1ff;
 }
-.re-upload-checkbox{
+.re-upload-item-checkbox{
     margin: 0 5px 5px 0;
 }
-.re-upload-preview{
+.re-upload-item-preview{
     line-height: 100%;
     overflow: hidden;
     position: relative;
     border: 1px solid #ddd;
 }
-.re-upload-img{
+.re-upload-item-media{
     width: 100%;
     height: 100%;
     display: block;
 }
-.re-upload-logo{
+.re-upload-item-media.noview{
+    background: #76b176;
+    font-size: 36px;
+    text-align: center;
+    color: #f9f9f9;
+}
+.re-upload-item-logo{
     position: absolute;
     width: 15%;
     opacity: .3;
     right: 2px;
     bottom: 2px;
 }
-.re-upload-logo.active{
+.re-upload-item-logo.active{
     opacity: 1;
 }
-.re-upload-other-file{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    width: 100%;
-    height: 2em;
-    line-height: 2em;
-    background: #76b176;
-    font-size: 36px;
-    text-align: center;
-    color: #f9f9f9;
-}
-.re-upload-info{
+.re-upload-item-info{
     box-sizing: border-box;
     margin-top: 10px;
 }
-.re-upload-filename{
+.re-upload-item-filename{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #555;
     padding: 2px 5px;
 }
-.re-upload-textarea{
+.re-upload-item-textarea{
     width: 100%;
     height: 3em;
     box-sizing: border-box;
@@ -477,11 +469,11 @@
     margin: 10px 0;
     outline: none;
 }
-.re-upload-textarea:focus{
+.re-upload-item-textarea:focus{
     border-color: #44a4ff;
     box-shadow: #44a4ff 0 0 3px;
 }
-.re-upload-tick{
+.re-upload-item-tick{
     color: #fff;
     display: none;
     font-size: 16px;
@@ -495,33 +487,42 @@
     top: 0;
     margin: auto 0;
 }
-.re-uploaded .re-upload-tick{
+.re-uploaded .re-upload-item-tick{
     display: block;
 }
-.re-uploaded .re-upload-logo{
+.re-uploaded .re-upload-item-logo{
     display: none;
 }
 @media (min-width: 1400px) {
     .re-upload-item{
         width: 25%;
     }
-    .re-upload-preview{
+    .re-upload-item-preview{
         height: 11.25vw;
+    }
+    .re-upload-item-media.noview{
+        line-height: 11.25vw;
     }
 }
 @media (min-width: 1000px) and (max-width: 1399px) {
     .re-upload-item{
         width: 33.33%;
     }
-    .re-upload-preview{
+    .re-upload-item-preview{
         height: 15vw;
+    }
+    .re-upload-item-media.noview{
+        line-height: 15vw;
     }
 }
 @media (max-width: 999px) {
     .re-upload-item{
         width: 50%;
     }
-    .re-upload-preview{
+    .re-upload-item-preview{
         height: 22.5vw;
+    }
+    .re-upload-item-media.noview{
+        line-height: 22.5vw;
     }
 }

@@ -1,50 +1,71 @@
 import Files from './Files';
+import Logo from './Logo';
 
 class Items{
-    constructor(){
-
-    }
     static create(id){
         let o = Files.items[id].info,
             item = document.create('div'),
-            html;
+            nodes = {
+                inner: document.create('div'),
+                preview: document.create('div'),
+                tick: document.create('div'),
+                info: document.create('div'),
+                filename: document.create('div'),
+                textarea: document.create('textarea'),
+                media: null
+            },
+            close = document.create('i');
+
+        if(o.type === 'video' || o.type === 'audio'){
+            nodes.media = document.create('video');
+            nodes.media.innerHTML = '浏览器不支持';
+        }else{
+            nodes.media = document.create('div');
+            if(o.type === 'image'){
+                nodes.media.style = 'background:url('+o.src+') no-repeat center;background-size:contain;';
+                if(o.logo) {
+                    nodes.preview.append(Logo.create(id));
+                }
+            }else{
+                nodes.media.className = 'noview';
+                nodes.media.innerHTML = o.ext.toUpperCase();
+            }
+        }
+
+        for(let k in nodes){
+            if(k === 'media'){
+                nodes[k].addClass('re-upload-item-'+k);
+            }else{
+                nodes[k].className = 're-upload-item-'+k;
+            }
+        }
+
 
         item.className = 're-upload-item';
         item.id = id;
+        close.className = 're-close icon icon-close1';
+        nodes.preview.addClass('alpha');
+        nodes.tick.innerHTML = '已上传';
+        nodes.filename.innerHTML = o.name || '';
+        nodes.textarea.name = 'desc';
+        nodes.textarea.placeholder = '文件描述';
+        nodes.textarea.value = o.desc || '';
 
-        html = `
-        <div class="re-upload-item-inner">
-            <i class="re-close icon icon-close1"></i>
-            <div class="re-upload-preview alpha">`;
-
-        if(o.type === 'image'){
-            html += '<div class="re-upload-img" style="background:url('+o.src+') no-repeat center;background-size:contain;"></div>';
-            if(o.logo) html += '<img class="re-upload-logo active" src="'+o.logo.path+'">';
-        } else if(o.type === 'video' || o.type === 'audio'){
-            html +='<video class="re-upload-img" controls src="'+o.src+'">浏览器不支持</video>';
-        }else{
-            html += '<div class="re-upload-other-file">.'+o.ext+'</div>';
-        }
-
-        html += `<div class="re-upload-tick">已上传</div>
-            </div>
-            <div class="re-upload-info">
-                <div class="re-upload-filename">${o.name}</div>
-                <textarea class="re-upload-textarea" name="desc" placeholder="文件描述">${o.desc}</textarea>
-            </div>
-        </div>`;
-
-        item.innerHTML = html;
+        nodes.preview.append(nodes.media, nodes.tick);
+        nodes.info.append(nodes.filename, nodes.textarea);
+        nodes.inner.append(close, nodes.preview, nodes.info);
+        item.append(nodes.inner);
 
         item.on('click', Items.clickHandler);
         return item;
     }
     static removeItem(item){
-        item.off('click', this.clickHandler);
+        item.off('click', Items.clickHandler);
         try{
             window.revokeURL(Files.items[item.id].info.src);
         }catch(err){}
         item.remove();
+        Logo.remove(item.id);
         delete Files.items[item.id];
     }
     static clickHandler(e){

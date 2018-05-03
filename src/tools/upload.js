@@ -33,10 +33,10 @@ export default (reditor)=>{
         oncreated(box){
             tab = utils.tab(box);
             Tab1.init({
-                choser: '#re-upload-u-choser',
-                upload: '#re-upload-u-upload',
-                clear: '#re-upload-u-clear',
-                list: '#re-upload-u-list'
+                choser: 're-upload-u-choser',
+                upload: 're-upload-u-upload',
+                clear: 're-upload-u-clear',
+                list: 're-upload-u-list'
             });
         },
         onsure(e){
