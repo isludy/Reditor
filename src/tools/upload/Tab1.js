@@ -1,5 +1,7 @@
 import Files from './Files';
 import Items from './Item';
+import Send from './Send';
+import Logo from "./Logo";
 
 class Tab1{
     constructor(){
@@ -19,7 +21,7 @@ class Tab1{
                 document.body.removeChild(_this.input);
             },
             upload(){
-                console.log(Files.items);
+                Send.start();
             },
             clear(){
                 Items.remove();
@@ -56,6 +58,9 @@ class Tab1{
         this.upload.off('click', this.handlers.upload);
         this.clear.off('click', this.handlers.clear);
         this.input.off('change', this.handlers.input);
+
+        Files.remove();
+        Logo.remove();
     }
 }
 

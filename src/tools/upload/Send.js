@@ -1,5 +1,7 @@
-//处理开始上传
 import utils from '../../utils';
+import options from '../../options';
+import Files from './Files';
+import Logo from './Logo';
 
 const xhr = new XMLHttpRequest(),
     msg = {
@@ -15,13 +17,62 @@ const xhr = new XMLHttpRequest(),
         }
     },
     Send = {
-        send(formData,path) {
+        start() {
+            if(utils.isEmpty(Files.items)){
+                msg.title = '上传失败';
+                msg.body = '空文件夹，请先添加文件。';
+                msg.no = false;
+                utils.dialog(msg);
+                return;
+            }
             msg.title = '准备就绪';
             msg.body = '准备就绪，马上开始！';
             msg.no = '取消';
             utils.dialog(msg);
-            xhr.open('post', path+'?Reditor=upload', true);
-            xhr.send(formData);
+
+            let formData = new FormData(),
+                keys = Object.keys(Logo.items),
+                index = 0;
+
+            //处理logo
+            function recursion(){
+                if(Logo.items[keys[index]].el.hasClass('active')){
+                    Logo.compose(keys[index], file=>{
+                        if(file){
+                            Files.items[ keys[index] ].file = file;
+                            index++;
+                            if(keys[index]){
+                                recursion();
+                            }else{
+                                addData();
+                            }
+                        }else{
+                            msg.title = 'LOGO添加失败';
+                            msg.body = '文件“'+Files.items[keys[index]].name+'”无法添加LOGO，可能某些操作不当造成的。';
+                        }
+                    });
+                }else{
+                    index++;
+                    if(keys[index]){
+                        recursion();
+                    }else{
+                        addData();
+                    }
+                }
+            }
+            //添加到formData, 并提交
+            function addData(){
+                for(let k in Files.items){
+                    formData.append(k, Files.items[k].file);
+                    formData.append(k, JSON.stringify({
+                        desc: document.getElementById(k).re('[name=desc]')[0].value
+                    }));
+                }
+                xhr.open('post', options.upload.path+'?Reditor=upload', true);
+                xhr.send(formData);
+            }
+
+            recursion();
         },
         stop(){
             try{
@@ -48,12 +99,12 @@ xhr.upload.on('progress',e=>{
 });
 
 xhr.on('error', ()=>{
-    msg.title = '请求失败';
+    msg.title = '上传失败';
     msg.body = '连接失败，请求发生错误。';
 });
 
 xhr.on('timeout', ()=>{
-    msg.title = '请求超时';
+    msg.title = '上传失败';
     msg.body = '请求超时！可能网络原因，稍后重试！';
 });
 
@@ -69,7 +120,7 @@ xhr.on('loadend', ()=>{
             msg.no = '完成';
         }
     }catch (err){
-        msg.title = '失败';
+        msg.title = '上传失败';
         msg.body = '失败！响应的数据错误。消息：'+err.message;
     }
 });

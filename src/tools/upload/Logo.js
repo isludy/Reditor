@@ -171,7 +171,7 @@ class Logo{
             }
         }
     }
-    getFile(id, fn){
+    compose(id, fn){
         if(typeof fn === 'function'){
             let item = this.items[id],
                 canvas = this.canvas,
@@ -232,6 +232,13 @@ class Logo{
                     document.body.removeChild(canvas);
                 }
                 img.off('load', loadedFn);
+                img.off('error', errorFn);
+            }
+            img.on('error', errorFn);
+            function errorFn(){
+                fn(null);
+                img.off('load', loadedFn);
+                img.off('error', errorFn);
             }
             img.src = o.src;
         }
