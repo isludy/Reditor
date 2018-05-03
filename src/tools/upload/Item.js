@@ -45,11 +45,9 @@ class Items{
         nodes.preview.addClass('alpha');
         nodes.tick.innerHTML = '已上传';
         nodes.filename.innerHTML = o.name || '';
-        nodes.form.innerHTML = options.upload.form || '';
-        let frag = document.create('div');
-        frag.innerHTML = options.upload.form;
-        console.log(frag.children);
         nodes.form.id = id + '-form';
+        nodes.form.innerHTML = options.upload.form || '';
+
         nodes.preview.append(nodes.media, nodes.tick);
         nodes.info.append(nodes.filename, nodes.form);
         nodes.inner.append(close, nodes.preview, nodes.info);

@@ -33,8 +33,7 @@ const xhr = new XMLHttpRequest(),
             let formData = new FormData(),
                 keys = Object.keys(Logo.items),
                 index = 0,
-                param = {},
-                names;
+                param = {};
 
             //处理logo
             function recursion(){
@@ -66,8 +65,7 @@ const xhr = new XMLHttpRequest(),
             function addData(){
                 for(let k in Files.items){
                     formData.append(k, Files.items[k].file);
-                    names = document.getElementById(k).re('[name]');
-                    names.each(n=>{
+                    document.getElementById(k+'-form').elements.each(n=>{
                         param[n.name] = n.value;
                     });
                     formData.append(k, JSON.stringify(param));
