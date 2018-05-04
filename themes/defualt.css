@@ -416,7 +416,7 @@
     position: relative;
     border: 1px solid #bbb;
 }
-.active>.re-upload-item-inner{
+.selected>.re-upload-item-inner{
     border-color: #a2cbfd;
     background: #e1f1ff;
 }
@@ -488,14 +488,13 @@
     left: 0;
     bottom: 0;
     top: 0;
+    text-align: center;
     margin: auto 0;
 }
-.re-uploaded .re-upload-item-tick{
+.re-upload-item-tick.active{
     display: block;
 }
-.re-uploaded .re-upload-item-logo{
-    display: none;
-}
+
 @media (min-width: 1400px) {
     .re-upload-item{
         width: 25%;

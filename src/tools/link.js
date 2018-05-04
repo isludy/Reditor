@@ -1,5 +1,4 @@
 import utils from "../utils";
-
 export default (reditor)=>{
 	utils.dialog({
 		title: '添加超链接',
@@ -15,19 +14,18 @@ export default (reditor)=>{
 				</select>
 			</p>
 		`,
-		onsure(e){
-			let url = e.params.url,
-				target = e.params.target,
+		btns: ['确定',{html: '取消', type: 'warning'}],
+		clicked(code, box){
+			if(code) return;
+			let url = box.re('[name="url"]')[0].value,
+            	target = box.re('[name="target"]')[0].value,
 				a, reg, len, i;
 
 			if(!/^http[s]?:\/\/[^.\s]+\.\S+/.test(url)) {
 				utils.dialog({
-					overlay: true,
 					title: '地址错误',
-					body: '输入的超链接地地不符合。<br>注意：<br>1.不能缺少http://或https://头。<br>2.不能为空链接。',
-					colorType: 'danger',
-					yes: false,
-					no: false
+					body: '输入的超链接地地不符合。<br>注意：<br>1.不能缺少http://或https://头。<br>2.不能为空或无效链接。',
+					type: 'danger'
 				});
 				utils.range(reditor.range);
 				return false;

@@ -42,6 +42,7 @@ export default {
         }
     },
     upload: {
+        field: 'file',
         type:{
             image: ['jpg','jpeg','gif','png','webp','ico','bmp'],
             video: ['mp4','ogg','webm','mkv'],
@@ -54,7 +55,6 @@ export default {
             audio: 12,
             other: 1024
         },
-        path: 'http://localhost/demo/data.php',
         logo: {
             path: './themes/logo.png',
             targetWidth: 600,
@@ -62,6 +62,7 @@ export default {
             alpha: 65,
             position: 5
         },
-        form: `<textarea class="re-upload-item-textarea" name="desc" placeholder="文件描述"></textarea>`
+        path: 'http://localhost/demo/data.php',
+        form: '<textarea class="re-upload-item-textarea" name="desc" placeholder="文件描述"></textarea>'
     }
 };

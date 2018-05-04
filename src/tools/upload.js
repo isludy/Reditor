@@ -30,7 +30,11 @@ export default (reditor)=>{
                 <div class="re-upload-list"></div>
             </div>
         </div>`,
-        oncreated(box){
+        btns: ['确定', {
+            html: '取消',
+            type: 'warning'
+        }],
+        created(box){
             tab = utils.tab(box);
             Tab1.init({
                 choser: 're-upload-u-choser',
@@ -39,10 +43,7 @@ export default (reditor)=>{
                 list: 're-upload-u-list'
             });
         },
-        onsure(e){
-
-        },
-        onhide(){
+        clicked(){
             tab.destroy();
             Tab1.destroy();
         }

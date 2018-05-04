@@ -2,15 +2,20 @@ import utils from '../../utils';
 import options from '../../options';
 import Files from './Files';
 
+const canvas = document.create('canvas'),
+    ctx = canvas.getContext('2d'),
+    img = new Image(),
+    logoPath = options.upload.logo.path;
+
+
+
 class Logo{
     constructor(){
         let _this = this;
         this.items = Object.create(null);
-        this.src = options.upload.logo.path;
-        this.canvas = document.create('canvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.image = new Image();
-        this.canvas.attr('style','position:fixed;top:-99999px;');
+
+        canvas.attr('style','position:fixed;top:-99999px;');
+
         this.style = {
             name: 'width:7.5em;font-size:14px;text-align:right;display:inline-block;',
             value: 'width:6em;text-align:center;',
@@ -59,9 +64,10 @@ class Logo{
             pos;
         logo.attr('data-re-id', id);
         logo.className = 're-upload-item-logo active';
-        logo.src = this.src;
+        logo.src = logoPath;
         this.items[id] = {
             el: logo,
+            status: 1,
             targetWidth: 600,
             width: 120,
             alpha: 65,
@@ -84,7 +90,8 @@ class Logo{
     }
     menu(e){
         let _this = this,
-            logo = e.target;
+            logo = e.target,
+            id = logo.attr('data-re-id');
         utils.menu({
             x: e.clientX,
             y: e.clientY,
@@ -108,35 +115,40 @@ class Logo{
                 switch (ctg.attr('data-name')){
                     case 'del':
                         logo.removeClass('active');
+                        _this.items[id].status = 0;
                         break;
                     case 'add':
                         logo.addClass('active');
+                        _this.items[id].status = 1;
                         break;
                     case 'delAll':
-                        for(let k in _this.items)
+                        for(let k in _this.items){
                             _this.items[k].el.removeClass('active');
+                            _this.items[k].status = 0;
+                        }
                         break;
                     case 'addAll':
-                        for(let k in _this.items)
+                        for(let k in _this.items){
                             _this.items[k].el.addClass('active');
+                            _this.items[k].status = 1;
+                        }
                         break;
                     case 'setAttr':
-                        _this.setAttr(logo);
+                        _this.setAttr(id);
                         break;
                 }
             }
         });
     }
-    setAttr(logo){
+    setAttr(id){
         let _this = this,
-            id = logo.attr('data-re-id'),
             names = null,
             all = null;
         utils.dialog({
-            overlay: true,
             title: '设置logo属性',
             body: _this.attrBody,
-            oncreated(box){
+            btns: ['确定',{html: '取消', type: 'warning'}],
+            created(box){
                 names = box.re('[name]');
                 names.each(n=>{
                     if(n.name === 'all') all = n;
@@ -144,7 +156,8 @@ class Logo{
                         n.value = _this.items[id][n.name];
                 });
             },
-            onsure(){
+            clicked(code){
+                if(code) return;
                 names.each(n=>{
                     if(all.checked){
                         for(let k in _this.items)
@@ -171,17 +184,31 @@ class Logo{
             }
         }
     }
-    compose(id, fn){
-        if(typeof fn === 'function'){
-            let item = this.items[id],
-                canvas = this.canvas,
-                img = this.image,
-                ctx = this.ctx,
-                o = Files.items[id].info;
+    compose(fn){
+        if(typeof fn !== 'function') return;
+
+        let _this = this,
+            keys = Object.keys(_this.items),
+            index = 0,
+            result = {},
+            item, o;
+        if(keys[index]){
+            document.body.append(canvas);
+            recursion(keys[index]);
+        }else{
+            fn(result);
+        }
+        function recursion(id) {
+
+            item = _this.items[id];
+            o = Files.items[id].info;
+
             canvas.width = 0;
             canvas.height = 0;
+
             img.on('load', loadedFn);
-            function loadedFn(){
+
+            function loadedFn() {
                 let ow = img.width,
                     oh = img.height,
                     tw = item.targetWidth,
@@ -195,17 +222,17 @@ class Logo{
                     rlh,
                     space;
 
-                if(tw && lw){
+                if (tw && lw) {
                     canvas.width = ow;
                     canvas.height = oh;
-                    document.body.append(canvas);
+
                     ctx.drawImage(img, 0, 0, ow, oh);
 
                     rlw = (ow / tw) * lw;
                     rlh = rlw * lscale;
                     space = ow * .008;
-                    if(space > 5) space = 5;
-                    switch (lp){
+                    if (space > 5) space = 5;
+                    switch (lp) {
                         case 1:
                             lx = ly = space;
                             break;
@@ -225,20 +252,35 @@ class Logo{
                             lx = ow - rlw - space;
                             ly = oh - rlh - space;
                     }
-                    ctx.globalAlpha = la/100;
+                    ctx.globalAlpha = la / 100;
                     ctx.drawImage(item.el, lx, ly, rlw, rlh);
-
-                    fn( canvas.toFile(o.name, o.mime) );
-                    document.body.removeChild(canvas);
+                    result[id] = canvas.toFile(o.name, o.mime);
                 }
                 img.off('load', loadedFn);
                 img.off('error', errorFn);
+
+                index++;
+                if(keys[index]) {
+                    recursion(keys[index]);
+                }else{
+                    fn(result);
+                    canvas.remove();
+                }
             }
+
             img.on('error', errorFn);
-            function errorFn(){
-                fn(null);
+
+            function errorFn() {
                 img.off('load', loadedFn);
                 img.off('error', errorFn);
+
+                index++;
+                if(keys[index]) {
+                    recursion(keys[index]);
+                }else{
+                    canvas.remove();
+                    fn(result);
+                }
             }
             img.src = o.src;
         }

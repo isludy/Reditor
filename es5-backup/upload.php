@@ -4,15 +4,6 @@ header("Access-Control-Allow-Origin: *");
  * Multiple files uploading for editor
  * data: 2018-04-24
  * author: lu
- * recieve format:
- * $_FILES => array(
- *    'id1'=>blob of file1,
- *    'id2'=>blob of file2
- * );
- * $_POST => array(
- *    'id1'=>'{"desc": "file's descipton", "other": "other params"}', //json string
- *    'id2'=>'{"desc": "file's descipton", "other": "other params"}'
- * )
  * The id between POST and FILES must be one-to-one
  * @param $servRoot {String}   localhost dir
  * @param $webRoot  {String}   remote url, url for user
@@ -62,62 +53,66 @@ class File{
             return json_encode($this->json);
         }
         $dataTable = fopen($this->servRoot . $this->folder.'/'.$this->dataTable, 'a');
-        foreach ($_FILES as $id => $file){
-            $fsize = $file['size'];
-            $ferr = $file['error'];
-            $ftmp = $file['tmp_name'];
-            //check error
-            switch ($ferr) {
-                case 1: $this->json['message'] = 'Error 1: Size was exceeded the limit on the server.'; break;
-                case 2: $this->json['message'] = 'Error 2: Size was exceeded the limit on the browser.'; break;
-                case 3: $this->json['message'] = 'Error 3: Incompleted file was uploaded.'; break;
-                case 4: $this->json['message'] = 'Error 4: No file'; break;
-                case 5: $this->json['message'] = 'Error 5: Temporary folder not found'; break;
-                case 6: $this->json['message'] = 'Error 6: Write into temporary folder error'; break;
-                case 7: $this->json['message'] = 'Error 7: Fail to write in';break;
-            }
-            if($ferr > 0){
-                $this->json['code'] = 1;
-                return json_encode($this->json);
-            }
-
-            //Check size
-            if($fsize > $size*1048576){
-                $this->json['code'] = 1;
-                $this->json['message'] = 'File size out of limit '.$size.'MB.';
-                return json_encode($this->json);
-            }
-
-            //check upload files
-            if (!is_uploaded_file($ftmp)) {
-                $this->json['code'] = 1;
-                $this->json['message'] = 'No access';
-                return json_encode($this->json);
-            }
-
-            //move file from temp to folder
-            $md5 = md5_file($ftmp);
-            $rename =  $md5 . strrchr($file['name'], '.');
-            $savePath = $this->servRoot . $this->folder . '/' . $rename;
-            if (!move_uploaded_file($ftmp, $savePath)){
-                $this->json['code'] = 1;
-                $this->json['message'] = 'Could not move file to destination directory';
-                return json_encode($this->json);
-            }
-
-            //response data & save user log
-            $url = $this->webRoot . $this->folder . '/' . $rename;
-            $query = isset($_POST[$id]) ? $_POST[$id] : '{}';
-            $query = json_decode($query, true);
-            $query['name'] = $file['name'];
-            $query['type'] = $file['type'];
-            $query['url'] = $url;
-            $query['date'] = time()*1000;
-            $query['subid'] = $id;
-            $query['resid'] = $md5;
-            $this->json['data'][] = $query;
-            fwrite($dataTable, '#"'.$md5.'":'.json_encode($query));
+        $file = $_FILES['file'];
+        $fsize = $file['size'];
+        $ferr = $file['error'];
+        $ftmp = $file['tmp_name'];
+        $id = $_POST['subid'];
+        //check error
+        switch ($ferr) {
+            case 1: $this->json['message'] = 'Error 1: Size was exceeded the limit on the server.'; break;
+            case 2: $this->json['message'] = 'Error 2: Size was exceeded the limit on the browser.'; break;
+            case 3: $this->json['message'] = 'Error 3: Incompleted file was uploaded.'; break;
+            case 4: $this->json['message'] = 'Error 4: No file'; break;
+            case 5: $this->json['message'] = 'Error 5: Temporary folder not found'; break;
+            case 6: $this->json['message'] = 'Error 6: Write into temporary folder error'; break;
+            case 7: $this->json['message'] = 'Error 7: Fail to write in';break;
         }
+        if($ferr > 0){
+            $this->json['code'] = 1;
+            return json_encode($this->json);
+        }
+
+        //Check size
+        if($fsize > $size*1048576){
+            $this->json['code'] = 1;
+            $this->json['message'] = 'File size out of limit '.$size.'MB.';
+            return json_encode($this->json);
+        }
+
+        //check upload files
+        if (!is_uploaded_file($ftmp)) {
+            $this->json['code'] = 1;
+            $this->json['message'] = 'No access';
+            return json_encode($this->json);
+        }
+
+        //move file from temp to folder
+        $md5 = md5_file($ftmp);
+        $rename =  $md5 . strrchr($file['name'], '.');
+        $savePath = $this->servRoot . $this->folder . '/' . $rename;
+        if (!move_uploaded_file($ftmp, $savePath)){
+            $this->json['code'] = 1;
+            $this->json['message'] = 'Could not move file to destination directory';
+            return json_encode($this->json);
+        }
+
+        //response data & save user log
+        $url = $this->webRoot . $this->folder . '/' . $rename;
+
+        $usrlog = array(
+            'name' => $file['name'],
+            'type' => $file['type'],
+            'url'  => $url,
+            'date' => time()*1000,
+            'resid'=> $md5
+        );
+        foreach( $_POST as $key => $val){
+            $usrlog[$key] = $val;
+        }
+
+        $this->json['data'] = $usrlog;
+        fwrite($dataTable, '#"'.$md5.'":'.json_encode($usrlog));
 
         $this->json['code'] = 0;
         $this->json['message'] = 'success';
@@ -140,6 +135,7 @@ class File{
         return json_encode($this->json);
     }
 }
+
 if(isset($_GET['Reditor'])){
     $File = new File('./upload/', 'http://localhost/demo/upload/');
     if($_GET['Reditor'] == 'upload'){

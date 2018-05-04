@@ -52,8 +52,12 @@ export default {
             Object.defineProperty(obj, name, {
                 set(newVal){
                     if(newVal !== node[attr]){
-                        node[attr] = newVal;
-                        if(typeof fn === 'function') fn(newVal);
+                        if(newVal === false){
+                            node.style.display = 'none';
+                        }else{
+                            node[attr] = newVal;
+                            if(typeof fn === 'function') fn(newVal);
+                        }
                     }
                 },
                 get(){
@@ -69,91 +73,79 @@ export default {
      *      id: {String} 规定弹窗id名
      *      title: {String} 标题,
      *      colorType: {String} header的样式颜色名，默认success，另外有warning, danger。也可自定义名称如: info，然后添加 .re-info{}到样式中
-     *      overlay: {boolean} 是否可以叠加弹窗，默认false。
      *      body: {String} 内容,
      *      css: {String} 弹窗样式,
-     *      yes: {String,boolean} “确定”按钮的内容, 如果是false，则隐藏按钮
-     *      no: {String,boolean} “取消”按钮的内容, 如果是false，则隐藏按钮
+     *      yes: {String}
+     *      no: {String} “取消”按钮的内容, 如果是false，则隐藏按钮
      *      oncreated, onclose, onsure, oncancel, onhide //事件函数
      * }
      * @param context {Node,Element,NodeList,HTMLCollection} 可选 上下文，默认body
      */
     dialog(o, context=document.body){
-        let _this = this,
+        let dialog = document.create('div'),
             nodes = {
-            dialog: document.re('.re-dialog'),
             wrapper: document.create('div'),
             header: document.create('div'),
             body: document.create('div'),
             footer: document.create('div'),
             close: document.create('b')
-        };
+        },
+        btns,
+        btn;
 
-        if(o.overlay || !nodes.dialog) nodes.dialog = document.create('div');
+        nodes.header.innerHTML = o.title || '弹窗';
+        nodes.close.innerHTML = '&times;' ;
+        nodes.body.innerHTML = o.body || '';
+        nodes.wrapper.attr('style', o.css);
 
-        nodes.header.innerHTML = '弹窗';
-        nodes.close.innerHTML = '&times;';
-        nodes.dialog.innerHTML = '';
-        nodes.dialog.removeAttr('style');
+        if(o.id) dialog.id = o.id;
 
-        if(o.id) nodes.dialog.id = o.id;
-
-        hasBtn('yes', '确定');
-        hasBtn('no', '取消');
         for(let n in nodes){
-            if(n === 'dialog')
-                nodes[n].addClass('re-dialog');
-            else
-                nodes[n].addClass('re-dialog-'+n);
+            nodes[n].addClass('re-dialog-'+n);
         }
-        nodes.header.addClass(o.colorType ? 're-'+o.colorType : 're-success');
-
-        this.observe(nodes.header,'innerHTML', o, 'title');
-        this.observe(nodes.body,'innerHTML', o, 'body');
-        this.observe(nodes.wrapper, 'style', o, 'css');
+        nodes.header.addClass(o.type ? 're-'+o.type : 're-success');
+        dialog.addClass('re-dialog');
 
         nodes.wrapper.append(nodes.close, nodes.header, nodes.body, nodes.footer);
-        nodes.dialog.append(nodes.wrapper);
-        context.append(nodes.dialog);
+        dialog.append(nodes.wrapper);
+        context.append(dialog);
 
-        nodes.close.on('click', closeFn, false);
+        nodes.close.on('click', clickHandler, false);
 
-        function hasBtn(name, txt){
-            if(o[name] !== false){
-                if(!o[name]) o[name] = txt;
-                nodes[name] = document.create('button');
-                nodes[name].addClass('re-btn-m');
-                if(name === 'yes'){
-                    nodes[name].on('click', sureFn, false);
-                    nodes[name].addClass('re-btn-success');
-                }else{
-                    nodes[name].on('click', closeFn, false);
-                    nodes[name].addClass('re-btn-warning');
+        if(o.btns && o.btns.length){
+            btns = [];
+            o.btns.each((item)=>{
+                btn = document.create('button');
+                if(typeof item === 'string'){
+                    btn.className = 're-btn-m re-btn-success';
+                    btn.innerHTML = item;
+                }else if(typeof item === 'object'){
+                    btn.className = 're-btn-m re-btn-' + item.type;
+                    btn.innerHTML = item.html;
                 }
-                nodes.footer.append(nodes[name]);
-                _this.observe(nodes[name], 'innerHTML', o, name);
+                btn.on('click', clickHandler);
+                btns.push(btn);
+                nodes.footer.append(btn);
+            });
+        }
+
+        function clickHandler(e){
+            if(typeof o.clicked === 'function'){
+                if(o.clicked.call(this, btns.indexOf(this), dialog, e) !== false) destroy();
+            }else{
+                destroy();
             }
         }
-        function closeFn(e){
-            if(typeof o.oncancel === 'function') o.oncancel(e);
-            if(typeof o.onclose === 'function') o.onclose(e);
-            destory();
-        }
-        function sureFn(e){
-            let callback;
-            if(typeof o.onsure === 'function') callback = o.onsure(e);
-            if(callback !== false) destory();
-        }
-        function destory(){
-            nodes.close.off('click', closeFn, false);
-            if(nodes.yes) nodes.yes.off('click', sureFn, false);
-            if(nodes.no) nodes.no.off('click', closeFn, false);
-            context.removeChild(nodes.dialog);
-            if(typeof o.onhide === 'function') o.onhide();
+        function destroy(){
+            if(btns) btns.each(btn=>{
+                btn.off('click', clickHandler);
+            });
+            btns = btn = null;
+            nodes.close.off('click', clickHandler);
+            dialog.remove();
         }
 
-        if(typeof o.oncreated === 'function') o.oncreated(nodes.dialog);
-        return nodes.dialog;
+        if(typeof o.created === 'function') o.created(dialog);
     },
     /**
      * 创建tab菜单

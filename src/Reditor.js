@@ -21,10 +21,7 @@ class Reditor {
                 title: '提醒!',
                 css: 'max-width:320px',
                 body: '您的浏览器兼容性差，建议使用其他现代浏览器',
-                colorType: 'warning',
-                overlay: true,
-                yes: false,
-                no: false
+                type: 'warning'
             });
         }
     }

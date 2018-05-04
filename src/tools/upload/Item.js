@@ -19,6 +19,9 @@ class Items{
 
         if(o.type === 'video' || o.type === 'audio'){
             nodes.media = document.create('video');
+            nodes.media.src = o.src;
+            nodes.media.controls = 'controls';
+            nodes.media.preload = 'auto';
             nodes.media.innerHTML = '浏览器不支持';
         }else{
             nodes.media = document.create('div');
@@ -39,20 +42,21 @@ class Items{
             }
         }
 
-        item.className = 're-upload-item';
         item.id = id;
+        nodes.tick.id = id + '-tick';
+        nodes.form.id = id + '-form';
+
+        item.className = 're-upload-item';
         close.className = 're-close icon icon-close1';
         nodes.preview.addClass('alpha');
-        nodes.tick.innerHTML = '已上传';
+
         nodes.filename.innerHTML = o.name || '';
-        nodes.form.id = id + '-form';
         nodes.form.innerHTML = options.upload.form || '';
 
         nodes.preview.append(nodes.media, nodes.tick);
         nodes.info.append(nodes.filename, nodes.form);
         nodes.inner.append(close, nodes.preview, nodes.info);
         item.append(nodes.inner);
-
 
         item.on('click', Items.clickHandler);
         return item;
@@ -63,7 +67,7 @@ class Items{
             window.revokeURL(Files.items[item.id].info.src);
         }catch(err){}
         item.remove();
-        Logo.remove(item.id);
+        if(Logo.items[item.id]) Logo.remove(item.id);
         delete Files.items[item.id];
     }
     static clickHandler(e){

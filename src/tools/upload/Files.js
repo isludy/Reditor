@@ -4,10 +4,7 @@ import options from '../../options';
 const opt = options.upload;
 const errorOpt = {
         css: 'max-width: 360px;',
-        colorType: 'danger',
-        overlay: true,
-        yes: false,
-        no: false
+        type: 'danger',
     },
     limit = [],
     msg = {
