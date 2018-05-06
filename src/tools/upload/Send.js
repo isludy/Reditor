@@ -23,7 +23,6 @@ xhr.upload.on('progress', (e)=>{
     }
 });
 xhr.on('loadend', ()=>{
-    console.log(xhr.response);
     try{
         let data = typeof xhr.response === 'object' ? xhr.response : JSON.parse(xhr.response);
         if(data.code > 0){

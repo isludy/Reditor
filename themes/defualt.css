@@ -381,6 +381,13 @@
 .re-dialog-footer .re-btn-m{
     margin-left: 10px;
 }
+.re-dialog-roll{
+    transform: translateY(-100%);
+    transition: all 1s;
+}
+.re-dialog-rolldown{
+    transform: translateY(0);
+}
 
 /* plugins tools ui */
 /*upload*/

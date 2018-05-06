@@ -26,47 +26,6 @@ export default {
         return JSON.stringify(o) === '{}';
     },
     /**
-     * 监听数据模型改变node的一些属性
-     * @param node 数据改变时，影响的节点
-     * @param attr 影响的节点属性
-     * @param obj  数据模型
-     * @param name 监听的属性
-     * @param fn 回调
-     */
-    observe(node, attr, obj, name, fn){
-        if(/(style)|(^data-*)|(name)/i.test(attr)){
-            node.attr('style', obj[name]);
-            Object.defineProperty(obj, 'css', {
-                set(newVal){
-                    if(newVal !== node.attr('style')){
-                        node.attr('style', newVal);
-                        if(typeof fn === 'function') fn(newVal);
-                    }
-                },
-                get(){
-                    return node.attr('style');
-                }
-            });
-        }else{
-            node[attr] = obj[name];
-            Object.defineProperty(obj, name, {
-                set(newVal){
-                    if(newVal !== node[attr]){
-                        if(newVal === false){
-                            node.style.display = 'none';
-                        }else{
-                            node[attr] = newVal;
-                            if(typeof fn === 'function') fn(newVal);
-                        }
-                    }
-                },
-                get(){
-                    return node[attr];
-                }
-            });
-        }
-    },
-    /**
      * 创建弹窗
      * @param o {Object} 必需
      * {
@@ -110,7 +69,8 @@ export default {
         dialog.append(nodes.wrapper);
         context.append(dialog);
 
-        nodes.close.on('click', clickHandler, false);
+        nodes.close.on('click', clickHandler);
+        dialog.on('click', dialogHandler);
 
         if(o.btns && o.btns.length){
             btns = [];
@@ -136,12 +96,17 @@ export default {
                 destroy();
             }
         }
+        function dialogHandler(e) {
+            if (e.target === dialog) clickHandler.call(this, e);
+        }
+
         function destroy(){
             if(btns) btns.each(btn=>{
                 btn.off('click', clickHandler);
             });
             btns = btn = null;
             nodes.close.off('click', clickHandler);
+            dialog.off('click', dialogHandler);
             dialog.remove();
         }
 
@@ -207,8 +172,7 @@ export default {
      *      y: 菜单的top,
      *      onclick, onhide //事件
      * }
-     * @param context {Node} 可选 上下文，默认body
-     * @returns menu {Node} 菜单节点
+     * @param context 可选 上下文，默认body
      */
     menu(o, context = document.body) {
         if(typeof o !== 'object' || typeof o.items !== 'object'){
@@ -265,7 +229,10 @@ export default {
             document.off('mouseup', upFn, false);
             context.removeChild(menu);
         }
-        return menu;
+    },
+    aside(o){
+        let box = document.create('div');
+
     },
     /**
      * 代替execCommand命令来完成文档的一些复杂操作
