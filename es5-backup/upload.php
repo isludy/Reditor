@@ -27,7 +27,7 @@ class File{
         );
         // if production, user must be replaced with real user's id;
         $this->user = 'user';
-        $this->dataTable = $this->user.'data.txt';
+        $this->dataTable = $this->user.'log.txt';
 
         //check & init folder
         $saveDir = $this->servRoot . $this->folder;

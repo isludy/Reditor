@@ -50,7 +50,7 @@ class Logo{
         </p>
         <p>
             <span style="${this.style.name}; color:#b2512f;">应用于所有：</span>
-            <input class="re-checkbox-m" type="checkbox" name="all">
+            <input class="re-checkbox-s" type="checkbox" name="all">
         </p>`;
 
         this.menuHandler = function(e){
@@ -173,9 +173,11 @@ class Logo{
     }
     remove(id){
         if(id){
-            this.items[id].el.off('contextmenu', this.menuHandler);
-            this.items[id].el.remove();
-            delete this.items[id];
+            if(this.items[id]){
+                this.items[id].el.off('contextmenu', this.menuHandler);
+                this.items[id].el.remove();
+                delete this.items[id];
+            }
         }else{
             for(let k in this.items){
                 this.items[k].el.off('contextmenu', this.menuHandler);

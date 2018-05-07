@@ -1,5 +1,5 @@
 import Files from './Files';
-import Items from './Item';
+import Items from './Items';
 import Send from './Send';
 import Logo from "./Logo";
 
@@ -38,7 +38,7 @@ class Tab1{
                     if(Files.add(id, file)) continue;
                     frag.appendChild(Items.create(id));
                 }
-                _this.list.appendChild(frag);
+                _this.list.insertBefore(frag, _this.list.childNodes[0]);
             }
         };
     }

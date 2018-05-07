@@ -62,7 +62,9 @@ export default {
             alpha: 65,
             position: 5
         },
+        // path: 'http://news.wenweipo.com/test/test.php',
         path: 'http://localhost/demo/data.php',
-        form: '<textarea class="re-upload-item-textarea" name="desc" placeholder="文件描述"></textarea>'
+        form: '',
+        local: 'reditor'
     }
 };

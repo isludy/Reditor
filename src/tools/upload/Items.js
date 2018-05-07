@@ -52,9 +52,10 @@ class Items{
 
         nodes.filename.innerHTML = o.name || '';
         nodes.form.innerHTML = options.upload.form || '';
+        nodes.tick.innerText = '等待上传...';
 
-        nodes.preview.append(nodes.media, nodes.tick);
-        nodes.info.append(nodes.filename, nodes.form);
+        nodes.preview.append(nodes.filename, nodes.media);
+        nodes.info.append(nodes.form, nodes.tick);
         nodes.inner.append(close, nodes.preview, nodes.info);
         item.append(nodes.inner);
 
@@ -74,6 +75,9 @@ class Items{
         let target = e.target;
         if(target.hasClass('re-close')){
             Items.removeItem(this);
+        }
+        if(!/input|button|textarea/i.test(target.tagName) && this.hasClass('re-upload-loaded')){
+            this.toggleClass('re-upload-selected');
         }
     }
     static remove(item){
