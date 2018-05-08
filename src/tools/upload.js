@@ -1,4 +1,5 @@
 import Tab1 from './upload/Tab1';
+import Tab2 from './upload/Tab2';
 
 let box;
 
@@ -28,6 +29,7 @@ export default (reditor)=>{
             clear: 're-upload-clear',
             list: 're-upload-body'
         });
+        Tab2.start();
     }else{
         box.toggleClass('re-upload-hide');
     }

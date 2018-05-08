@@ -7,8 +7,6 @@ const canvas = document.create('canvas'),
     img = new Image(),
     logoPath = options.upload.logo.path;
 
-
-
 class Logo{
     constructor(){
         let _this = this;

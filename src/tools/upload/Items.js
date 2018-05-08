@@ -1,6 +1,7 @@
 import options from '../../options';
 import Files from './Files';
 import Logo from './Logo';
+import Send from './Send';
 
 class Items{
     static create(id){
@@ -63,6 +64,7 @@ class Items{
         return item;
     }
     static removeItem(item){
+        if(item.id === Send.curid) Send.stop();
         item.off('click', Items.clickHandler);
         try{
             window.revokeURL(Files.items[item.id].info.src);

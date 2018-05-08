@@ -448,7 +448,7 @@
     background: #ed9b2b;
 }
 .re-upload-item-inner{
-    box-shadow: #aebbc7 0 0 4px;
+    box-shadow: #aebbc7 0 0 2px;
     border-radius: 4px;
     background: #fff;
     padding: 10px;
@@ -460,12 +460,12 @@
 .re-upload-loaded>.re-upload-item-inner{
     border-color: #9ac5f9;
     background: #d3eaff;
-    box-shadow: #77baf3 0 0 4px;
+    box-shadow: #77baf3 0 0 2px;
 }
 .re-upload-selected>.re-upload-item-inner{
     border-color: #7fc77e;
     background: #bbe4ba;
-    box-shadow: #459c44 0 0 4px;
+    box-shadow: #459c44 0 0 2px;
 }
 .re-upload-item-checkbox{
     margin: 0 5px 5px 0;

@@ -25,6 +25,7 @@ class Tab1{
             },
             clear(){
                 Items.remove();
+                Send.stop();
             },
             input(){
                 let frag = document.frag(),

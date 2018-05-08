@@ -8,7 +8,6 @@ header("Access-Control-Allow-Origin: *");
  * @param $servRoot {String}   localhost dir
  * @param $webRoot  {String}   remote url, url for user
  */
-
 class File{
     private $servRoot;
     private $webRoot;
@@ -135,6 +134,8 @@ class File{
         return json_encode($this->json);
     }
 }
+
+sleep(1);
 
 if(isset($_GET['Reditor'])){
     $File = new File('./upload/', 'http://localhost/demo/upload/');

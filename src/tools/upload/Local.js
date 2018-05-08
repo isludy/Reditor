@@ -8,17 +8,18 @@ class Local{
             this.ls.setItem(this.name, '{}');
         }
     }
-    add(arr){
+    add(arg){
         let tmp = JSON.parse(this.ls.getItem(this.name)),
-            len = arr.length;
+            len = arg.length;
         if(len){
            for(; len--; ){
-               tmp[arr[len].resid] = tmp[arr[len]];
-               delete arr[len].resid;
+               tmp[arg[len].resid] = arg[len];
+               delete arg[len].resid;
            }
         }else{
-            tmp[arr.resid] = tmp[arr];
-            delete arr.resid;
+            console.log(arg.resid);
+            tmp[arg.resid] = arg;
+            delete arg.resid;
         }
         this.ls.setItem(this.name, JSON.stringify(tmp));
     }

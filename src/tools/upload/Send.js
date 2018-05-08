@@ -7,12 +7,12 @@ import Local from './Local';
 const field = options.upload.field,
     path = options.upload.path,
     xhr = new XMLHttpRequest(),
-    defaultRes = {code: 1};
+    defaultRes = {code: 1, message:''};
 
-let formData, keys, index, tick;
+let formData, key, tick;
 
 xhr.on('loadstart', ()=>{
-    tick = document.getElementById(keys[index]+'-tick');
+    tick = document.getElementById(key+'-tick');
     tick.addClass('active');
     tick.innerText = '已上传...0%';
 });
@@ -23,6 +23,12 @@ xhr.upload.on('progress', (e)=>{
     }else{
         tick.innerText = '已上传...0%';
     }
+});
+xhr.on('timeout', ()=>{
+    defaultRes.message = '连接超时！';
+});
+xhr.on('abort', ()=>{
+    defaultRes.message = '已经删除文件并终止上传！';
 });
 xhr.on('loadend', ()=>{
     let res;
@@ -39,15 +45,17 @@ xhr.on('loadend', ()=>{
             body: '服务器回应的数据格式错误，需要技术人员检查。',
             css: 'max-width:360px;',
         });
+        tick.innerText = '等待上传...';
     }else if(res.code > 0){
         utils.dialog({
             type: 'warning',
             title: '上传失败',
-            body: '服务器回应消息：' + res.message,
+            body: res.message,
             css: 'max-width:360px;',
         });
+        tick.innerText = '等待上传...';
     }else{
-        let tmp = document.getElementById(keys[index]);
+        let tmp = document.getElementById(key);
         tmp.id = 're' + res.data.resid;
         tmp.addClass('re-upload-loaded');
         tmp.attr('data-re-src', res.data.url);
@@ -61,19 +69,20 @@ xhr.on('loadend', ()=>{
         tick.id = 're' + res.data.resid + '-tick';
         tick.innerText = '上传于：'+(new Date(res.data.date).format('Y-M-D H:I:S'));
 
-        document.getElementById(keys[index]+'-form').id = 're' + res.data.resid + '-form';
+        document.getElementById(key+'-form').id = 're' + res.data.resid + '-form';
 
-        Logo.remove(keys[index]);
-        Files.remove(keys[index]);
+        Logo.remove(key);
+        Files.remove(key);
 
         Local.add(res.data);
 
-        index++;
-        if(keys[index]) recursion(keys[index]);
+        recursion(Object.keys(Files.items)[0]);
     }
 });
 
 function recursion(id){
+    if(!id) return;
+    Send.curid = key = id;
     formData = new FormData();
     formData.append(field, Files.items[id].file);
     formData.append('subid', id);
@@ -85,23 +94,22 @@ function recursion(id){
 }
 
 const Send = {
+    curid: null,
     start(){
         Logo.compose(files=>{
             for(let k in files){
                 Files.items[k].file = files[k];
             }
             files = null;
-            keys = Object.keys(Files.items);
-            index = 0;
-            if(keys[index]){
-                recursion(keys[index]);
-            }else{
+            if(utils.isEmpty(Files.items)){
                 utils.dialog({
                     type: 'warning',
                     title: '空文件夹',
                     body: '空文件夹，请添加文件',
                     css: 'max-width:360px;',
                 });
+            }else{
+                recursion(Object.keys(Files.items)[0]);
             }
         });
     },
