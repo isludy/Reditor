@@ -11,6 +11,8 @@ const field = options.upload.field,
 
 let formData, key, tick;
 
+xhr.responseType = 'json';
+
 xhr.on('loadstart', ()=>{
     tick = document.getElementById(key+'-tick');
     tick.addClass('active');
@@ -31,52 +33,48 @@ xhr.on('abort', ()=>{
     defaultRes.message = '已经删除文件并终止上传！';
 });
 xhr.on('loadend', ()=>{
-    let res;
-    try{
-       res = typeof xhr.response === 'object' ? xhr.response : JSON.parse(xhr.response);
-    }catch(err){
-        res = defaultRes;
-    }
-
-    if(!res.hasOwnProperty('code')){
+    let res = xhr.response;
+    if(!res){
         utils.dialog({
             type: 'warning',
             title: '上传失败',
-            body: '服务器回应的数据格式错误，需要技术人员检查。',
-            css: 'max-width:360px;',
-        });
-        tick.innerText = '等待上传...';
-    }else if(res.code > 0){
-        utils.dialog({
-            type: 'warning',
-            title: '上传失败',
-            body: res.message,
+            body: '服务器无回应或回应的数据格式错误，需要技术人员检查。',
             css: 'max-width:360px;',
         });
         tick.innerText = '等待上传...';
     }else{
-        let tmp = document.getElementById(key);
-        tmp.id = 're' + res.data.resid;
-        tmp.addClass('re-upload-loaded');
-        tmp.attr('data-re-src', res.data.url);
-        tmp = tmp.querySelector('.re-upload-item-media');
-        if(/video/i.test(tmp.tagName)){
-            tmp.src = res.data.url;
-        }else if(!tmp.hasClass('noview')){
-            tmp.style.backgroundImage = 'url('+res.data.url+')';
+        if(res.code > 0){
+            utils.dialog({
+                type: 'warning',
+                title: '上传失败',
+                body: res.message,
+                css: 'max-width:360px;',
+            });
+            tick.innerText = '等待上传...';
+        }else{
+            let tmp = document.getElementById(key);
+            tmp.id = 're' + res.data.resid;
+            tmp.addClass('re-upload-loaded');
+            tmp.attr('data-re-src', res.data.url);
+            tmp = tmp.querySelector('.re-upload-item-media');
+            if(/video/i.test(tmp.tagName)){
+                tmp.src = res.data.url;
+            }else if(!tmp.hasClass('noview')){
+                tmp.style.backgroundImage = 'url('+res.data.url+')';
+            }
+
+            tick.id = 're' + res.data.resid + '-tick';
+            tick.innerText = '上传于：'+(new Date(res.data.date).format('Y-M-D H:I:S'));
+
+            document.getElementById(key+'-form').id = 're' + res.data.resid + '-form';
+
+            Logo.remove(key);
+            Files.remove(key);
+
+            Local.add(res.data);
+
+            recursion(Object.keys(Files.items)[0]);
         }
-
-        tick.id = 're' + res.data.resid + '-tick';
-        tick.innerText = '上传于：'+(new Date(res.data.date).format('Y-M-D H:I:S'));
-
-        document.getElementById(key+'-form').id = 're' + res.data.resid + '-form';
-
-        Logo.remove(key);
-        Files.remove(key);
-
-        Local.add(res.data);
-
-        recursion(Object.keys(Files.items)[0]);
     }
 });
 

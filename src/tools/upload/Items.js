@@ -4,8 +4,8 @@ import Logo from './Logo';
 import Send from './Send';
 
 class Items{
-    static create(id){
-        let o = Files.items[id].info,
+    static create(id, opt){
+        let o = opt || Files.items[id].info,
             item = document.create('div'),
             nodes = {
                 inner: document.create('div'),
