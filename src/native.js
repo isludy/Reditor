@@ -171,7 +171,7 @@ Document.prototype.frag = function(args){
     let frag = document.createDocumentFragment(), len, i=0;
     if(!args) return frag;
 
-    if(len = args.length){
+    if((typeof args !== 'string') && (len = args.length)){
         for(; i < len; i++) add(args[i]);
         return frag;
     }else{

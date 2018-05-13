@@ -32,7 +32,7 @@ for(let type in opt.type)
 
 class Files {
     constructor(){
-        Object.defineProperty(this, 'items', {value: Object.create(null)});
+        this.items = Object.create(null);
     }
     add(id, file){
         let ext = file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase(),
@@ -44,33 +44,24 @@ class Files {
             errorOpt.title = '格式错误';
             errorOpt.body = '不支持“'+ext+'”，'+msg.type;
             utils.dialog(errorOpt);
-            return 1;
+            return;
         }
         //判断文件大小
         if (size > opt.size[type]) {
             errorOpt.title = '文件过大';
             errorOpt.body = '文件“'+file.name+'大小（'+size+'MB）超出上限，'+msg.size;
             utils.dialog(errorOpt);
-            return 2;
+            return;
         }
         //判断相同的文件
         if (this.items[id]) {
             errorOpt.title = '文件重复';
             errorOpt.body = '文件“' + file.name + '”可能是重复的，请检查。';
             utils.dialog(errorOpt);
-            return 3;
+            return;
         }
-        this.items[id] = {
-            file,
-            info: {
-                ext,
-                type,
-                mime: file.type,
-                size,
-                name: file.name,
-                src: window.createURL(file)
-            }
-        };
+        this.items[id] = file;
+        return true;
     }
     remove(k){
         if(k){

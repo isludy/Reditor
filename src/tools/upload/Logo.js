@@ -1,6 +1,5 @@
 import utils from '../../utils';
 import options from '../../options';
-import Files from './Files';
 
 const canvas = document.create('canvas'),
     ctx = canvas.getContext('2d'),
@@ -184,24 +183,22 @@ class Logo{
             }
         }
     }
-    compose(fn){
+    compose(optItems, fileItems, fn){
         if(typeof fn !== 'function') return;
 
         let _this = this,
             keys = Object.keys(_this.items),
             index = 0,
-            result = {},
             item, o;
         if(keys[index]){
             document.body.append(canvas);
             recursion(keys[index]);
         }else{
-            fn(result);
+            fn();
         }
         function recursion(id) {
-
             item = _this.items[id];
-            o = Files.items[id].info;
+            o = optItems[id];
 
             canvas.width = 0;
             canvas.height = 0;
@@ -254,7 +251,7 @@ class Logo{
                     }
                     ctx.globalAlpha = la / 100;
                     ctx.drawImage(item.el, lx, ly, rlw, rlh);
-                    result[id] = canvas.toFile(o.name, o.mime);
+                    fileItems[id] = canvas.toFile(o.name, o.type);
                 }
                 img.off('load', loadedFn);
                 img.off('error', errorFn);
@@ -263,8 +260,8 @@ class Logo{
                 if(keys[index]) {
                     recursion(keys[index]);
                 }else{
-                    fn(result);
-                    canvas.remove();
+                    // canvas.remove();
+                    fn();
                 }
             }
 
@@ -279,10 +276,10 @@ class Logo{
                     recursion(keys[index]);
                 }else{
                     canvas.remove();
-                    fn(result);
+                    fn();
                 }
             }
-            img.src = o.src;
+            img.src = o.url;
         }
     }
 }
