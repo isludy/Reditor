@@ -106,6 +106,7 @@ class Items{
             }
             if(!/input|button|textarea/i.test(target.tagName) && this.hasClass('re-upload-loaded')){
                 this.toggleClass('re-upload-selected');
+                _this.items[id].selected = this.hasClass('re-upload-selected');
             }
         }
         this.items[id].handler = handler;
@@ -122,8 +123,7 @@ class Items{
             Items.del(id, this.items);
         }else{
             for(id in this.items)
-                if(this.items.hasOwnProperty(id))
-                    Items.del(id, this.items);
+                Items.del(id, this.items);
             Send.stop();
         }
     }
@@ -137,8 +137,9 @@ class Items{
         try{
             items[id].el.off('click', items[id].handler);
             items[id].el.remove();
+            if(Logo.items[id]) Logo.remove(id);
+            Files.remove(id);
             delete items[id];
-            delete Files.items[id];
         }catch(err){
             console.log(err.message);
         }
@@ -149,7 +150,7 @@ class Items{
      * @return {HTMLFormControlsCollection | ActiveX.ISchemaItemCollection}
      */
     form(id){
-        return this.items[id].el.getElementsByTagName('form').elements;
+        return this.items[id].el.getElementsByTagName('form')[0].elements;
     }
     /**
      * 合成logo，并执行上传

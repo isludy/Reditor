@@ -190,6 +190,7 @@ class Logo{
             keys = Object.keys(_this.items),
             index = 0,
             item, o;
+
         if(keys[index]){
             document.body.append(canvas);
             recursion(keys[index]);

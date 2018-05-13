@@ -30,7 +30,7 @@ export default (reditor)=>{
             list: 're-upload-body',
             use: 're-upload-use'
         });
-        // Down.start();
+        Down.init('re-upload-body');
     }else{
         box.toggleClass('re-upload-hide');
     }

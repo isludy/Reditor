@@ -6,86 +6,83 @@ import Local from './Local';
 
 const field = options.upload.field,
     path = options.upload.path,
-    xhr = new XMLHttpRequest(),
-    defaultRes = {code: 1, message:''};
+    xhr = new XMLHttpRequest();
 
-let formData, key, items;
+let formData, key, Items, errorMsg;
 
 xhr.responseType = 'json';
 
 xhr.on('loadstart', ()=>{
-    items[key].tick = '已上传...0%';
+    errorMsg = '';
+    Items.items[key].tick = '已上传...0%';
 });
 
 xhr.upload.on('progress', (e)=>{
     if(e.total>0 && e.loaded > 0){
-        items[key].tick = '已上传... '+(Math.round(10000*e.loaded/e.total)/100)+' %';
+        Items.items[key].tick = '已上传... '+(Math.round(10000*e.loaded/e.total)/100)+' %';
     }else{
-        items[key].tick = '已上传...0%';
+        Items.items[key].tick = '已上传...0%';
     }
 });
 xhr.on('timeout', ()=>{
-    defaultRes.message = '连接超时！';
+    errorMsg = '连接超时！';
 });
 xhr.on('abort', ()=>{
-    defaultRes.message = '已经删除文件并终止上传！';
+    errorMsg = '已经删除文件并终止上传！';
 });
 xhr.on('loadend', ()=>{
     let res = xhr.response;
-    if(!res){
-        utils.dialog({
-            type: 'warning',
-            title: '上传失败',
-            body: '服务器无回应或回应的数据格式错误，需要技术人员检查。',
-            css: 'max-width:360px;',
-        });
-        items[key].tick = '等待上传...';
+    if(res && res.code === 0 && res.data){
+        Items.items[key].el.addClass('re-upload-loaded');
+        Items.items[key].url = res.data.url;
+        Items.items[key].tick = '上传于：'+(new Date(res.data.date).format('Y-M-D H:I:S'));
+
+        Logo.remove(key);
+        Files.remove(key);
+        Local.add(res.data);
+
+        recursion(Object.keys(Files.items)[0]);
     }else{
-        if(res.code > 0){
+        if(!res || !res.hasOwnProperty('code') || !res.data){
             utils.dialog({
                 type: 'warning',
                 title: '上传失败',
-                body: res.message,
+                body: errorMsg || '服务器无响应或响应的数据格式错误。',
                 css: 'max-width:360px;',
             });
-            items[key].tick = '等待上传...';
-        }else{
-            let tmp = items[key].el;
-            tmp.id = 're' + res.data.resid;
-            tmp.addClass('re-upload-loaded');
-            tmp.attr('data-re-src', res.data.url);
-
-            items[key].url = res.data.url;
-
-            items[key].tick = '上传于：'+(new Date(res.data.date).format('Y-M-D H:I:S'));
-
-            Logo.remove(key);
-            Files.remove(key);
-
-            Local.add(res.data);
-
-            recursion(Object.keys(Files.items)[0]);
+        }else if(res.code > 0){
+            utils.dialog({
+                type: 'warning',
+                title: '上传失败',
+                body: '来自服务器的错误提示：'+res.message,
+                css: 'max-width:360px;',
+            });
         }
+        Items.items[key].tick = '<b>等待上传...</b>';
     }
 });
 
 function recursion(id){
     if(!id) return;
+    //在上传进行中，如果删除项是正在上传的项，则立即中止上传，所以需要curid来提供给Items.js进行判断
     Send.curid = key = id;
+
     formData = new FormData();
     formData.append(field, Files.items[id]);
     formData.append('subid', id);
-    // document.getElementById(id+'-form').elements.each(el=>{
-    //     formData.append(el.name, el.value);
-    // });
+    Items.form(id).each(input=>{
+        formData.append(input.name, input.value);
+    });
+
     xhr.open('post', path+'?Reditor=upload', true);
     xhr.send(formData);
 }
 
 const Send = {
     curid: null,
-    start(args){
-        items = args.items;
+    start(items){
+        Items = items;
+        items = null;
         if(utils.isEmpty(Files.items)){
             utils.dialog({
                 type: 'warning',
