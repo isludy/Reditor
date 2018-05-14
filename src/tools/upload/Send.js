@@ -10,6 +10,9 @@ const field = options.upload.field,
 
 let formData, key, Items, errorMsg;
 
+xhr.on = xhr.addEventListener;
+xhr.upload.on = xhr.upload.addEventListener;
+
 xhr.responseType = 'json';
 
 xhr.on('loadstart', ()=>{

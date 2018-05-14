@@ -138,7 +138,7 @@ class Items{
      * @return {HTMLFormControlsCollection | ActiveX.ISchemaItemCollection}
      */
     form(id){
-        return this.items[id].el.getElementsByTagName('form')[0].elements;
+        return this.items[id].el.find('form')[0].elements;
     }
     /**
      * 合成logo，并执行上传

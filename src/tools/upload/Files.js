@@ -26,7 +26,7 @@ const errorOpt = {
 
 for(let type in opt.type)
     if(opt.type.hasOwnProperty(type))
-        opt.type[type].each(v=>{
+        opt.type[type].forEach(v=>{
             limit.push(v);
         });
 

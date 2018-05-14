@@ -56,14 +56,14 @@ class Up{
         this.choser.on('click', this.handlers.choser);
         this.upload.on('click', this.handlers.upload);
         this.clear.on('click', this.handlers.clear);
-        this.input.on('change', this.handlers.input);
+        re(this.input).on('change', this.handlers.input);
         this.use.on('click', this.handlers.use);
     }
     destroy(){
         this.choser.off('click', this.handlers.choser);
         this.upload.off('click', this.handlers.upload);
         this.clear.off('click', this.handlers.clear);
-        this.input.off('change', this.handlers.input);
+        re(this.input).off('change', this.handlers.input);
         this.use.off('click', this.handlers.use);
     }
 }

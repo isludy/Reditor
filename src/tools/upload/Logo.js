@@ -1,67 +1,24 @@
 import utils from '../../utils';
 import options from '../../options';
+import re from '../../re';
 
-const canvas = document.createElement('canvas'),
-    ctx = canvas.getContext('2d'),
+const canvas = re('<canvas style="position:fixed;top:-99999px;"></canvas>'),
+    ctx = canvas[0].getContext('2d'),
     img = new Image(),
-    logoPath = options.upload.logo.path;
+    logoPath = options.upload.logo.path,
+    positions = ['top:2px;left:2px;', 'top:2px;right:2px;', 'top:0;bottom:0;left:0;right:0;margin:auto;', 'bottom:2px;left:2px;', 'bottom:2px;right:2px;'],
+    style1 = 'width:7.5em;font-size:14px;text-align:right;display:inline-block;',
+    style2 = 'width:6em;text-align:center;';
 
 class Logo{
     constructor(){
-        let _this = this;
         this.items = Object.create(null);
-
-        canvas.setAttribute('style','position:fixed;top:-99999px;');
-
-        this.style = {
-            name: 'width:7.5em;font-size:14px;text-align:right;display:inline-block;',
-            value: 'width:6em;text-align:center;',
-            1: 'top:2px;left:2px;',
-            2: 'top:2px;right:2px;',
-            3: 'top:0;bottom:0;left:0;right:0;margin:auto;',
-            4: 'bottom:2px;left:2px;',
-            5: 'bottom:2px;right:2px;'
-        };
-        this.attrBody = `<b>在网页中的实际属性：</b>
-        <p>
-            <span style="${this.style.name}">上标图片宽度：</span>
-            <input class="re-input-m" type="text" name="targetWidth" style="${this.style.value}"> px
-        </p>
-        <p>
-            <span style="${this.style.name}">logo宽度：</span>
-            <input class="re-input-m" type="text" name="width" style="${this.style.value}"> px
-        </p>
-        <p>
-            <span style="${this.style.name}">logo透明度：</span>
-            <input class="re-input-m" type="text" name="alpha" style="${this.style.value}"> %
-        </p>
-        <p>
-            <span style="${this.style.name}">logo位置：</span>
-            <select class="re-input-m" name="position" style="${this.style.value}">
-                <option value="1">左上</option>
-                <option value="2">右上</option>
-                <option value="3">中心</option>
-                <option value="4">左下</option>
-                <option value="5">右下</option>
-            </select>
-        </p>
-        <p>
-            <span style="${this.style.name}; color:#b2512f;">应用于所有：</span>
-            <input class="re-checkbox-s" type="checkbox" name="all">
-        </p>`;
-
-        this.menuHandler = function(e){
-            e.preventDefault();
-            _this.menu(e);
-        };
+        this.handlers = Object.create(null);
     }
     create(id){
         let _this = this,
-            logo = document.create('img'),
+            logo = re('<img src="'+logoPath+'" class="re-upload-item-logo active">'),
             pos;
-        logo.attr('data-re-id', id);
-        logo.className = 're-upload-item-logo active';
-        logo.src = logoPath;
         this.items[id] = {
             el: logo,
             status: 1,
@@ -74,7 +31,7 @@ class Logo{
         Object.defineProperty(this.items[id], 'position', {
             set(n){
                 if(n !== pos){
-                    logo.attr('style', _this.style[n]);
+                    logo.attr('style', positions[n]);
                     pos = n;
                 }
             },
@@ -82,60 +39,58 @@ class Logo{
                 return pos;
             }
         });
-        logo.on('contextmenu', this.menuHandler);
-        return logo;
-    }
-    menu(e){
-        let _this = this,
-            logo = e.target,
-            id = logo.attr('data-re-id');
-        utils.menu({
-            x: e.clientX,
-            y: e.clientY,
-            items: [{
-                html: '开启logo',
-                data: {name: 'add'}
-            },{
-                html: '关闭logo',
-                data: {name: 'del'}
-            },{
-                html: '开启所有logo',
-                data: {name: 'addAll'}
-            },{
-                html: '关闭所有logo',
-                data: {name: 'delAll'}
-            },{
-                html: '设置logo属性',
-                data: {name: 'setAttr'}
-            }],
-            onclick(ctg){
-                switch (ctg.attr('data-name')){
-                    case 'del':
-                        logo.removeClass('active');
-                        _this.items[id].status = 0;
-                        break;
-                    case 'add':
-                        logo.addClass('active');
-                        _this.items[id].status = 1;
-                        break;
-                    case 'delAll':
-                        for(let k in _this.items){
-                            _this.items[k].el.removeClass('active');
-                            _this.items[k].status = 0;
-                        }
-                        break;
-                    case 'addAll':
-                        for(let k in _this.items){
-                            _this.items[k].el.addClass('active');
-                            _this.items[k].status = 1;
-                        }
-                        break;
-                    case 'setAttr':
-                        _this.setAttr(id);
-                        break;
+        logo.on('contextmenu', handler);
+        function handler(e){
+            utils.menu({
+                x: e.clientX,
+                y: e.clientY,
+                items: [{
+                    html: '开启logo',
+                    data: {name: 'add'}
+                },{
+                    html: '关闭logo',
+                    data: {name: 'del'}
+                },{
+                    html: '开启所有logo',
+                    data: {name: 'addAll'}
+                },{
+                    html: '关闭所有logo',
+                    data: {name: 'delAll'}
+                },{
+                    html: '设置logo属性',
+                    data: {name: 'setAttr'}
+                }],
+                onclick(ctg){
+                    switch (ctg.data('name')){
+                        case 'del':
+                            logo.removeClass('active');
+                            _this.items[id].status = 0;
+                            break;
+                        case 'add':
+                            logo.addClass('active');
+                            _this.items[id].status = 1;
+                            break;
+                        case 'delAll':
+                            for(let k in _this.items){
+                                logo.removeClass('active');
+                                _this.items[k].status = 0;
+                            }
+                            break;
+                        case 'addAll':
+                            for(let k in _this.items){
+                                logo.addClass('active');
+                                _this.items[k].status = 1;
+                            }
+                            break;
+                        case 'setAttr':
+                            _this.setAttr(id);
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        }
+        this.handlers[id] = handler;
+        return logo;
     }
     setAttr(id){
         let _this = this,
@@ -143,10 +98,36 @@ class Logo{
             all = null;
         utils.dialog({
             title: '设置logo属性',
-            body: _this.attrBody,
+            body: `<b>在网页中的实际属性：</b>
+            <p>
+                <span style="${style1}">上标图片宽度：</span>
+                <input class="re-input-m" type="text" name="targetWidth" style="${style2}"> px
+            </p>
+            <p>
+                <span style="${style1}">logo宽度：</span>
+                <input class="re-input-m" type="text" name="width" style="${style2}"> px
+            </p>
+            <p>
+                <span style="${style1}">logo透明度：</span>
+                <input class="re-input-m" type="text" name="alpha" style="${style2}"> %
+            </p>
+            <p>
+                <span style="${style1}">logo位置：</span>
+                <select class="re-input-m" name="position" style="${style2}">
+                    <option value="1">左上</option>
+                    <option value="2">右上</option>
+                    <option value="3">中心</option>
+                    <option value="4">左下</option>
+                    <option value="5">右下</option>
+                </select>
+            </p>
+            <p>
+                <span style="${style1}; color:#b2512f;">应用于所有：</span>
+                <input class="re-checkbox-s" type="checkbox" name="all">
+            </p>`,
             btns: ['确定',{html: '取消', type: 'warning'}],
             created(box){
-                names = box.re('[name]');
+                names = box.find('[name]');
                 names.each(n=>{
                     if(n.name === 'all') all = n;
                     if(_this.items[id].hasOwnProperty(n.name))
@@ -171,13 +152,13 @@ class Logo{
     remove(id){
         if(id){
             if(this.items[id]){
-                this.items[id].el.off('contextmenu', this.menuHandler);
+                this.items[id].el.off('contextmenu', this.handlers[id]);
                 this.items[id].el.remove();
                 delete this.items[id];
             }
         }else{
             for(let k in this.items){
-                this.items[k].el.off('contextmenu', this.menuHandler);
+                this.items[k].el.off('contextmenu', this.handlers[id]);
                 this.items[k].el.remove();
                 delete this.items[k];
             }
@@ -192,7 +173,7 @@ class Logo{
             item, o;
 
         if(keys[index]){
-            document.body.append(canvas);
+            document.body.appendChild(canvas[0]);
             recursion(keys[index]);
         }else{
             fn();
@@ -221,8 +202,8 @@ class Logo{
                     space;
 
                 if (tw && lw) {
-                    canvas.width = ow;
-                    canvas.height = oh;
+                    canvas[0].width = ow;
+                    canvas[0].height = oh;
 
                     ctx.drawImage(img, 0, 0, ow, oh);
 
@@ -252,7 +233,7 @@ class Logo{
                     }
                     ctx.globalAlpha = la / 100;
                     ctx.drawImage(item.el, lx, ly, rlw, rlh);
-                    fileItems[id] = canvas.toFile(o.name, o.type);
+                    fileItems[id] = canvas[0].toFile(o.name, o.type);
                 }
                 img.off('load', loadedFn);
                 img.off('error', errorFn);
@@ -261,7 +242,7 @@ class Logo{
                 if(keys[index]) {
                     recursion(keys[index]);
                 }else{
-                    // canvas.remove();
+                    canvas.remove();
                     fn();
                 }
             }
