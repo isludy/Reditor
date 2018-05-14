@@ -91,8 +91,7 @@ class Items{
                 ethis = re(this);
             if(re(target).hasClass('re-close')){
                 _this.remove(id);
-            }
-            if(!/input|button|textarea/i.test(target.tagName) && ethis.hasClass('re-upload-loaded')){
+            }else if(!/input|button|textarea/i.test(target.tagName) && ethis.hasClass('re-upload-loaded')){
                 ethis.toggleClass('re-upload-selected');
                 _this.items[id].selected = ethis.hasClass('re-upload-selected');
             }

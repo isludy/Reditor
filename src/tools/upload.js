@@ -1,6 +1,6 @@
 import re from './../re';
 import Up from './upload/Up';
-// import Down from './upload/Down';
+import Down from './upload/Down';
 let box;
 
 export default (reditor)=>{
@@ -24,14 +24,14 @@ export default (reditor)=>{
         });
         document.body.appendChild(box[0]);
 
-        let up = Up.init({
+        Up.init({
             choser: '#re-upload-choser',
             upload: '#re-upload-upload',
             clear: '#re-upload-clear',
             list: '#re-upload-body',
             use: '#re-upload-use'
         });
-        // Down.init(up.list);
+        Down.init('#re-upload-body');
     }else{
         box.toggleClass('re-upload-hide');
     }
