@@ -32,12 +32,13 @@ class Up{
 
                 for(; i<len; i++){
                     file = _this.input.files[i];
+
                     frag.appendChild(Items.create('re' + file.lastModified + file.size, {
                         url: window.createURL(file),
                         name: file.name,
                         type: file.type,
                         tick: '<b>等待上传...</b>'
-                    }));
+                    })[0]);
                 }
                 _this.list.prepend(frag);
             },

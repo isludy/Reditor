@@ -2,7 +2,7 @@ import utils from '../../utils';
 import options from '../../options';
 import re from '../../re';
 
-const canvas = re('<canvas style="position:fixed;top:-99999px;"></canvas>'),
+const canvas = re('<canvas style="position: fixed; top: -99999px;"></canvas>'),
     ctx = canvas[0].getContext('2d'),
     img = new Image(),
     logoPath = options.upload.logo.path,
@@ -25,7 +25,7 @@ class Logo{
             targetWidth: 600,
             width: 120,
             alpha: 65,
-            position: 5
+            position: 4
         };
         pos = this.items[id].position;
         Object.defineProperty(this.items[id], 'position', {
@@ -41,6 +41,7 @@ class Logo{
         });
         logo.on('contextmenu', handler);
         function handler(e){
+            e.preventDefault();
             utils.menu({
                 x: e.clientX,
                 y: e.clientY,
@@ -72,13 +73,13 @@ class Logo{
                             break;
                         case 'delAll':
                             for(let k in _this.items){
-                                logo.removeClass('active');
+                                _this.items[k].el.removeClass('active');
                                 _this.items[k].status = 0;
                             }
                             break;
                         case 'addAll':
                             for(let k in _this.items){
-                                logo.addClass('active');
+                                _this.items[k].el.addClass('active');
                                 _this.items[k].status = 1;
                             }
                             break;
@@ -114,11 +115,11 @@ class Logo{
             <p>
                 <span style="${style1}">logo位置：</span>
                 <select class="re-input-m" name="position" style="${style2}">
-                    <option value="1">左上</option>
-                    <option value="2">右上</option>
-                    <option value="3">中心</option>
-                    <option value="4">左下</option>
-                    <option value="5">右下</option>
+                    <option value="0">左上</option>
+                    <option value="1">右上</option>
+                    <option value="2">中心</option>
+                    <option value="3">左下</option>
+                    <option value="4">右下</option>
                 </select>
             </p>
             <p>
@@ -185,7 +186,7 @@ class Logo{
             canvas.width = 0;
             canvas.height = 0;
 
-            img.on('load', loadedFn);
+            img.addEventListener('load', loadedFn);
 
             function loadedFn() {
                 let ow = img.width,
@@ -194,7 +195,7 @@ class Logo{
                     lw = item.width,
                     la = item.alpha,
                     lp = item.position,
-                    lscale = item.el.offsetHeight / item.el.offsetWidth,
+                    lscale = item.el[0].offsetHeight / item.el[0].offsetWidth,
                     lx,
                     ly,
                     rlw,
@@ -212,18 +213,18 @@ class Logo{
                     space = ow * .008;
                     if (space > 5) space = 5;
                     switch (lp) {
-                        case 1:
+                        case 0:
                             lx = ly = space;
                             break;
-                        case 2:
+                        case 1:
                             lx = ow - rlw - space;
                             ly = 5;
                             break;
-                        case 3:
+                        case 2:
                             lx = (ow - rlw) / 2;
                             ly = (oh - rlh) / 2;
                             break;
-                        case 4:
+                        case 3:
                             lx = 5;
                             ly = oh - rlh - space;
                             break;
@@ -232,11 +233,11 @@ class Logo{
                             ly = oh - rlh - space;
                     }
                     ctx.globalAlpha = la / 100;
-                    ctx.drawImage(item.el, lx, ly, rlw, rlh);
+                    ctx.drawImage(item.el[0], lx, ly, rlw, rlh);
                     fileItems[id] = canvas[0].toFile(o.name, o.type);
                 }
-                img.off('load', loadedFn);
-                img.off('error', errorFn);
+                img.removeEventListener('load', loadedFn);
+                img.removeEventListener('error', errorFn);
 
                 index++;
                 if(keys[index]) {
@@ -247,11 +248,11 @@ class Logo{
                 }
             }
 
-            img.on('error', errorFn);
+            img.addEventListener('error', errorFn);
 
             function errorFn() {
-                img.off('load', loadedFn);
-                img.off('error', errorFn);
+                img.removeEventListener('load', loadedFn);
+                img.removeEventListener('error', errorFn);
 
                 index++;
                 if(keys[index]) {

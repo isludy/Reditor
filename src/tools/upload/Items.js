@@ -94,7 +94,7 @@ class Items{
             }
             if(!/input|button|textarea/i.test(target.tagName) && ethis.hasClass('re-upload-loaded')){
                 ethis.toggleClass('re-upload-selected');
-                _this.items[id].selected = this.hasClass('re-upload-selected');
+                _this.items[id].selected = ethis.hasClass('re-upload-selected');
             }
         }
         this.items[id].handler = handler;
@@ -138,7 +138,7 @@ class Items{
      * @return {HTMLFormControlsCollection | ActiveX.ISchemaItemCollection}
      */
     form(id){
-        return this.items[id].el.find('form')[0].elements;
+        return this.items[id].el.find('form [name]');
     }
     /**
      * 合成logo，并执行上传

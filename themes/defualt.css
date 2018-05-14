@@ -493,6 +493,7 @@
     opacity: .3;
     right: 2px;
     bottom: 2px;
+    z-index: 2;
 }
 .re-upload-item-logo.active{
     opacity: 1;
@@ -521,6 +522,7 @@
     transform-origin: top;
     transform: scaleY(0);
     transition: transform .5s;
+    z-index: 1;
 }
 .re-upload-item-preview:hover .re-upload-item-filename{
     transform: scaleY(1);

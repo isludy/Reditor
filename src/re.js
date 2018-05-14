@@ -186,7 +186,7 @@ class Re{
      * @return {DocumentFragment}
      */
     static argsToFragment(args){
-        if(args[0].nodeType === 11) return args;
+        if(args[0].nodeType === 11) return args[0];
         let frag = document.createDocumentFragment();
         for(let i=0, len=args.length, elen=0; i<len; i++){
             if(args[i].nodeType === 1){
@@ -215,9 +215,9 @@ class Re{
     attr(k, v=''){
         if(v){
             for(let i=0; i<this.length; i++)
-                this[i].setAttribute('data-'+k, v);
+                this[i].setAttribute(k, v);
         }else{
-            return this[0].getAttribute('data-'+k);
+            return this[0].getAttribute(k);
         }
         return this;
     }
@@ -237,9 +237,9 @@ class Re{
                 return this[0].dataset[k];
         }else{
             if(v)
-                this.attr(k, v);
+                this.attr('data-'+k, v);
             else
-                return this.attr(k);
+                return this.attr('data-'+k);
         }
         return this;
     }
