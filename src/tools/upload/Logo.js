@@ -1,7 +1,7 @@
 import utils from '../../utils';
 import options from '../../options';
 
-const canvas = document.create('canvas'),
+const canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d'),
     img = new Image(),
     logoPath = options.upload.logo.path;
@@ -11,7 +11,7 @@ class Logo{
         let _this = this;
         this.items = Object.create(null);
 
-        canvas.attr('style','position:fixed;top:-99999px;');
+        canvas.setAttribute('style','position:fixed;top:-99999px;');
 
         this.style = {
             name: 'width:7.5em;font-size:14px;text-align:right;display:inline-block;',

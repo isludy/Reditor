@@ -16,9 +16,10 @@ export default (reditor)=>{
 		`,
 		btns: ['确定',{html: '取消', type: 'warning'}],
 		clicked(code, box){
+			console.log(code);
 			if(code) return;
-			let url = box.re('[name="url"]')[0].value,
-            	target = box.re('[name="target"]')[0].value,
+			let url = box.find('[name="url"]')[0].value,
+            	target = box.find('[name="target"]')[0].value,
 				a, reg, len, i;
 
 			if(!/^http[s]?:\/\/[^.\s]+\.\S+/.test(url)) {
@@ -37,16 +38,13 @@ export default (reditor)=>{
 				range: reditor.range
             });
 
-			a = reditor.edit.re('a[href$="__target_'+target+'"]');
-			if(a){
+			a = reditor.edit.find('a[href$="__target_'+target+'"]');
+			if(a.length){
                 reg = new RegExp('__target_'+target+'[\/]?$','g');
-                len = a.length;
-                i = 0;
-
-                for(; i<len; i++){
-                    a[i].href = a[i].href.replace(reg, '');
-                    if(target === '_blank') a[i].target = '_blank';
-                }
+                a.each(item=>{
+                	item.href = item.href.replace(reg, '');
+                    if(target === '_blank') item.target = '_blank';
+				});
 			}
 		}
 	});

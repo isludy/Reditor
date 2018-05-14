@@ -1,3 +1,5 @@
+import re from './re';
+
 export default {
     /**
      * 获取或设置range
@@ -41,75 +43,51 @@ export default {
      * @param context {Node,Element,NodeList,HTMLCollection} 可选 上下文，默认body
      */
     dialog(o, context=document.body){
-        let dialog = document.create('div'),
-            nodes = {
-            wrapper: document.create('div'),
-            header: document.create('div'),
-            body: document.create('div'),
-            footer: document.create('div'),
-            close: document.create('b')
-        },
-        btns,
-        btn;
+        let dialog = re('<div'+(o.id ? ' id='+o.id : '')+' class="re-dialog">'),
+            wrapper = re('<div class="re-dialog-wrapper" style="'+o.css+'">'),
+            header = re('<div class="re-dialog-header re-'+(o.type || 'success')+'">'+(o.title || '弹窗')+'</div>'),
+            body = re('<div class="re-dialog-body">'+(o.body || '')+'</div>'),
+            footer = re('<div class="re-dialog-footer">'),
+            close = re('<b class="re-dialog-close">&times;</b>'),
+            btns,
+            btn;
 
-        nodes.header.innerHTML = o.title || '弹窗';
-        nodes.close.innerHTML = '&times;' ;
-        nodes.body.innerHTML = o.body || '';
-        nodes.wrapper.attr('style', o.css);
+        wrapper.append(close, header, body, footer);
+        dialog.append(wrapper);
+        context.appendChild(dialog[0]);
 
-        if(o.id) dialog.id = o.id;
-
-        for(let n in nodes){
-            nodes[n].addClass('re-dialog-'+n);
-        }
-        nodes.header.addClass(o.type ? 're-'+o.type : 're-success');
-        dialog.addClass('re-dialog');
-
-        nodes.wrapper.append(nodes.close, nodes.header, nodes.body, nodes.footer);
-        dialog.append(nodes.wrapper);
-        context.append(dialog);
-
-        nodes.close.on('click', clickHandler);
+        close.on('click', clickHandler);
         dialog.on('click', dialogHandler);
 
-        if(o.btns && o.btns.length){
+        if(Array.isArray(o.btns)){
             btns = [];
-            o.btns.each((item)=>{
-                btn = document.create('button');
-                if(typeof item === 'string'){
-                    btn.className = 're-btn-m re-btn-success';
-                    btn.innerHTML = item;
-                }else if(typeof item === 'object'){
-                    btn.className = 're-btn-m re-btn-' + item.type;
-                    btn.innerHTML = item.html;
-                }
+            o.btns.forEach(item=>{
+                btn = re('<button class="re-btn-m re-btn-'+(item.type || 'success')+'">'+(item.html || item)+'</button>');
                 btn.on('click', clickHandler);
-                btns.push(btn);
-                nodes.footer.append(btn);
+                btns.push(btn[0]);
+                footer.append(btn);
             });
         }
 
         function clickHandler(e){
             if(typeof o.clicked === 'function'){
-                if(o.clicked.call(this, btns.indexOf(this), dialog, e) !== false) destroy();
+                if(o.clicked.call(this,  btns.indexOf(this), dialog, e) !== false) destroy();
             }else{
                 destroy();
             }
         }
         function dialogHandler(e) {
-            if (e.target === dialog) clickHandler.call(this, e);
+            if (e.target === this) clickHandler.call(this, e);
         }
-
         function destroy(){
-            if(btns) btns.each(btn=>{
-                btn.off('click', clickHandler);
+            if(btns) btns.forEach(btn=>{
+                re(btn).off('click', clickHandler);
             });
             btns = btn = null;
-            nodes.close.off('click', clickHandler);
+            close.off('click', clickHandler);
             dialog.off('click', dialogHandler);
             dialog.remove();
         }
-
         if(typeof o.created === 'function') o.created(dialog);
     },
     /**
@@ -120,32 +98,26 @@ export default {
     tab(id){
         let context, tabs, tabbody, data, len, i=0;
 
-        if(typeof id === 'string'){
-            context = document.re('#'+id);
-        }else if(id && id.nodeType === 1){
-            context = id;
-        }else{
-            throw new Error('The parameter of tab must be id or element!');
-        }
+        context = re('#'+id);
 
-        id = null;
-        tabs = context.re('[data-tab]');
-        tabbody = context.re('[data-tabbody]');
+        tabs = context.find('[data-tab]');
+        tabbody = context.find('[data-tabbody]');
         len = tabbody.length;
 
         tabs.on('click', handle, false);
 
-        function handle(e){
+        function handle(){
+            let _this = re(this);
             tabs.removeClass('active');
-            this.addClass('active');
-            if(data = e.currentTarget.attr('data-tab')){
-                for(i=0; i<len; i++){
-                    if(tabbody[i].attr('data-tabbody') === data){
-                        tabbody[i].addClass('active');
+            _this.addClass('active');
+            if(data = _this.data('tab')){
+                tabbody.each(v=>{
+                    if(v.data('tabbody') === data){
+                        v.addClass('active');
                     }else{
-                        tabbody[i].removeClass('active');
+                        v.removeClass('active');
                     }
-                }
+                });
             }
         }
 
@@ -178,61 +150,45 @@ export default {
         if(typeof o !== 'object' || typeof o.items !== 'object'){
             throw 'The first parameter (options && options.items) of menu must be given!';
         }
-        let menu = document.create('div'),
+        let menu = re('<div class="re-menu" style="left: '+(o.x || 0) +'px; top: '+(o.y || 0)+'px">'),
             len = o.items.length,
             i = 0,
             item,
             div,
             target;
 
-        menu.className = 're-menu';
         for (; i < len; i++) {
             item = o.items[i];
-            div = document.create('div');
+            div = re('<div class="re-menu-item"'+(item.css ? ' style="'+item.css+'"' : '')+'>'+(item.html || '')+'</div>');
             if (typeof item.data === 'object') {
                 for (let k in item.data) {
-                    if (item.data.hasOwnProperty(k)) div.attr('data-' + k, item.data[k]);
+                    if (item.data.hasOwnProperty(k)) div.data(k, item.data[k]);
                 }
             }
-            div.className = 're-menu-item';
-            if (typeof item.css === 'string')
-                div.attr('style', item.css);
-            else if(typeof item.css === 'object')
-                for(let k in item.css)
-                    if(item.css.hasOwnProperty(k))
-                        div.style[k] = item.css[k];
-
-            if (typeof item.html === 'string') div.innerHTML = item.html;
 
             div.on('click', handle, false);
             menu.append(div);
         }
-        context.append(menu);
+        context.appendChild(menu[0]);
 
-        document.on('mouseup', upFn, false);
-        menu.style.left = (o.x || 0) + 'px';
-        menu.style.top  = (o.y || 0) + 'px';
+        re(document).on('mouseup', upFn, false);
 
-        function handle(e) {
-            target = e.currentTarget;
+        function handle() {
+            target = re(this);
             if(typeof o.onclick === 'function') o.onclick(target);
             leaveFn();
         }
 
         function upFn(e) {
-            if(!menu.contains(e.target) && e.target !== menu) leaveFn();
+            if(!menu[0].contains(e.target) && e.target !== menu[0]) leaveFn();
         }
 
         function leaveFn() {
             if(typeof o.onhide === 'function') o.onhide();
             if (target) target.off('click', handle, false);
-            document.off('mouseup', upFn, false);
-            context.removeChild(menu);
+            re(document).off('mouseup', upFn, false);
+            menu.remove();
         }
-    },
-    aside(o){
-        let box = document.create('div');
-
     },
     /**
      * 代替execCommand命令来完成文档的一些复杂操作
@@ -250,25 +206,17 @@ export default {
     exec(o){
         if(!o.range || o.range.collapsed) return;
         this.range(o.range);
-        document.cmd(o.cmdName, false, o.cmdValue);
+        document.execCommand(o.cmdName, false, o.cmdValue);
         if(o.value && o.name && o.context && o.selector){
-            o.selector.each(selector=>{
-                let nodes = o.context.re(selector);
-                if(nodes) {
-                    if (nodes.length)
-                        nodes.each(setStyle);
-                    else
-                        setStyle(nodes);
-                }
+            o.selector.forEach(selector=>{
+                o.context.find(selector).each(setStyle);
             });
         }
         function setStyle(node){
             node.style[o.name] = o.value;
             if(node.tagName === 'FONT'){
-                let span = document.create('span');
-                span.attr('style', node.attr('style'));
-                span.innerHTML = node.innerHTML;
-                node.parentNode.replaceChild(span, node);
+                let span = re('<span style="'+node.attr('style')+'">'+node.innerHTML+'</span>');
+                node.parentNode.replaceChild(span[0], node);
             }
         }
     }

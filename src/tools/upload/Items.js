@@ -1,4 +1,5 @@
 import options from '../../options';
+import re from '../../re';
 import Logo from './Logo';
 import Send from './Send';
 import Files from './Files';
@@ -46,66 +47,53 @@ class Items{
         }
         this.items[id] = o;
         let _this = this,
-            item = document.create('div'),
-            nodes = {
-                inner: document.create('div'),
-                preview: document.create('div'),
-                tick: document.create('div'),
-                info: document.create('div'),
-                filename: document.create('div'),
-                form: document.create('form'),
-                media: null
-            },
-            close = document.create('i');
+            item = re('<div class="re-upload-item">'),
+            inner = re('<div class="re-upload-item-inner">'),
+            preview = re('<div class="re-upload-item-preview alpha">'),
+            tick = re('<div class="re-upload-item-tick">'+(o.tick || '')+'</div>'),
+            info = re('<div class="re-upload-item-info">'),
+            filename = re('<div class="re-upload-item-filename">'+(o.name || '')+'</div>'),
+            form = re('<form class="re-upload-item-form">'+(options.upload.form || '')+'</form>'),
+            media = null,
+            close = re('<i class="re-close icon icon-close1">');
 
         if(/^(video|audio)\//.test(o.type)){
-            nodes.media = document.create('video');
-            nodes.media.src = o.url;
-            nodes.media.controls = 'controls';
-            nodes.media.preload = 'auto';
-            nodes.media.innerHTML = '浏览器不支持播放器';
+            media = re('<video class="re-upload-item-media" src="'+o.url+'" controls>浏览器不支持播放器</video>');
             Items.observe(this.items[id], 'url', o.url, val=>{
-                nodes.media.src = val;
+                media[0].src = val;
             });
         }else{
-            nodes.media = document.create('div');
+            media = re('<div class="re-upload-item-media">');
             if(/^image\//.test(o.type)){
-                nodes.media.style = 'background:url('+o.url+') no-repeat center; background-size: contain;';
-                nodes.preview.append(Logo.create(id));
+                media[0].style = 'background:url('+o.url+') no-repeat center; background-size: contain;';
+                preview.append(Logo.create(id));
                 Items.observe(this.items[id], 'url', o.url, val=>{
-                    nodes.media.style.backgroundImage = 'url('+val+')';
+                    media[0].style.backgroundImage = 'url('+val+')';
                 });
             }else{
-                nodes.media.addClass('noview');
-                nodes.media.innerHTML = (o.name.slice(o.name.lastIndexOf('.')+1)).toUpperCase();
+                media.addClass('noview');
+                media[0].innerHTML = (o.name.slice(o.name.lastIndexOf('.')+1)).toUpperCase();
             }
         }
 
-        for(let k in nodes) nodes[k].addClass('re-upload-item-'+k);
-        item.className = 're-upload-item';
-        close.className = 're-close icon icon-close1';
-        nodes.preview.addClass('alpha');
-
-        nodes.filename.innerHTML = o.name || '';
-        nodes.form.innerHTML = options.upload.form || '';
-        nodes.tick.innerHTML = o.tick || '';
         Items.observe(this.items[id], 'tick', o.tick, val=>{
-            nodes.tick.innerHTML = val;
+            tick[0].innerHTML = val;
         });
 
-        nodes.preview.append(nodes.filename, nodes.media);
-        nodes.info.append(nodes.form, nodes.tick);
-        nodes.inner.append(close, nodes.preview, nodes.info);
-        item.append(nodes.inner);
+        preview.append(filename, media);
+        info.append(form, tick);
+        inner.append(close, preview, info);
+        item.append(inner);
 
         item.on('click', handler);
         function handler(e){
-            let target = e.target;
-            if(target.hasClass('re-close')){
+            let target = e.target,
+                ethis = re(this);
+            if(re(target).hasClass('re-close')){
                 _this.remove(id);
             }
-            if(!/input|button|textarea/i.test(target.tagName) && this.hasClass('re-upload-loaded')){
-                this.toggleClass('re-upload-selected');
+            if(!/input|button|textarea/i.test(target.tagName) && ethis.hasClass('re-upload-loaded')){
+                ethis.toggleClass('re-upload-selected');
                 _this.items[id].selected = this.hasClass('re-upload-selected');
             }
         }

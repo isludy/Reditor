@@ -1,10 +1,10 @@
 import options from './options';
 import utils from './utils';
-
+import re from './re';
 const RC =  require.context('./tools', false, /\.js$/);
 class Reditor {
     constructor(id){
-        let editor = document.getElementById(id);
+        let editor = re('#'+id);
         if(!editor)
             throw new Error('Element of id "'+id+'" not found');
 
@@ -12,10 +12,11 @@ class Reditor {
         this.editor = editor;
         this.toolbar = this.createToolbar(options.tools);
         this.edit = this.createEdit();
-        this.editor.append(this.toolbar, this.edit);
+        this.editor.append(this.toolbar);
+        this.editor.append(this.edit);
         //使用styleWidthCss模式
         try{
-            document.cmd('styleWithCss', false, true);
+            document.execCommand('styleWithCss', false, true);
         }catch (e) {
             utils.dialog({
                 title: '提醒!',
@@ -26,26 +27,22 @@ class Reditor {
         }
     }
     createToolbar(tools){
-        let _this = this, toolbar = document.create('div'), title, div, k;
+        let _this = this, toolbar = re('<div class="re-toolbar">'), title, div, k;
         for(k in tools){
             if(tools.hasOwnProperty(k)){
                 title = typeof tools[k] === 'object' ? tools[k].title : tools[k];
-                div = document.create('div');
-                div.className = 're-tool re-tool-'+k;
-                div.title = title;
-                div.attr('data-name', k);
-                div.innerHTML = '<i class="icon icon-'+k+'"></i>';
-                div.on('click', handler, false);
+                div = re('<div class="re-tool re-tool-'+k+'" title="'+title+'" data-name="'+k+'"><i class="icon icon-'+k+'"></i></div>');
+                div.on('click', handler);
                 toolbar.append(div);
             }
         }
         function handler(e){
-            let name = e.currentTarget.attr('data-name');
-            _this.edit.focus();
+            let name = this.getAttribute('data-name');
+            _this.edit[0].focus();
             utils.range(_this.range);
-            if(name && document.activeElement === _this.edit){
+            if(name && document.activeElement === _this.edit[0]){
                 if(tools[name].params === undefined){
-                    document.cmd(name);
+                    document.execCommand(name);
                     _this.range = utils.range();
                 }else{
                     let toolHandler = RC('./'+name+'.js');
@@ -57,15 +54,12 @@ class Reditor {
                 }
             }
         }
-        toolbar.className = 're-toolbar';
         return toolbar;
     }
     createEdit(){
         let _this = this,
-            edit = document.create('div');
+            edit = re('<div class="re-edit" contentEditable="true"></div>');
 
-        edit.className = 're-edit';
-        edit.contentEditable = true;
         edit.on('mouseup', ()=>{
             _this.range = utils.range();
         });
@@ -74,9 +68,9 @@ class Reditor {
                 _this.range.detach();
             }catch (e) {}
         });
-        document.on('keydown', (e)=>{
-            if(e.keyCode === 13 || !edit.childNodes.length)
-                document.cmd('formatBlock',false,'p');
+        re(document).on('keydown', (e)=>{
+            if(e.keyCode === 13 || !edit.children().length)
+                document.execCommand('formatBlock', false, 'p');
         });
         return edit;
     }

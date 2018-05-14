@@ -1,9 +1,10 @@
+import re from '../../re';
 import Items from './Items';
 
 class Up{
     constructor(){
-        let _this = this, ii = 0;
-        this.input = document.create('input');
+        let _this = this;
+        this.input = document.createElement('input');
         this.input.type = 'file';
         this.input.multiple = true;
         this.choser = null;
@@ -24,7 +25,7 @@ class Up{
                 Items.remove();
             },
             input(){
-                let frag = document.frag(),
+                let frag = document.createDocumentFragment(),
                     len = _this.input.files.length,
                     i = 0,
                     file;
@@ -38,7 +39,7 @@ class Up{
                         tick: '<b>等待上传...</b>'
                     }));
                 }
-                _this.list.insertBefore(frag, _this.list.childNodes[0]);
+                _this.list.prepend(frag);
             },
             use(){
                 console.log(Items.items);
@@ -46,11 +47,11 @@ class Up{
         };
     }
     init(o){
-        this.choser = document.getElementById(o.choser);
-        this.upload = document.getElementById(o.upload);
-        this.clear = document.getElementById(o.clear);
-        this.list = document.getElementById(o.list);
-        this.use = document.getElementById(o.use);
+        this.choser = re(o.choser);
+        this.upload = re(o.upload);
+        this.clear = re(o.clear);
+        this.list = re(o.list);
+        this.use = re(o.use);
 
         this.choser.on('click', this.handlers.choser);
         this.upload.on('click', this.handlers.upload);
