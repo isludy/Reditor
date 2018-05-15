@@ -4,6 +4,7 @@
     border: #ddd solid 1px;
     box-sizing: border-box;
     outline: none;
+    position: relative;
 }
 .re-edit:focus{
     -webkit-box-shadow: 0 0 2px #44a4ff;

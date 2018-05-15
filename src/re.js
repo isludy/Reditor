@@ -194,7 +194,6 @@ class Re{
     remove(){
         for(let i=0; i<this.length; i++)
             this[i].parentNode.removeChild(this[i]);
-        this.length = 0;
         return this;
     }
 

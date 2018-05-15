@@ -1,52 +1,56 @@
 const colors = ['#ffffff','#eeeeee','#aaaaaa','#000000','#445566','#4477cc','#5599dd','#aa0000','#cc0000','#ee7733','#ffcc00','#77aa44'];
 export default {
     tools: {
-        'bold': '加粗',
-        'italic': '斜体',
-        'underline': '下划线',
-        'strikethrough': '删除线',
-        'subscript': '下标',
-        'superscript': '上标',
-        'fontname': {
+        bold: '加粗',
+        italic: '斜体',
+        underline: '下划线',
+        strikethrough: '删除线',
+        subscript: '下标',
+        superscript: '上标',
+        fontname: {
             title: '字体',
             params: ['Helvetica','MicrosoftYaHei','Arial','SimHei','SimSum','FangSong','KaiTi','STKaiti','STSong','STFangSong']
         },
-        'fontsize': {
+        fontsize: {
             title: '字号',
             params: [12,13,14,16,18,20,22,24,28,32,36,42,48,56,72]
         },
-        'linespacing': {
+        linespacing: {
             title: '行距',
             params: [1,1.5,1.6,1.8,2,2.5,3,3.5,4,4.5,5]
         },
-        'forecolor': {
+        forecolor: {
             title: '前景色',
             params: colors
         },
-        'backcolor': {
+        backcolor: {
             title: '背景色',
             params: colors
         },
-        'justifyleft': '左对齐',
-        'justifycenter': '居中对齐',
-        'justifyright': '右对齐',
-        'justifyfull': '两端对齐',
-        'link': {
+        justifyleft: '左对齐',
+        justifycenter: '居中对齐',
+        justifyright: '右对齐',
+        justifyfull: '两端对齐',
+        link: {
             title: '添加超链接',
             params: true
         },
-        'unlink': '删除超链接',
-        'upload': {
+        unlink: '删除超链接',
+        upload: {
             title: '添加文件',
             params: true
         },
-        'zhconv': {
+        zhconv: {
             icon: '繁',
             title: '繁体',
             params: './lib/zh_lib.js'
         },
-        'replace': {
+        replace: {
             title: '查找替换',
+            params: true
+        },
+        source: {
+            title: '源码',
             params: true
         }
     },
