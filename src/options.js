@@ -37,7 +37,16 @@ export default {
         },
         'unlink': '删除超链接',
         'upload': {
-            title: '文件上传与管理',
+            title: '添加文件',
+            params: true
+        },
+        'zhconv': {
+            icon: '繁',
+            title: '繁体',
+            params: './lib/zh_lib.js'
+        },
+        'replace': {
+            title: '查找替换',
             params: true
         }
     },

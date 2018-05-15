@@ -31,7 +31,7 @@ class Reditor {
         for(k in tools){
             if(tools.hasOwnProperty(k)){
                 title = typeof tools[k] === 'object' ? tools[k].title : tools[k];
-                div = re('<div class="re-tool re-tool-'+k+'" title="'+title+'" data-name="'+k+'"><i class="icon icon-'+k+'"></i></div>');
+                div = re('<div class="re-tool re-tool-'+k+'" title="'+title+'" data-name="'+k+'">'+(tools[k].icon || '<i class="icon icon-'+k+'"></i>')+'</div>');
                 div.on('click', handler);
                 toolbar.append(div);
             }
@@ -58,7 +58,7 @@ class Reditor {
     }
     createEdit(){
         let _this = this,
-            edit = re('<div class="re-edit" contentEditable="true"></div>');
+            edit = re('<div class="re-edit" contentEditable="true" spellcheck="false"></div>');
 
         edit.on('mouseup', ()=>{
             _this.range = utils.range();

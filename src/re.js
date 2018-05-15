@@ -63,6 +63,24 @@ class Re{
     }
 
     /**
+     * 获取所有的文本节点
+     * @return {Array}
+     */
+    textNodes(){
+        let doms = [];
+        for(let i=0; i<this.length; i++) rec(this[i]);
+        function rec(el){
+            let tmp = el.childNodes;
+            for (let j = 0, len = tmp.length; j < len; j++)
+                if(tmp[j].nodeType === 3)
+                    doms.push(tmp[j]);
+                else
+                    rec(tmp[j]);
+        }
+        return doms;
+    }
+
+    /**
      * 迭代
      * @param fn
      * @return {*}

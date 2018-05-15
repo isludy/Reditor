@@ -36,18 +36,19 @@ class Items{
      *         url: 可预览文件的路径,
      *         type: 文件mime类型,
      *         name: 文件名,
-     *         tick: 上传状态信息
+     *         tick: 上传状态信息，用来显示上传前显示等待、上传中进度信息、上传后显示日期信息
+     *         status: 状态值，2表示未上传，1表示上传中，0表示已上传，用来控制上传状态样式
+     *         selected: 选择状态，boolean类型
      *     }
      * @param file 文件File
      * @return {*}
      */
     create(id, o, file = null){
-        if(file) {
+        if(file)
             if(!Files.add(id, file)) return;
-        }
         this.items[id] = o;
         let _this = this,
-            item = re('<div class="re-upload-item">'),
+            item = re('<div class="re-upload-item'+(o.status > 0 ? '' : ' re-upload-loaded')+'">'),
             inner = re('<div class="re-upload-item-inner">'),
             preview = re('<div class="re-upload-item-preview alpha">'),
             tick = re('<div class="re-upload-item-tick">'+(o.tick || '')+'</div>'),
@@ -66,7 +67,7 @@ class Items{
             media = re('<div class="re-upload-item-media">');
             if(/^image\//.test(o.type)){
                 media[0].style = 'background:url('+o.url+') no-repeat center; background-size: contain;';
-                preview.append(Logo.create(id));
+                if(o.status > 0) preview.append(Logo.create(id));
                 Items.observe(this.items[id], 'url', o.url, val=>{
                     media[0].style.backgroundImage = 'url('+val+')';
                 });
@@ -80,6 +81,20 @@ class Items{
             tick[0].innerHTML = val;
         });
 
+        Items.observe(this.items[id], 'status', o.status, val=>{
+            if(val > 0)
+                item.removeClass('re-upload-loaded');
+            else
+                item.addClass('re-upload-loaded');
+        });
+
+        Items.observe(this.items[id], 'selected', o.selected, val=>{
+            if(val)
+                item.addClass('re-upload-selected');
+            else
+                item.removeClass('re-upload-selected');
+        });
+
         preview.append(filename, media);
         info.append(form, tick);
         inner.append(close, preview, info);
@@ -87,13 +102,17 @@ class Items{
 
         item.on('click', handler);
         function handler(e){
-            let target = e.target,
-                ethis = re(this);
+            let target = e.target;
             if(re(target).hasClass('re-close')){
                 _this.remove(id);
-            }else if(!/input|button|textarea/i.test(target.tagName) && ethis.hasClass('re-upload-loaded')){
-                ethis.toggleClass('re-upload-selected');
-                _this.items[id].selected = ethis.hasClass('re-upload-selected');
+            }else if(!/input|button|textarea/i.test(target.tagName) && _this.items[id].status === 0){
+                _this.items[id].selected = !_this.items[id].selected;
+                let selected = _this.items[id].selected;
+                if(e.ctrlKey){
+                    for(let k in _this.items)
+                        _this.items[k].selected = selected;
+                }else
+                    _this.items[id].selected = selected;
             }
         }
         this.items[id].handler = handler;

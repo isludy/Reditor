@@ -402,10 +402,25 @@
     justify-content: center;
     align-items: center;
     transform: translateX(0);
-    transition: transform 1s;
+    transition: transform .5s;
 }
 .re-upload-hide{
     transform: translateX(100%);
+}
+.re-upload-slide-left{
+    position: absolute;
+    right: 100%;
+    background: rgba(0, 0, 0, .5);
+    color: #fff;
+    font-size: 14px;
+    padding: 2em .2em;
+    border-top-left-radius: 1em;
+    border-bottom-left-radius: 1em;
+    cursor: pointer;
+    opacity: .6;
+}
+.re-upload-slide-left:hover{
+    opacity: 1;
 }
 .re-upload-wrapper{
     width: 80%;

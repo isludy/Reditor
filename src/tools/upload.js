@@ -1,6 +1,9 @@
 import re from './../re';
 import Up from './upload/Up';
 import Down from './upload/Down';
+import Items from './upload/Items';
+import utils from "../utils";
+
 let box;
 
 export default (reditor)=>{
@@ -18,6 +21,7 @@ export default (reditor)=>{
                     <button id="re-upload-use" class="re-btn-m re-btn-success">使用</button>
                 </div>
             </div>
+            <div id="re-upload-slide-left" class="re-upload-slide-left icon icon-arrow-left1"></div>
         </div>`);
         box.on('click',function (e){
             if(e.target === this) box.toggleClass('re-upload-hide');
@@ -28,10 +32,19 @@ export default (reditor)=>{
             choser: '#re-upload-choser',
             upload: '#re-upload-upload',
             clear: '#re-upload-clear',
-            list: '#re-upload-body',
-            use: '#re-upload-use'
+            list: '#re-upload-body'
         });
         Down.init('#re-upload-body');
+        re('#re-upload-use').on('click', function(){
+            for(let k in Items.items)
+                if(Items.items[k].selected){
+                    utils.range(reditor.range);
+                    document.execCommand('insertimage', false, Items.items[k].url);
+                }
+        });
+        re('#re-upload-slide-left').on('click',()=>{
+            box.toggleClass('re-upload-hide');
+        });
     }else{
         box.toggleClass('re-upload-hide');
     }

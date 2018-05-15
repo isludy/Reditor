@@ -7,18 +7,27 @@ let list = null;
 xhr.responseType = 'json';
 xhr.addEventListener('load',()=>{
     let res = xhr.response,
-        frag = document.createDocumentFragment();
+        frag = document.createDocumentFragment(),
+        sort = [];
 
     for(let k in res.data){
-        res.data[k].tick = '上传于：' + new Date(res.data[k].date).format('Y-M-D H:I:S');
-        frag.appendChild(Items.create(k, res.data[k])[0]);
+        sort.push(res.data[k]);
     }
+    sort.sort((a, b)=>{
+       return a.date < b.date;
+    });
+    sort.forEach(o=>{
+        o.tick = '上传于：' + new Date(o.date).format('Y-M-D H:I:S');
+        o.status = 0;
+        o.selected = false;
+        frag.appendChild(Items.create(o.resid, o)[0]);
+    });
     list.append(frag);
 });
 const Down = {
     init(id){
         list = re(id);
-        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180514');
+        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180508');
         xhr.send();
     }
 };

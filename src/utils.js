@@ -33,12 +33,11 @@ export default {
      * {
      *      id: {String} 规定弹窗id名
      *      title: {String} 标题,
-     *      colorType: {String} header的样式颜色名，默认success，另外有warning, danger。也可自定义名称如: info，然后添加 .re-info{}到样式中
+     *      type: {String} header的样式颜色名，默认success，另外有warning, danger。也可自定义名称如: info，然后添加 .re-info{}到样式中
      *      body: {String} 内容,
      *      css: {String} 弹窗样式,
-     *      yes: {String}
-     *      no: {String} “取消”按钮的内容, 如果是false，则隐藏按钮
-     *      oncreated, onclose, onsure, oncancel, onhide //事件函数
+     *      created: {Function} 事件，节点创建并添加完成时触发
+     *      clicked: {Function} 事件，点击按钮时触发
      * }
      * @param context {Node,Element,NodeList,HTMLCollection} 可选 上下文，默认body
      */

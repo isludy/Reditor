@@ -37,13 +37,11 @@ class Up{
                         url: window.createURL(file),
                         name: file.name,
                         type: file.type,
-                        tick: '<b>等待上传...</b>'
+                        tick: '<b>等待上传...</b>',
+                        status: 1
                     })[0]);
                 }
                 _this.list.prepend(frag);
-            },
-            use(){
-                console.log(Items.items);
             }
         };
     }
@@ -52,20 +50,17 @@ class Up{
         this.upload = re(o.upload);
         this.clear = re(o.clear);
         this.list = re(o.list);
-        this.use = re(o.use);
 
         this.choser.on('click', this.handlers.choser);
         this.upload.on('click', this.handlers.upload);
         this.clear.on('click', this.handlers.clear);
         re(this.input).on('change', this.handlers.input);
-        this.use.on('click', this.handlers.use);
     }
     destroy(){
         this.choser.off('click', this.handlers.choser);
         this.upload.off('click', this.handlers.upload);
         this.clear.off('click', this.handlers.clear);
         re(this.input).off('change', this.handlers.input);
-        this.use.off('click', this.handlers.use);
     }
 }
 

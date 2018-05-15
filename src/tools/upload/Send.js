@@ -2,7 +2,7 @@ import utils from '../../utils';
 import options from '../../options';
 import Files from './Files';
 import Logo from './Logo';
-import Local from './Local';
+// import Local from './Local';
 
 const field = options.upload.field,
     path = options.upload.path,
@@ -31,18 +31,19 @@ xhr.on('timeout', ()=>{
     errorMsg = '连接超时！';
 });
 xhr.on('abort', ()=>{
-    errorMsg = '已经删除文件并终止上传！';
+    errorMsg = '删除文件，已终止上传！';
 });
 xhr.on('loadend', ()=>{
     let res = xhr.response;
     if(res && res.code === 0 && res.data){
-        Items.items[key].el.addClass('re-upload-loaded');
+        Items.items[key].status = 0;
+        Items.items[key].selected = true;
         Items.items[key].url = res.data.url;
         Items.items[key].tick = '上传于：'+(new Date(res.data.date).format('Y-M-D H:I:S'));
 
         Logo.remove(key);
         Files.remove(key);
-        Local.add(res.data);
+        // Local.add(res.data);
 
         recursion(Object.keys(Files.items)[0]);
     }else{
