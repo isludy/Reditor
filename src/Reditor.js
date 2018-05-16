@@ -135,24 +135,20 @@ class Reditor {
             try{
                 _this.range.detach();
             }catch (e) {}
-            if(e.keyCode === 13 || !edit.children().length)
+            if(e.keyCode === 13 || !/<p/.test(_this.edit[0].innerHTML)){
                 document.execCommand('formatBlock', false, 'p');
+            }
         };
         handlers['editcontextmenu'] = (e)=>{
             switch (e.target.tagName){
                 case 'IMG':
                     e.preventDefault();
-                    utils.dialog( contextMenus.IMG(e.target) );
+                    utils.menu( contextMenus.IMG(e, e.target) );
                     break;
                 case 'A':
                     e.preventDefault();
                     utils.dialog( contextMenus.A(e.target) );
                     break;
-                default:
-                    if(_this.range && !_this.range.collapsed){
-                        e.preventDefault();
-                        utils.menu(contextMenus.TEXT(e, _this.range) );
-                    }
             }
         };
         edit.on('mouseup', handlers['editmouseup']);

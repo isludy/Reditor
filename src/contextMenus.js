@@ -1,7 +1,60 @@
 import utils from "./utils";
-
+import re from  './re';
 export default {
-    IMG(img){
+    A(a){
+        let url, target;
+        return {
+            title: '设置超链接属性',
+            body: `<p>输入地址：
+				<input class="re-input-m" type="text" name="url" value="${a.href}" style="width: 240px;">
+			</p>
+			<p>打开模式：
+				<select class="re-input-m" name="target">
+					<option value="_blank">在新建窗口打开</option>
+					<option value="_self">在当前窗口打开</option>
+				</select>
+			</p>`,
+            btns: ['确定',{html: '取消', type: 'warning'}],
+            created(box){
+                url = box.find('[name=url]');
+                target = box.find('[name=target]');
+                url[0].value = a.getAttribute('href');
+                target[0].value = a.getAttribute('target');
+            },
+            clicked(){
+                a.href = url[0].value;
+                a.target = target[0].value;
+            }
+        }
+    },
+    IMG(e, img){
+        let _this = this,
+            css = 'white-space:nowrap;font-size:14px;';
+        return {
+            x: e.clientX,
+            y: e.clientY,
+            items:[{
+                css,
+                html: '添加文件描述',
+                data: {name: 'desc'}
+            },{
+                css,
+                html: '修改文件样式',
+                data: {name: 'scale'}
+            }],
+            onclick(target){
+                switch (target.data('name')){
+                    case 'desc':
+                        _this.IMGDesc(img);
+                        break;
+                    case 'scale':
+                        _this.IMGScale(img);
+                        break;
+                }
+            }
+        }
+    },
+    IMGScale(img){
         let els;
         function inputHandler(){
             if(this.name === 'textAlign'){
@@ -10,7 +63,7 @@ export default {
                 img.style[this.name] = this.value;
             }
         }
-        return {
+        utils.dialog({
             title: '设置图片属性',
             body: `<p>
                         宽度：<input class="re-input-m" type="text" placeholder="自动" name="width">
@@ -44,7 +97,7 @@ export default {
                 els = box.find('[name]').on('input', inputHandler).each(el=>{
                     switch (el.name) {
                         case  'textAlign':
-                            el.value = img.parentNode.style[this.name] || 'left';
+                            el.value = img.parentNode.style[el.name] || 'left';
                             break;
                         case 'float':
                             el.value = img.style[el.name] || 'none';
@@ -57,72 +110,16 @@ export default {
             clicked(){
                 els.off('input', inputHandler);
             }
-        };
+        });
     },
-    A(a){
-        let url, target;
-        return {
-            title: '设置超链接属性',
-            body: `<p>输入地址：
-				<input class="re-input-m" type="text" name="url" value="${a.href}" style="width: 240px;">
-			</p>
-			<p>打开模式：
-				<select class="re-input-m" name="target">
-					<option value="_blank">在新建窗口打开</option>
-					<option value="_self">在当前窗口打开</option>
-				</select>
-			</p>`,
-            btns: ['确定',{html: '取消', type: 'warning'}],
-            created(box){
-                url = box.find('[name=url]');
-                target = box.find('[name=target]');
-                url[0].value = a.getAttribute('href');
-                target[0].value = a.getAttribute('target');
-            },
-            clicked(){
-                a.href = url[0].value;
-                a.target = target[0].value;
-            }
-        }
-    },
-    TEXT(e, range){
-        let css = 'white-space:nowrap;font-size:14px;';
-        return {
-            x: e.clientX,
-            y: e.clientY,
-            items:[{
-                css,
-                html: '复制',
-                data: {name: 'copy'}
-            },{
-                css,
-                html: '粘贴',
-                data: {name: 'paste'}
-            },{
-                css,
-                html: '剪切',
-                data: {name: 'cut'}
-            },{
-                css,
-                html: '删除',
-                data: {name: 'delete'}
-            },{
-                css,
-                html: '重做',
-                data: {name: 'redo'}
-            },{
-                css,
-                html: '撤销',
-                data: {name: 'undo'}
-            },{
-                css,
-                html: '格式化',
-                data: {name: 'removeFormat'}
-            }],
-            onclick(target){
-                utils.range(range);
-                document.execCommand(target.data('name'));
-            }
-        }
+    IMGDesc(img){
+        let span = re('<span style="display: inline-block;text-align: left; color: gray; font-size: .9em;">在此输入文件描述</span>'),
+            range = document.createRange();
+        img.after(span[0]);
+        img.after(re('<br>')[0]);
+
+        span[0].parentNode.style.textAlign = 'center';
+        range.selectNode(span[0]);
+        utils.range(range);
     }
 }
