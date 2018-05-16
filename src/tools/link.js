@@ -16,11 +16,10 @@ export default (reditor)=>{
 		`,
 		btns: ['确定',{html: '取消', type: 'warning'}],
 		clicked(code, box){
-			console.log(code);
 			if(code) return;
 			let url = box.find('[name="url"]')[0].value,
             	target = box.find('[name="target"]')[0].value,
-				a, reg, len, i;
+				a, reg;
 
 			if(!/^http[s]?:\/\/[^.\s]+\.\S+/.test(url)) {
 				utils.dialog({

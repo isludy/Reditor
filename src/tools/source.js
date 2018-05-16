@@ -1,17 +1,15 @@
-import re from '../re';
-
-let hide = true,
-    el = re('<div style="width:100%; height: 100%;position: absolute;top: 0;left: 0;">');
 export default (reditor)=>{
-    el.html(reditor.edit.html()
-        .replace(/<(\/)?(\w+[^>]*?)>/ig, '#lb#&lt;#rb#$1$2#lb#&gt;#rb#@n@')
-        .replace(/#lb#/g, '<b style="color: red;">')
-        .replace(/#rb#/g, '</b>')
-        .replace(/@n@/g, '<br>'));
-    if(hide){
-        reditor.edit.append(el);
+    if(!reditor.options.sync)
+        reditor.textarea.html(reditor.edit.html().replace(/<\/(p|div)>\n*/ig, '</$1>\n\n'));
+
+    reditor.textarea.attr('style','resize: none; height: '+reditor.edit[0].offsetHeight+'px;');
+    reditor.edit.toggleClass('re-hide');
+    reditor.textarea.toggleClass('re-hide');
+
+    if(reditor.textarea.hasClass('re-hide')){
+        reditor.textarea.remove();
+        reditor.edit.html(reditor.textarea[0].value);
     }else{
-        el.remove();
+        reditor.editor.append(reditor.textarea);
     }
-    hide = !hide;
 }

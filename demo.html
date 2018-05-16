@@ -8,10 +8,19 @@
 </head>
 <body>
 
-<div id="reditor" style="margin-top: 30px"></div>
+<div id="reditor"></div>
+<button id="btn1">销毁</button>
+<button id="btn2">更新</button>
 <script src="dist/main.js?v=1.0"></script>
 <script>
-    let r = new Reditor('reditor');
+    let r = new Reditor('#reditor');
+    btn1.onclick = function(){
+        r.destroy();
+    };
+
+    btn2.onclick = function(){
+        r.update();
+    }
 </script>
 </body>
 </html>

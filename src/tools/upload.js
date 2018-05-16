@@ -36,11 +36,16 @@ export default (reditor)=>{
         });
         Down.init('#re-upload-body');
         re('#re-upload-use').on('click', function(){
-            for(let k in Items.items)
-                if(Items.items[k].selected){
+            let rand = Math.random();
+            for(let k in Items.items) {
+                if (Items.items[k].selected) {
                     utils.range(reditor.range);
-                    document.execCommand('insertimage', false, Items.items[k].url);
+                    document.execCommand('insertimage', false, Items.items[k].url + '?reditor_img=' + rand);
                 }
+            }
+            re('img[src*="reditor_img='+rand+'"]').each(img=>{
+                img.src = img.src.replace('?reditor_img='+rand, '');
+            }).attr('style', 'max-width: 100%;');
         });
         re('#re-upload-slide-left').on('click',()=>{
             box.toggleClass('re-upload-hide');

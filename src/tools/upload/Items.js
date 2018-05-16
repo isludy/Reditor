@@ -50,7 +50,7 @@ class Items{
         let _this = this,
             item = re('<div class="re-upload-item'+(o.status > 0 ? '' : ' re-upload-loaded')+'">'),
             inner = re('<div class="re-upload-item-inner">'),
-            preview = re('<div class="re-upload-item-preview alpha">'),
+            preview = re('<div class="re-upload-item-preview re-alpha">'),
             tick = re('<div class="re-upload-item-tick">'+(o.tick || '')+'</div>'),
             info = re('<div class="re-upload-item-info">'),
             filename = re('<div class="re-upload-item-filename">'+(o.name || '')+'</div>'),

@@ -70,7 +70,7 @@ export default {
 
         function clickHandler(e){
             if(typeof o.clicked === 'function'){
-                if(o.clicked.call(this,  btns.indexOf(this), dialog, e) !== false) destroy();
+                if(o.clicked.call(this,  (btns ? btns.indexOf(this) : -1), dialog, e) !== false) destroy();
             }else{
                 destroy();
             }

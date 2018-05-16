@@ -27,7 +27,7 @@ xhr.addEventListener('load',()=>{
 const Down = {
     init(id){
         list = re(id);
-        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180514');
+        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180515');
         xhr.send();
     }
 };

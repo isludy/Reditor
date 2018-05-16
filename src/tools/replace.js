@@ -3,7 +3,6 @@ import utils from "../utils";
 
 export default (reditor, name)=>{
     let oldval, newval, matchcase, textNodes, nodeIndex, nodeLen, ovalLen, reg, exec, sel, range;
-
     function nextNode(){
         sel = document.getSelection();
         range = document.createRange();
@@ -54,7 +53,6 @@ export default (reditor, name)=>{
             });
         },
         clicked(code){
-            console.log(reg);
             switch (code){
                 case 0:
                     nextNode();

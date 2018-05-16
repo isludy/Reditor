@@ -1,6 +1,6 @@
 import options from '../options';
-let lib = null;
-function conv2HK(txt){
+let flag = false, loaded = false;
+function CN2HK(txt){
     let reg;
     for(let k in zh2Hant){
         reg = new RegExp(k,"ig");
@@ -13,14 +13,38 @@ function conv2HK(txt){
     reg = null;
     return txt;
 }
-export default (reditor, name)=>{
+function HK2CN(txt){
+    let reg;
+    for(let k in zh2Hant){
+        reg = new RegExp(zh2Hant[k],"ig");
+        txt = txt.replace(reg, k);
+    }
+    for(let k in zh2HK){
+        reg = new RegExp(zh2HK[k],"ig");
+        txt = txt.replace(reg, k);
+    }
+    reg = null;
+    return txt;
+}
+
+export default function(reditor, name, e, tool){
     let edit = reditor.edit;
-    if(!lib){
+    e = null;
+    if(loaded){
+        conv();
+    }else{
         let script = document.createElement('script');
-        script.onload = function(){
-            edit.html(conv2HK(edit.html()));
-        };
+        script.onload = conv;
         script.src = options.tools[name].params;
         document.head.appendChild(script);
+    }
+    function conv(){
+        loaded = true;
+        tool.innerText = flag ? '简' : '繁';
+        console.log(this);
+        if(flag = !flag)
+            edit.html(CN2HK(edit.html()));
+        else
+            edit.html(HK2CN(edit.html()));
     }
 }

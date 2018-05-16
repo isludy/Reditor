@@ -1,5 +1,6 @@
 const colors = ['#ffffff','#eeeeee','#aaaaaa','#000000','#445566','#4477cc','#5599dd','#aa0000','#cc0000','#ee7733','#ffcc00','#77aa44'];
 export default {
+    name: 'reditor',
     tools: {
         bold: '加粗',
         italic: '斜体',
@@ -41,8 +42,8 @@ export default {
             params: true
         },
         zhconv: {
-            icon: '繁',
-            title: '繁体',
+            icon: '简',
+            title: '简繁体切换',
             params: './lib/zh_lib.js'
         },
         replace: {
@@ -77,7 +78,7 @@ export default {
         },
         // path: 'http://news.wenweipo.com/test/test.php',
         path: 'http://localhost/demo/data.php',
-        form: '',
-        local: 'reditor'
-    }
+        form: ''
+    },
+    sync: false
 };

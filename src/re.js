@@ -343,13 +343,12 @@ class Re{
 
     /**
      * 设置/获取innnerHTML
-     * @param v
      * @return {Re, string}
      */
-    html(v=''){
-        if(v){
+    html(){
+        if(arguments.length > 0){
             for(let i=0; i<this.length; i++)
-                this[i].innerHTML = v;
+                this[i].innerHTML = arguments[0];
         }else{
             return this[0].innerHTML;
         }
@@ -358,13 +357,12 @@ class Re{
 
     /**
      * 设置/获取innnerText
-     * @param v
      * @return {Re, string}
      */
-    text(v=''){
-        if(v){
+    text(){
+        if(arguments.length > 0){
             for(let i=0; i<this.length; i++)
-                this[i].innerText = v;
+                this[i].innerText = arguments[0];
         }else{
             return this[0].innerText;
         }
