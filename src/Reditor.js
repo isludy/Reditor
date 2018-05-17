@@ -111,33 +111,32 @@ class Reditor {
             edit = re('<div class="re-edit" contentEditable="true" spellcheck="false"></div>'),
             range = document.createRange();
 
-        handlers['editmouseup'] = (e)=>{
-            if(/^img$/i.test(e.target.tagName)){
-                range.selectNode(e.target);
-                _this.range = utils.range(range);
-            }else{
-                _this.range = utils.range();
-            }
+        handlers['editmouseup'] = ()=>{
+            _this.range = utils.range();
         };
-        handlers['editmousedown'] = ()=>{
+        handlers['editmousedown'] = (e)=>{
             range.detach();
             try{
                 _this.range.detach();
-            }catch (e) {}
-        };
-        handlers['editkeyup'] = ()=>{
-            _this.range = utils.range();
-            if(options.sync)
-                _this.textarea[0].value = edit[0].innerHTML.replace(/<\/(p|div)>\n*/ig, '</$1>\n\n');
+            }catch (err) {}
+            if(/^img$/i.test(e.target.tagName)){
+                range.selectNode(e.target);
+                _this.range = utils.range(range);
+            }
         };
         handlers['editkeydown'] = (e)=>{
             range.detach();
             try{
                 _this.range.detach();
             }catch (e) {}
-            if(e.keyCode === 13 || !/<p/.test(_this.edit[0].innerHTML)){
+            if(!/^<(p|div)[^>]*?>/i.test(_this.edit.html())){
                 document.execCommand('formatBlock', false, 'p');
             }
+        };
+        handlers['editkeyup'] = (e)=>{
+            _this.range = utils.range();
+            if(options.sync)
+                _this.textarea[0].value = edit[0].innerHTML.replace(/<\/(p|div)>\n*/ig, '</$1>\n\n');
         };
         handlers['editcontextmenu'] = (e)=>{
             switch (e.target.tagName){

@@ -113,3 +113,14 @@ HTMLCanvasElement.prototype.toFile = function(name = 'file.png', type = 'image/p
         binary[i] = data.charCodeAt(i);
     return new File([binary], name ,{type, endings:'transparent'});
 };
+
+/**
+ * trim方法兼容性处理
+ * @type {Function}
+ * @return {String}
+ */
+if (!String.prototype.trim) {
+    String.prototype.trim = function () {
+        return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+}

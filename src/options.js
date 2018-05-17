@@ -8,6 +8,7 @@ export default {
         strikethrough: '删除线',
         subscript: '下标',
         superscript: '上标',
+        removeformat: '清除格式',
         fontname: {
             title: '字体',
             params: ['Helvetica','MicrosoftYaHei','Arial','SimHei','SimSum','FangSong','KaiTi','STKaiti','STSong','STFangSong']

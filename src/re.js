@@ -47,6 +47,41 @@ class Re{
     }
 
     /**
+     * 查找父节点
+     * @param s 查找匹配的选择器
+     * @param deep 查找深度，层级。
+     */
+    parents(s='', deep=0){
+        let doms = [];
+        if(typeof s === 'number'){
+            deep = s;
+            s = null;
+        }
+        for(let i=0; i<this.length; i++){
+            let p = this[i].parentNode;
+            if(typeof deep === 'number' && deep > 0){
+                while(deep--)
+                    pushEl();
+            }else{
+                while(p !== document.documentElement)
+                    pushEl();
+            }
+            function pushEl(){
+                if(!s){
+                    doms.push(p);
+                }else{
+                    let els = p.parentNode.querySelectorAll(s);
+                    for(let j=0, jlen=els.length; j<jlen; j++){
+                        if(els[j] === p) doms.push(p);
+                    }
+                }
+                p = p.parentNode;
+            }
+        }
+        return new Re(doms);
+    }
+
+    /**
      * 查找子节点
      * @param s 选择器，匹配选择器的子节点
      * @return {Re}
@@ -153,6 +188,7 @@ class Re{
                 this[i].insertBefore(frag, this[i].childNodes[0]);
             }
         }
+        return this;
     }
 
     /**
@@ -164,11 +200,12 @@ class Re{
         let frag = Re.argsToFragment(arguments);
         for(let i=0; i<this.length; i++){
             if(i < this.length-1){
-                this[i].insertBefore(frag.cloneNode(true), this[i].nextSibling);
+                this[i].parentNode.insertBefore(frag.cloneNode(true), this[i].nextSibling);
             }else{
-                this[i].insertBefore(frag, this[i].nextSibling);
+                this[i].parentNode.insertBefore(frag, this[i].nextSibling);
             }
         }
+        return this;
     }
 
     /**
@@ -180,11 +217,12 @@ class Re{
         let frag = Re.argsToFragment(arguments);
         for(let i=0; i<this.length; i++){
             if(i < this.length-1){
-                this[i].insertBefore(frag.cloneNode(true), this[i]);
+                this[i].parentNode.insertBefore(frag.cloneNode(true), this[i]);
             }else{
-                this[i].insertBefore(frag, this[i]);
+                this[i].parentNode.insertBefore(frag, this[i]);
             }
         }
+        return this;
     }
 
     /**
@@ -205,22 +243,40 @@ class Re{
     static argsToFragment(args){
         if(args[0].nodeType === 11) return args[0];
         let frag = document.createDocumentFragment();
-        for(let i=0, len=args.length, elen=0; i<len; i++){
-            if(args[i].nodeType === 1){
-                frag.appendChild(args[i]);
-            }else if(elen = args[i].length){
-                for(let j=0; j<elen; j++){
-                    if(args[i][j].nodeType === 1){
-                        frag.appendChild(args[i][j]);
+        function recursion(args){
+            for(let i=0, len=args.length, elen=0; i<len; i++){
+                if(args[i].nodeType === 1){
+                    frag.appendChild(args[i]);
+                }else if(elen = args[i].length && typeof args[i] !== 'string'){
+                    recursion(args[i]);
+                }else{
+                    if(/^<(\w+)[^>]*?>([\s\S]*?<\/\1>)*$/i.test(args[i])){
+                        let tmp = document.createElement('div');
+                        tmp.innerHTML = args[i];
+                        frag.appendChild(tmp.childNodes[0]);
+                        tmp = null;
                     }else{
-                        frag.appendChild(document.createTextNode(args[i][j]));
+                        frag.appendChild(document.createTextNode(args[i]));
                     }
                 }
-            }else{
-                frag.appendChild(document.createTextNode(args[i]));
             }
         }
+        recursion(args);
         return frag;
+    }
+
+    /**
+     * 查找指定节点是否属于后代
+     * @param arg 输入指定的节点
+     * @return {boolean}
+     */
+    has(arg){
+        if(arg instanceof Re)
+            arg = arg[0];
+        for(let i=0; i<this.length; i++)
+            if(this[i].contains(arg))
+                return true;
+        return false;
     }
 
     /**
@@ -257,6 +313,26 @@ class Re{
                 this.attr('data-'+k, v);
             else
                 return this.attr('data-'+k);
+        }
+        return this;
+    }
+
+    /**
+     * 设置/获取style
+     * @param arg 接收一个object或两个string+{string/number}参数
+     * @return {*}
+     */
+    css(arg){
+        if(typeof arg === 'object'){
+            for(let i=0; i<this.length; i++)
+                for(let k in arg)
+                    this[i].style[k] = arg[k];
+        }else if(typeof arg === 'string'){
+            if(arguments[1])
+                for(let i=0; i<this.length; i++)
+                    this[i].style[arg] = arguments[1];
+            else
+                return this[0].style[arg];
         }
         return this;
     }
@@ -350,7 +426,7 @@ class Re{
             for(let i=0; i<this.length; i++)
                 this[i].innerHTML = arguments[0];
         }else{
-            return this[0].innerHTML;
+            return this[0].innerHTML.trim();
         }
         return this;
     }
@@ -364,7 +440,21 @@ class Re{
             for(let i=0; i<this.length; i++)
                 this[i].innerText = arguments[0];
         }else{
-            return this[0].innerText;
+            return this[0].innerText.trim();
+        }
+        return this;
+    }
+
+    /**
+     * 设置/获取val
+     * @return {*}
+     */
+    val(){
+        if(arguments.length > 0){
+            for(let i=0; i<this.length; i++)
+                this[i].value = arguments[0];
+        }else{
+            return this[0].value.trim();
         }
         return this;
     }
@@ -375,6 +465,8 @@ class Re{
      * @return {number}
      */
     indexOf(el){
+        if(el instanceof Re)
+            el = el[0];
         for(let i=0; i<this.length; i++)
             if(el === this[i]) return i;
         return -1;

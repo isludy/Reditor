@@ -41,11 +41,13 @@ export default (reditor)=>{
                 if (Items.items[k].selected) {
                     utils.range(reditor.range);
                     document.execCommand('insertimage', false, Items.items[k].url + '?reditor_img=' + rand);
+                    Items.items[k].selected = false;
                 }
             }
             re('img[src*="reditor_img='+rand+'"]').each(img=>{
                 img.src = img.src.replace('?reditor_img='+rand, '');
             }).attr('style', 'max-width: 100%;');
+            box.addClass('re-upload-hide');
         });
         re('#re-upload-slide-left').on('click',()=>{
             box.toggleClass('re-upload-hide');
