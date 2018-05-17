@@ -2,13 +2,13 @@ const colors = ['#ffffff','#eeeeee','#aaaaaa','#000000','#445566','#4477cc','#55
 export default {
     name: 'reditor',
     tools: {
+        removeformat: '清除格式',
         bold: '加粗',
         italic: '斜体',
         underline: '下划线',
         strikethrough: '删除线',
         subscript: '下标',
         superscript: '上标',
-        removeformat: '清除格式',
         fontname: {
             title: '字体',
             params: ['Helvetica','MicrosoftYaHei','Arial','SimHei','SimSum','FangSong','KaiTi','STKaiti','STSong','STFangSong']
@@ -29,7 +29,10 @@ export default {
             title: '背景色',
             params: colors
         },
-        justifyleft: '左对齐',
+        justifyleft: {
+            title: '左对齐',
+            params: true
+        },
         justifycenter: '居中对齐',
         justifyright: '右对齐',
         justifyfull: '两端对齐',
