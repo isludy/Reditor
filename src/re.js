@@ -20,7 +20,7 @@ class Re{
                 }
                 doms = null;
             }
-        }else if(s.length){
+        }else if(s.length && s.nodeType !== 3){
             this.length = s.length;
             for(let i=0; i<this.length; i++){
                 this[i] = s[i];
@@ -52,7 +52,7 @@ class Re{
      * @param deep 查找深度，层级。
      */
     parents(s='', deep=0){
-        let doms = [];
+        let doms = [], deepEl = deep && deep.nodeType === 1 ? deep : document.documentElement;
         if(typeof s === 'number'){
             deep = s;
             s = null;
@@ -63,7 +63,7 @@ class Re{
                 while(deep--)
                     pushEl();
             }else{
-                while(p !== document.documentElement)
+                while(p !== deepEl)
                     pushEl();
             }
             function pushEl(){
@@ -296,6 +296,17 @@ class Re{
     }
 
     /**
+     * 删除元素属性
+     * @param k
+     * @return {Re}
+     */
+    removeAttr(k){
+        for(let i=0; i<this.length; i++)
+            this[i].removeAttribute(k);
+        return this;
+    }
+
+    /**
      * 设置/获取节点的data-属性，获取时，只获取第一个节点的属性
      * @param k
      * @param v
@@ -328,7 +339,7 @@ class Re{
                 for(let k in arg)
                     this[i].style[k] = arg[k];
         }else if(typeof arg === 'string'){
-            if(arguments[1])
+            if(typeof arguments[1] !== 'undefined')
                 for(let i=0; i<this.length; i++)
                     this[i].style[arg] = arguments[1];
             else

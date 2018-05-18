@@ -111,20 +111,23 @@ class Reditor {
             edit = re('<div class="re-edit" contentEditable="true" spellcheck="false"></div>'),
             range = document.createRange();
 
-        handlers['editmouseup'] = ()=>{
+        function docUpHandler(){
+            re(document).off('mouseup', docUpHandler);
             _this.range = utils.range();
-        };
+        }
+
         handlers['editmousedown'] = (e)=>{
             range.detach();
-            try{
-                _this.range.detach();
-            }catch (err) {}
+            _this.range = null;
+
             if(/^img$/i.test(e.target.tagName)){
                 range.selectNode(e.target);
                 _this.range = utils.range(range);
+            }else{
+                re(document).on('mouseup', docUpHandler);
             }
         };
-        handlers['editkeydown'] = (e)=>{
+        handlers['editkeydown'] = ()=>{
             range.detach();
             try{
                 _this.range.detach();
@@ -133,7 +136,7 @@ class Reditor {
                 document.execCommand('formatBlock', false, 'p');
             }
         };
-        handlers['editkeyup'] = (e)=>{
+        handlers['editkeyup'] = ()=>{
             _this.range = utils.range();
             if(options.sync)
                 _this.textarea[0].value = edit[0].innerHTML.replace(/<\/(p|div)>\n*/ig, '</$1>\n\n');
@@ -150,7 +153,6 @@ class Reditor {
                     break;
             }
         };
-        edit.on('mouseup', handlers['editmouseup']);
         edit.on('mousedown', handlers['editmousedown']);
         edit.on('keyup', handlers['editkeyup']);
         edit.on('keydown', handlers['editkeydown']);
@@ -163,7 +165,6 @@ class Reditor {
      * 销毁编辑器
      */
     destroy(deep){
-        this.edit.off('mouseup', handlers['editmouseup']);
         this.edit.off('mousedown', handlers['editmousedown']);
         this.edit.off('keyup', handlers['editkeyup']);
         this.edit.off('keydown', handlers['editkeydown']);

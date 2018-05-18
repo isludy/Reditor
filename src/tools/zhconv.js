@@ -41,7 +41,6 @@ export default function(reditor, name, e, tool){
     function conv(){
         loaded = true;
         tool.innerText = flag ? '简' : '繁';
-        console.log(this);
         if(flag = !flag)
             edit.html(CN2HK(edit.html()));
         else
