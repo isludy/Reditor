@@ -120,7 +120,7 @@ class Reditor {
             range.detach();
             _this.range = null;
 
-            if(/^img$/i.test(e.target.tagName)){
+            if(/^(img|video|audio|embed|object)$/i.test(e.target.tagName)){
                 range.selectNode(e.target);
                 _this.range = utils.range(range);
             }else{

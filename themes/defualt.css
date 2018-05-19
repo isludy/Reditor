@@ -50,6 +50,16 @@
 .re-hide{
     display: none !important;
 }
+.re-selected{
+    position: relative;
+}
+.re-selected::after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: rgba(68, 164, 255, .5);
+}
 
 /*form*/
 .re-input-l,

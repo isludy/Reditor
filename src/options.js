@@ -57,6 +57,10 @@ export default {
         source: {
             title: '源码',
             params: true
+        },
+        code: {
+            title: '插入代码',
+            params: true
         }
     },
     upload: {
