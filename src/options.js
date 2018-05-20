@@ -36,6 +36,7 @@ export default {
         justifycenter: '居中对齐',
         justifyright: '右对齐',
         justifyfull: '两端对齐',
+        indent: '段落缩进',
         link: {
             title: '添加超链接',
             params: true

@@ -56,6 +56,8 @@ class Reditor {
             this.textarea = re('<textarea class="re-edit re-hide" spellcheck="false" name="'+options.name+'"></textarea>');
             this.editor.append(this.toolbar);
             this.editor.append(this.edit);
+            this.edit[0].focus();
+            this.range = utils.range();
         }else{
             throw new Error('The editor is already destroyed');
         }
@@ -108,9 +110,7 @@ class Reditor {
      */
     createEdit(){
         let _this = this,
-            edit = re('<div class="re-edit" contentEditable="true" spellcheck="false"></div>'),
-            range = document.createRange(),
-            el;
+            edit = re('<div class="re-edit" contentEditable="true" spellcheck="false"></div>');
 
         function docUpHandler(){
             re(document).off('mouseup', docUpHandler);
@@ -118,14 +118,12 @@ class Reditor {
         }
 
         handlers['editmousedown'] = (e)=>{
-            range.detach();
-            _this.range = null;
-
             if(/^(img|video|audio|embed|object)$/i.test(e.target.tagName)){
-                range.selectNode(e.target);
-                _this.range = utils.range(range);
+                _this.range.selectNode(e.target);
+                utils.range(_this.range);
             }else{
                 re(document).on('mouseup', docUpHandler);
+                _this.range = utils.range();
             }
         };
         handlers['editkeydown'] = (e)=>{
@@ -134,41 +132,44 @@ class Reditor {
             }
 
             if(e.keyCode === 13){
-                e.preventDefault();
-
+                let el;
                 if(e.shiftKey){
-                    let br = document.createElement('br');
-                    _this.range.insertNode(br);
-                    utils.range(_this.range);
-                    _this.range.collapse(false);
-                }else if(_this.range && (el = _this.range.startContainer)){
-                    if(el === edit[0]){
-                        el = el.children[0];
-                    }else {
-                        el = el.nodeType === 1 ? el : el.parentNode;
-                    }
+                    document.execCommand('formatBlock', false, 'br');
+                }else{
+                    e.preventDefault();
+                    _this.range = utils.range();
+                    if(_this.range && (el = _this.range.startContainer)){
 
-                    if(el.parentNode !== edit[0]){
-                        re(el).parents('p', edit[0]).each(p=>{
-                            if(p.parentNode === edit[0])
-                                el = p;
-                        });
-                    }
+                        if(el === edit[0]){
+                            el = el.children[0];
+                        }else {
+                            el = el.nodeType === 1 ? el : el.parentNode;
+                        }
 
-                    if(el.nodeType === 1){
-                        let emptyp = document.createElement('p'),
-                            last = el.childNodes[el.childNodes.length - 1];
+                        if(el.parentNode !== edit[0]){
+                            re(el).parents('p', edit[0]).each(p=>{
+                                if(p.parentNode === edit[0])
+                                    el = p;
+                            });
+                        }
 
-                        range.setStart(_this.range.startContainer, _this.range.endOffset);
-                        range.setEnd(last, last.data.length);
+                        if(el.nodeType === 1){
+                            let emptyp = document.createElement('p'),
+                                last = el.childNodes[el.childNodes.length - 1];
 
-                        emptyp.innerHTML = range.toString() || '<br>';
-                        range.deleteContents();
-                        re(el).after(emptyp);
-                        range.selectNode(emptyp.childNodes[0]);
-                        range.collapse(true);
-                        _this.range = range;
-                        utils.range(range);
+                            _this.range.deleteContents();
+                            _this.range.setStart(_this.range.startContainer, _this.range.endOffset);
+                            _this.range.setEnd(last, last.data.length);
+
+                            emptyp.innerHTML = _this.range.toString() || '<br>';
+                            _this.range.deleteContents();
+
+                            re(el).after(emptyp);
+
+                            _this.range.selectNode(emptyp.childNodes[0]);
+                            _this.range.collapse(true);
+                            utils.range(_this.range);
+                        }
                     }
                 }
             }
