@@ -139,6 +139,8 @@ class Reditor {
                 if(e.shiftKey){
                     let br = document.createElement('br');
                     _this.range.insertNode(br);
+                    utils.range(_this.range);
+                    _this.range.collapse(false);
                 }else if(_this.range && (el = _this.range.startContainer)){
                     if(el === edit[0]){
                         el = el.children[0];
