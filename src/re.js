@@ -98,6 +98,22 @@ class Re{
     }
 
     /**
+     * 获取第一个
+     * @return {Re}
+     */
+    first(){
+        return new Re(this[0]);
+    }
+
+    /**
+     * 获取最后一个
+     * @return {Re}
+     */
+    last(){
+        return new Re(this[this.length - 1]);
+    }
+
+    /**
      * 获取所有的文本节点
      * @return {Array}
      */

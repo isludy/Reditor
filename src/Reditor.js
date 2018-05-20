@@ -109,7 +109,8 @@ class Reditor {
     createEdit(){
         let _this = this,
             edit = re('<div class="re-edit" contentEditable="true" spellcheck="false"></div>'),
-            range = document.createRange();
+            range = document.createRange(),
+            el;
 
         function docUpHandler(){
             re(document).off('mouseup', docUpHandler);
@@ -127,19 +128,55 @@ class Reditor {
                 re(document).on('mouseup', docUpHandler);
             }
         };
-        handlers['editkeydown'] = ()=>{
-            range.detach();
-            try{
-                _this.range.detach();
-            }catch (e) {}
+        handlers['editkeydown'] = (e)=>{
             if(!/^<(p|div)[^>]*?>/i.test(_this.edit.html())){
                 document.execCommand('formatBlock', false, 'p');
             }
+
+            if(e.keyCode === 13){
+                e.preventDefault();
+
+                if(e.shiftKey){
+                    let br = document.createElement('br');
+                    _this.range.insertNode(br);
+                }else if(_this.range && (el = _this.range.startContainer)){
+                    if(el === edit[0]){
+                        el = el.children[0];
+                    }else {
+                        el = el.nodeType === 1 ? el : el.parentNode;
+                    }
+
+                    if(el.parentNode !== edit[0]){
+                        re(el).parents('p', edit[0]).each(p=>{
+                            if(p.parentNode === edit[0])
+                                el = p;
+                        });
+                    }
+
+                    if(el.nodeType === 1){
+                        let emptyp = document.createElement('p'),
+                            last = el.childNodes[el.childNodes.length - 1];
+
+                        range.setStart(_this.range.startContainer, _this.range.endOffset);
+                        range.setEnd(last, last.data.length);
+
+                        emptyp.innerHTML = range.toString() || '<br>';
+                        range.deleteContents();
+                        re(el).after(emptyp);
+                        range.selectNode(emptyp.childNodes[0]);
+                        range.collapse(true);
+                        _this.range = range;
+                        utils.range(range);
+                    }
+                }
+            }
         };
-        handlers['editkeyup'] = ()=>{
-            _this.range = utils.range();
+        handlers['editkeyup'] = (e)=>{
+            if(e.keyCode === 13)
+                e.preventDefault();
             if(options.sync)
                 _this.textarea[0].value = edit[0].innerHTML.replace(/<\/(p|div)>\n*/ig, '</$1>\n\n');
+            _this.range = utils.range();
         };
         handlers['editcontextmenu'] = (e)=>{
             switch (e.target.tagName){

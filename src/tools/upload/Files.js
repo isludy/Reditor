@@ -29,7 +29,6 @@ for(let type in opt.type)
         opt.type[type].forEach(v=>{
             limit.push(v);
         });
-
 class Files {
     constructor(){
         this.items = Object.create(null);

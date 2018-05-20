@@ -36,17 +36,30 @@ export default (reditor)=>{
         });
         Down.init('#re-upload-body');
         re('#re-upload-use').on('click', function(){
-            let rand = Math.random();
+            let frag = document.createDocumentFragment(),
+                media,
+                type;
+
             for(let k in Items.items) {
                 if (Items.items[k].selected) {
-                    utils.range(reditor.range);
-                    document.execCommand('insertimage', false, Items.items[k].url + '?reditor_img=' + rand);
+                    type = Items.items[k].type.slice(0, 5);
+                    if(/image|video|audio/i.test(type)){
+                        media = document.createElement(type==='image' ? 'img' : type);
+                        media.src = Items.items[k].url;
+                        media.style.maxWidth = '90%';
+                    }else{
+                        media = document.createElement('a');
+                        media.href = Items.items[k].url;
+                        media.innerHTML = media.download = Items.items[k].name;
+                    }
+                    frag.appendChild(media);
                     Items.items[k].selected = false;
                 }
             }
-            re('img[src*="reditor_img='+rand+'"]').each(img=>{
-                img.src = img.src.replace('?reditor_img='+rand, '');
-            }).attr('style', 'max-width: 100%;');
+            if(reditor.range.deleteContents){
+                reditor.range.deleteContents();
+                reditor.range.insertNode(frag);
+            }
             box.addClass('re-upload-hide');
         });
         re('#re-upload-slide-left').on('click',()=>{

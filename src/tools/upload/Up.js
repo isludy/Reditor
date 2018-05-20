@@ -28,18 +28,23 @@ class Up{
                 let frag = document.createDocumentFragment(),
                     len = _this.input.files.length,
                     i = 0,
-                    file;
+                    file,
+                    item;
 
                 for(; i<len; i++){
                     file = _this.input.files[i];
-
-                    frag.appendChild(Items.create('re' + file.lastModified + file.size, {
+                    item = Items.create('re' + file.lastModified + file.size, {
                         url: window.createURL(file),
                         name: file.name,
                         type: file.type,
                         tick: '<b>等待上传...</b>',
                         status: 1
-                    })[0]);
+                    }, file);
+
+                    if(item && item[0])
+                        frag.appendChild(item[0]);
+                    else
+                        break;
                 }
                 _this.list.prepend(frag);
             }

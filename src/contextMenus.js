@@ -19,7 +19,7 @@ export default {
                 url = box.find('[name=url]');
                 target = box.find('[name=target]');
                 url[0].value = a.getAttribute('href');
-                target[0].value = a.getAttribute('target');
+                target[0].value = a.getAttribute('target') || '_self';
             },
             clicked(){
                 a.href = url[0].value;
