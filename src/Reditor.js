@@ -159,7 +159,7 @@ class Reditor {
 
                             _this.range.deleteContents();
                             _this.range.setStart(_this.range.startContainer, _this.range.endOffset);
-                            _this.range.setEnd(last, last.data.length);
+                            _this.range.setEnd(last, last.nodeType === 3 ? last.data.length : 0);
 
                             emptyp.innerHTML = _this.range.toString() || '<br>';
                             _this.range.deleteContents();
