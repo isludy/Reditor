@@ -3,6 +3,23 @@ export default {
     name: 'reditor',
     tools: {
         removeformat: '清除格式',
+        upload: {
+            title: '添加文件',
+            params: true
+        },
+        zhconv: {
+            icon: '简',
+            title: '简繁体切换',
+            params: './lib/zh_lib.js'
+        },
+        replace: {
+            title: '查找替换',
+            params: true
+        },
+        code: {
+            title: '插入代码',
+            params: true
+        },
         bold: '加粗',
         italic: '斜体',
         underline: '下划线',
@@ -37,30 +54,14 @@ export default {
         justifyright: '右对齐',
         justifyfull: '两端对齐',
         indent: '段落缩进',
+        outdent: '减去缩进',
         link: {
             title: '添加超链接',
             params: true
         },
         unlink: '删除超链接',
-        upload: {
-            title: '添加文件',
-            params: true
-        },
-        zhconv: {
-            icon: '简',
-            title: '简繁体切换',
-            params: './lib/zh_lib.js'
-        },
-        replace: {
-            title: '查找替换',
-            params: true
-        },
         source: {
             title: '源码',
-            params: true
-        },
-        code: {
-            title: '插入代码',
             params: true
         }
     },

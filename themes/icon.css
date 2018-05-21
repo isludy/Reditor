@@ -44,6 +44,7 @@
 .icon-justifyright:before{content: '\ea79';}
 .icon-justifyfull:before{content: '\ea7a';}
 .icon-indent:before{content: '\ea7b';}
+.icon-outdent:before{content: '\ea7c';}
 
 .icon-link:before{content: '\e90c';}
 .icon-unlink:before{content: '\e916';}

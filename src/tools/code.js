@@ -1,6 +1,5 @@
 import utils from "../utils";
 import options from "../options";
-import re from "../re";
 export default (reditor, name)=>{
     utils.dialog({
         title: options.tools[name].title,
@@ -9,18 +8,14 @@ export default (reditor, name)=>{
         btns: ['确定',{html: '取消', type: 'warning'}],
         clicked(code, box){
             if(code === 0){
-                let div = re('<div>'),
-                    frag = document.createDocumentFragment();
+                let el = document.createElement('p');
 
-                div.html(box.find('[name='+name+']').val());
-                div.children().each(child=>{
-                    frag.appendChild(child);
-                });
+                el.innerHTML = box.find('[name='+name+']').val();
                 if(reditor.range.deleteContents){
                     reditor.range.deleteContents();
-                    reditor.range.insertNode(frag);
+                    reditor.range.insertNode(el);
                 }
-                div = frag = null;
+                el = null;
             }
         }
     });

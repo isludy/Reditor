@@ -13,7 +13,7 @@ xhr.addEventListener('load',()=>{
     for(let k in res.data){
         sort.push(res.data[k]);
     }
-    sort.sort((a, b)=>{
+    sort.sort(function(a, b){
        return a.date < b.date;
     });
     sort.forEach(o=>{
@@ -27,7 +27,7 @@ xhr.addEventListener('load',()=>{
 const Down = {
     init(id){
         list = re(id);
-        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180519');//+new Date().format('YMD'));
+        xhr.open('get',options.upload.path+'?Reditor=manage&date='+new Date().format('YMD'));
         xhr.send();
     }
 };
