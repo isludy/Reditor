@@ -11,17 +11,19 @@
 <div id="reditor"></div>
 <button id="btn1">销毁</button>
 <button id="btn2">更新</button>
+<canvas id="cv"></canvas>
 <script src="dist/main.js?v=1.0"></script>
-<!--<script src="src/re.js"></script>-->
 <script>
     let r = new Reditor('#reditor');
     btn1.onclick = function(){
         r.destroy();
     };
-
     btn2.onclick = function(){
         r.update();
-    }
+    };
+    cv.drawVideo('http://localhost/demo/upload/20180522/bfc6401bf4596d326d92ac564992d826.mp4', function(_this){
+        console.log(_this);
+    },5);
 </script>
 </body>
 </html>

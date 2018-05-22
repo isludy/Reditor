@@ -144,6 +144,7 @@ class Items{
             items[id].el.off('click', items[id].handler);
             items[id].el.remove();
             if(Logo.items[id]) Logo.remove(id);
+            window.revokeURL(items[id].url);
             Files.remove(id);
             delete items[id];
         }catch(err){

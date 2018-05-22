@@ -113,6 +113,23 @@ HTMLCanvasElement.prototype.toFile = function(name = 'file.png', type = 'image/p
         binary[i] = data.charCodeAt(i);
     return new File([binary], name ,{type, endings:'transparent'});
 };
+HTMLCanvasElement.prototype.drawVideo = function (src, fn, time=0) {
+    let _this = this,
+        v = document.createElement('video'),
+        ctx = this.getContext('2d');
+
+    v.addEventListener('canplay', canplay);
+    function canplay(){
+        v.removeEventListener('canplay', canplay);
+        _this.width = this.width || this.videoWidth;
+        _this.height = this.height || this.videoHeight;
+        ctx.drawImage(v, 0, 0, _this.width, _this.height);
+        if(fn) fn(this);
+        v = ctx = null;
+    }
+    v.src = src;
+    v.currentTime = time;
+};
 
 /**
  * trim方法兼容性处理
