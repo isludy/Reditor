@@ -37,15 +37,13 @@ export default (reditor)=>{
         Down.init('#re-upload-body');
         re('#re-upload-use').on('click', function(){
             let frag = document.createDocumentFragment(),
-                media,
-                type;
+                media;
 
             for(let k in Items.items) {
                 if (Items.items[k].selected) {
-                    type = Items.items[k].type.slice(0, 5);
-                    if(/image|video|audio/i.test(type)){
-                        media = document.createElement(type==='image' ? 'img' : type);
-                        media.src = Items.items[k].url;
+                    if(/^(image|video|audio)\//i.test(Items.items[k].type)){
+                        media = document.createElement('img');
+                        media.src = /image/i.test(Items.items[k].type) ? Items.items[k].url : Items.items[k].poster;
                         media.style.maxWidth = '90%';
                     }else{
                         media = document.createElement('a');
