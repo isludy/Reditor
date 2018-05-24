@@ -34,6 +34,38 @@
     background: #ccc;
 }
 
+/*scale-controller*/
+.re-scale-controller{
+    border: #44a4ff solid 1px;
+    position: fixed;
+    display: none;
+}
+.re-scale-controller-tl,
+.re-scale-controller-tr,
+.re-scale-controller-bl,
+.re-scale-controller-br{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #44a4ff;
+}
+.re-scale-controller-tl{
+    top: -5px;
+    left: -5px;
+}
+.re-scale-controller-tr{
+    top: -5px;
+    right: -5px;
+}
+.re-scale-controller-bl{
+    left: -5px;
+    bottom: -5px;
+}
+.re-scale-controller-br{
+    right: -5px;
+    bottom: -5px;
+}
+
 /*style*/
 .re-success{
     background-color: #419641;

@@ -118,7 +118,7 @@ class Reditor {
         }
 
         handlers['editmousedown'] = (e)=>{
-            if(/^(img|video|audio|embed|object)$/i.test(e.target.tagName)){
+            if(/^img$/i.test(e.target.tagName)){
                 _this.range.selectNode(e.target);
                 utils.range(_this.range);
             }else{
@@ -154,18 +154,15 @@ class Reditor {
                         }
 
                         if(el.nodeType === 1){
-                            let emptyp = document.createElement('p'),
-                                last = el.childNodes[el.childNodes.length - 1];
-
-                            _this.range.deleteContents();
+                            let emptyp = document.createElement('p');
                             _this.range.setStart(_this.range.startContainer, _this.range.endOffset);
-                            _this.range.setEnd(last, last.nodeType === 3 ? last.data.length : 0);
-
-                            emptyp.innerHTML = _this.range.toString() || '<br>';
+                            _this.range.setEnd(el, el.childNodes.length);
+                            emptyp.appendChild(_this.range.extractContents());
                             _this.range.deleteContents();
 
                             re(el).after(emptyp);
 
+                            if(!emptyp.innerHTML) emptyp.appendChild(document.createElement('br'));
                             _this.range.selectNode(emptyp.childNodes[0]);
                             _this.range.collapse(true);
                             utils.range(_this.range);
