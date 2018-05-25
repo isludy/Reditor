@@ -126,20 +126,19 @@ class Reditor {
                 _this.range = utils.range();
             }
         };
-        handlers['editkeydown'] = (e)=>{
+        handlers['editkeydown'] = ()=>{
             if(!/^<(p|div)[^>]*?>/i.test(_this.edit.html())){
                 document.execCommand('formatBlock', false, 'p');
             }
-
+            /*
             if(e.keyCode === 13){
-                let el;
+                let el, p;
                 if(e.shiftKey){
                     document.execCommand('formatBlock', false, 'br');
                 }else{
                     e.preventDefault();
                     _this.range = utils.range();
                     if(_this.range && (el = _this.range.startContainer)){
-
                         if(el === edit[0]){
                             el = el.children[0];
                         }else {
@@ -167,9 +166,10 @@ class Reditor {
                             _this.range.collapse(true);
                             utils.range(_this.range);
                         }
+
                     }
                 }
-            }
+            }*/
         };
         handlers['editkeyup'] = (e)=>{
             if(e.keyCode === 13)

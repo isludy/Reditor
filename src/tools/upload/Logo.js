@@ -174,7 +174,6 @@ class Logo{
             item, o;
 
         if(keys[index]){
-            document.body.appendChild(canvas[0]);
             recursion(keys[index]);
         }else{
             fn();
@@ -243,7 +242,6 @@ class Logo{
                 if(keys[index]) {
                     recursion(keys[index]);
                 }else{
-                    canvas.remove();
                     fn();
                 }
             }
@@ -258,7 +256,6 @@ class Logo{
                 if(keys[index]) {
                     recursion(keys[index]);
                 }else{
-                    canvas.remove();
                     fn();
                 }
             }

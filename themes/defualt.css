@@ -243,6 +243,13 @@
     font-size: 12px;
 }
 
+.re-label{
+    font-size: 14px;
+    display: block;
+    margin: .5em 0;
+    color:#888;
+}
+
 .re-disabled{
     color: #bbb !important;
     background: #fff !important;

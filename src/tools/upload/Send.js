@@ -2,7 +2,7 @@ import utils from '../../utils';
 import options from '../../options';
 import Files from './Files';
 import Logo from './Logo';
-// import Local from './Local';
+import Thumb from './Thumb';
 
 const field = options.upload.field,
     path = options.upload.path,
@@ -71,13 +71,31 @@ function recursion(id){
     //在上传进行中，如果删除项是正在上传的项，则立即中止上传，所以需要curid来提供给Items.js进行判断
     Send.curid = key = id;
 
+    let hasThumb = false;
     formData = new FormData();
+
     formData.append(field, Files.items[id]);
     formData.append('subid', id);
+
     Items.form(id).each(input=>{
-        formData.append(input.name, input.value);
+        if(/checkbox|radio/i.test(input.type)){
+            formData.append(input.name, input.checked+'');
+            hasThumb = (/^(image|video)/i.test(Files.items[id].type) && input.name === 'thumb' && input.checked);
+        }else
+            formData.append(input.name, input.value);
     });
 
+    if (hasThumb){
+        Thumb(Files.items[id], null, Items.items[id].el.find('video')).then(thumb=>{
+            formData.append('thumb', thumb);
+            startSend();
+        });
+    } else{
+        startSend();
+    }
+}
+
+function startSend(){
     xhr.open('post', path+'?Reditor=upload', true);
     xhr.send(formData);
 }

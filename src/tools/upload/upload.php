@@ -106,8 +106,19 @@ class File{
             'date' => time()*1000,
             'resid'=> $md5
         );
+
+        //add post params to log
         foreach( $_POST as $key => $val){
             $usrlog[$key] = $val;
+        }
+
+        //save thumb & response url
+        if(isset($_FILES['thumb'])){
+            $thumbName = $md5 . '_' . $_FILES['thumb']['name'];
+            $thumbPath = $this->servRoot . $this->folder . '/' . $thumbName;
+            if(move_uploaded_file($_FILES['thumb']['tmp_name'], $thumbPath)){
+                $usrlog['thumb'] = $this->webRoot . $this->folder . '/' . $thumbName;
+            }
         }
 
         $this->json['data'] = $usrlog;

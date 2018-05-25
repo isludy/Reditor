@@ -10,19 +10,21 @@ xhr.addEventListener('load',()=>{
         frag = document.createDocumentFragment(),
         sort = [];
 
-    for(let k in res.data){
-        sort.push(res.data[k]);
+    if(res){
+        for(let k in res.data){
+            sort.push(res.data[k]);
+        }
+        sort.sort(function(a, b){
+           return a.date < b.date;
+        });
+        sort.forEach(o=>{
+            o.tick = '上传于：' + new Date(o.date).format('Y-M-D H:I:S');
+            o.status = 0;
+            o.selected = false;
+            frag.appendChild(Items.create(o.resid, o)[0]);
+        });
+        list.append(frag);
     }
-    sort.sort(function(a, b){
-       return a.date < b.date;
-    });
-    sort.forEach(o=>{
-        o.tick = '上传于：' + new Date(o.date).format('Y-M-D H:I:S');
-        o.status = 0;
-        o.selected = false;
-        frag.appendChild(Items.create(o.resid, o)[0]);
-    });
-    list.append(frag);
 });
 const Down = {
     init(id){

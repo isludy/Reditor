@@ -16,10 +16,6 @@ export default {
             title: '查找替换',
             params: true
         },
-        code: {
-            title: '插入代码',
-            params: true
-        },
         bold: '加粗',
         italic: '斜体',
         underline: '下划线',
@@ -79,6 +75,10 @@ export default {
             audio: 12,
             other: 1024
         },
+        thumb: {
+            width: 480,
+            height: 'auto'
+        },
         logo: {
             path: './themes/logo.png',
             targetWidth: 600,
@@ -88,7 +88,7 @@ export default {
         },
         // path: 'http://news.wenweipo.com/test/test.php',
         path: 'http://localhost/demo/data.php',
-        form: ''
+        form: '<label class="re-label">缩略图(仅图片和视频)：<input class="re-checkbox-s" type="checkbox" name="thumb"></label>'
     },
     sync: false
 };
