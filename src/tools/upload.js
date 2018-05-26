@@ -19,6 +19,7 @@ export default (reditor)=>{
                 <div id="re-upload-body" class="re-upload-body"></div>
                 <div class="re-upload-footer">
                     <button id="re-upload-use" class="re-btn-m re-btn-success">使用</button>
+                    <button id="re-upload-refresh" class="re-btn-m re-btn-warning">刷新</button>
                 </div>
             </div>
             <div id="re-upload-slide-left" class="re-upload-slide-left icon icon-arrow-left1"></div>
@@ -35,6 +36,9 @@ export default (reditor)=>{
             list: '#re-upload-body'
         });
         Down.init('#re-upload-body');
+        re('#re-upload-refresh').on('click', function(){
+            Down.init('#re-upload-body');
+        });
         re('#re-upload-use').on('click', function(){
             let frag = document.createDocumentFragment(),
                 media;

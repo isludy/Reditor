@@ -7,6 +7,7 @@ import Files from './Files';
 class Items{
     constructor(){
         this.items = Object.create(null);
+        this.ondelete = null;
     }
     /**
      * 监听数据
@@ -126,10 +127,13 @@ class Items{
      */
     remove(id){
         if(id){
+            if(this.ondelete) this.ondelete(id);
             Items.del(id, this.items);
         }else{
-            for(id in this.items)
+            for(id in this.items){
+                if(this.ondelete) this.ondelete(id);
                 Items.del(id, this.items);
+            }
             Send.stop();
         }
     }

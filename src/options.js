@@ -56,8 +56,8 @@ export default {
             params: true
         },
         unlink: '删除超链接',
-        source: {
-            title: '源码',
+        code: {
+            title: '插入代码',
             params: true
         }
     },
@@ -89,6 +89,5 @@ export default {
         // path: 'http://news.wenweipo.com/test/test.php',
         path: 'http://localhost/demo/data.php',
         form: '<label class="re-label">缩略图(仅图片和视频)：<input class="re-checkbox-s" type="checkbox" name="thumb"></label>'
-    },
-    sync: false
+    }
 };

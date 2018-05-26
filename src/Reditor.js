@@ -27,6 +27,7 @@ class Reditor {
 
         this.update();
 
+        document.execCommand('formatBlock', false, 'p');
         //使用styleWidthCss模式
         try{
             document.execCommand('styleWithCss', false, true);
@@ -53,7 +54,6 @@ class Reditor {
             this.editor.html('');
             this.toolbar = this.createToolbar(options.tools);
             this.edit = this.createEdit();
-            this.textarea = re('<textarea class="re-edit re-hide" spellcheck="false" name="'+options.name+'"></textarea>');
             this.editor.append(this.toolbar);
             this.editor.append(this.edit);
             this.edit[0].focus();
@@ -126,56 +126,14 @@ class Reditor {
                 _this.range = utils.range();
             }
         };
-        handlers['editkeydown'] = ()=>{
-            if(!/^<(p|div)[^>]*?>/i.test(_this.edit.html())){
-                document.execCommand('formatBlock', false, 'p');
+        handlers['editkeydown'] = (e)=>{
+            if(e.keyCode === 8 && /^<p><br><\/p>$/.test(edit.html().replace(/\s+/g, ''))){
+                e.preventDefault();
             }
-            /*
-            if(e.keyCode === 13){
-                let el, p;
-                if(e.shiftKey){
-                    document.execCommand('formatBlock', false, 'br');
-                }else{
-                    e.preventDefault();
-                    _this.range = utils.range();
-                    if(_this.range && (el = _this.range.startContainer)){
-                        if(el === edit[0]){
-                            el = el.children[0];
-                        }else {
-                            el = el.nodeType === 1 ? el : el.parentNode;
-                        }
-
-                        if(el.parentNode !== edit[0]){
-                            re(el).parents('p', edit[0]).each(p=>{
-                                if(p.parentNode === edit[0])
-                                    el = p;
-                            });
-                        }
-
-                        if(el.nodeType === 1){
-                            let emptyp = document.createElement('p');
-                            _this.range.setStart(_this.range.startContainer, _this.range.endOffset);
-                            _this.range.setEnd(el, el.childNodes.length);
-                            emptyp.appendChild(_this.range.extractContents());
-                            _this.range.deleteContents();
-
-                            re(el).after(emptyp);
-
-                            if(!emptyp.innerHTML) emptyp.appendChild(document.createElement('br'));
-                            _this.range.selectNode(emptyp.childNodes[0]);
-                            _this.range.collapse(true);
-                            utils.range(_this.range);
-                        }
-
-                    }
-                }
-            }*/
         };
         handlers['editkeyup'] = (e)=>{
             if(e.keyCode === 13)
                 e.preventDefault();
-            if(options.sync)
-                _this.textarea[0].value = edit[0].innerHTML.replace(/<\/(p|div)>\n*/ig, '</$1>\n\n');
             _this.range = utils.range();
         };
         handlers['editcontextmenu'] = (e)=>{

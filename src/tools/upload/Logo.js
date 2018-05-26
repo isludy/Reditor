@@ -180,6 +180,15 @@ class Logo{
         }
         function recursion(id) {
             item = _this.items[id];
+            if(item.status !== 1){
+                index++;
+                if(keys[index]) {
+                    recursion(keys[index]);
+                }else{
+                    fn();
+                }
+                return;
+            }
             o = optItems[id];
 
             canvas.width = 0;
