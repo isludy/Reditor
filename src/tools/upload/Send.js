@@ -1,12 +1,14 @@
 import utils from '../../utils';
 import options from '../../options';
+import re from '../../re';
 import Files from './Files';
 import Logo from './Logo';
 import Thumb from './Thumb';
 
 const field = options.upload.field,
     path = options.upload.path,
-    xhr = new XMLHttpRequest();
+    xhr = new XMLHttpRequest(),
+    loading = re('<div class="re-loading"></div>');
 
 let formData, key, Items, errorMsg;
 
@@ -43,7 +45,19 @@ xhr.on('loadend', ()=>{
 
         Logo.remove(key);
         Files.remove(key);
-        // Local.add(res.data);
+
+        if(/^image/i.test(Items.items[key].type)){
+            let img = new Image();
+            Items.items[key].el.find('.re-upload-item-preview').append(loading);
+            img.onload = function(){
+                loading.remove();
+                img = img.onload = null;
+            };
+            img.src = res.data.url;
+        }
+        if(res.data.thumb){
+            Items.items[key].el.find('video').attr('poster', res.data.thumb);
+        }
 
         recursion(Object.keys(Files.items)[0]);
     }else{
@@ -79,16 +93,23 @@ function recursion(id){
 
     Items.form(id).each(input=>{
         if(/checkbox|radio/i.test(input.type)){
-            formData.append(input.name, input.checked+'');
+            formData.append(input.name, (input.checked ? 1 : ''));
             hasThumb = (/^(image|video)/i.test(Files.items[id].type) && input.name === 'thumb' && input.checked);
         }else
             formData.append(input.name, input.value);
     });
 
     if (hasThumb){
-        Thumb(Files.items[id], null, Items.items[id].el.find('video')).then(thumb=>{
+        Thumb(Items.items[id].type, Items.items[id].url, Items.items[id].el.find('video')).then(thumb=>{
             formData.append('thumb', thumb);
             startSend();
+        }).catch((errmsg)=>{
+            utils.dialog({
+                type: 'warning',
+                title: '上传失败',
+                body: '生成缩略图失败。'+ (errmsg ? 'error: '+errmsg : ''),
+                css: 'max-width:360px;',
+            });
         });
     } else{
         startSend();

@@ -54,7 +54,7 @@ class File{
 
         $logPath = $this->servRoot . $this->folder.'/'.$this->dataTable;
         $logJson = @file_get_contents($logPath);
-        $dataTable = fopen($logPath, 'a');
+        $dataTable = fopen($logPath, 'w');
 
         $file = $_FILES['file'];
         $fsize = $file['size'];
@@ -136,7 +136,7 @@ class File{
         fclose($dataTable);
         return json_encode($this->json);
     }
-    public function fileData($date){
+    public function get($date){
         $logPath = $this->servRoot . $date.'/'.$this->dataTable;
         $logJson = @file_get_contents($logPath);
         if(!$logJson){
@@ -144,35 +144,41 @@ class File{
             $this->json['message'] = 'no any files';
             return json_encode($this->json);
         }
-        $logJson = json_decode($logJson, true);
-        $this->json['data'] = $logJson;
+
+        $this->json['data'] = json_decode($logJson, true);
         $this->json['code'] = 0;
         $this->json['message'] = 'success';
         return json_encode($this->json);
     }
     public function del($resid, $date){
-        $userDataPath = $this->servRoot . $date.'/'.$this->dataTable;
-        if(!is_file($userDataPath)){
+        $logPath = $this->servRoot . $date.'/'.$this->dataTable;
+        echo $resid;
+        echo $date;
+        $logJson = @file_get_contents($logPath);
+        if(!$logJson){
             $this->json['code'] = 1;
             $this->json['message'] = 'fail to delete, empty folder';
             return json_encode($this->json);
         }
-        $userData = file_get_contents($userDataPath);
-        $lines = json_decode('{'.$userData.'}', true);
-        if(!unlink($userDataPath = $this->servRoot . $date.'/'.strrchr($lines['url'] ,'.'))){
-            $this->json['code'] = 1;
-            $this->json['message'] = 'no such file';
-        }else{
+
+        $logJson = json_decode($logJson, true);
+
+        if(unlink($this->servRoot . $date.'/'.$resid.strrchr($logJson[$resid]['url'] ,'.'))){
             $this->json['code'] = 0;
             $this->json['message'] = 'success';
+        }else{
+            $this->json['code'] = 1;
+            $this->json['message'] = 'no such file';
         }
-        unset($lines[$resid]);
+        unlink($this->servRoot . $date.'/'.substr( strrchr($logJson[$resid]['thumb'] ,'/'), 1));
 
-        $dataTable = fopen($this->servRoot . $this->folder.'/'.$this->dataTable, 'w');
-        fwrite($dataTable, substr(json_encode($lines), 1, -1));
+        unset($logJson[$resid]);
+
+        $dataTable = fopen($logPath, 'w');
+        fwrite($dataTable, json_encode($logJson));
         fclose($dataTable);
 
-        $this->json['data'] = $lines;
+        $this->json['data'] = $logJson;
         return json_encode($this->json);
     }
 }
@@ -186,7 +192,7 @@ if(isset($_GET['Reditor'])){
             echo $File->upload();
             break;
         case 'manage':
-            echo $File->fileData($_GET['date']);
+            echo $File->get($_GET['date']);
             break;
         case 'delete':
             echo $File->del($_GET['resid'], $_GET['date']);

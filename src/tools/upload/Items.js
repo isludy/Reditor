@@ -57,17 +57,18 @@ class Items{
             filename = re('<div class="re-upload-item-filename">'+(o.name || '')+'</div>'),
             form = re('<form class="re-upload-item-form">'+(options.upload.form || '')+'</form>'),
             media = null,
-            close = re('<i class="re-close icon icon-close1">');
+            close = re('<i class="re-close icon icon-close1">'),
+            time = (new Date()).getTime();
 
         if(/^(video|audio)\//.test(o.type)){
-            media = re('<video class="re-upload-item-media" src="'+o.url+'" controls>浏览器不支持播放器</video>');
+            media = re('<video class="re-upload-item-media" src="'+o.url+'"'+(o.thumb ? 'poster="'+o.thumb+( o.status === 0 ? '?t='+time : '')+'"' :'')+' controls>浏览器不支持播放器</video>');
             Items.observe(this.items[id], 'url', o.url, val=>{
                 media[0].src = val;
             });
         }else{
             media = re('<div class="re-upload-item-media">');
             if(/^image\//.test(o.type)){
-                media[0].style = 'background:url('+o.url+') no-repeat center; background-size: contain;';
+                media[0].style = 'background:url('+o.url+( o.status===0 ? '?t='+time : '')+') no-repeat center; background-size: contain;';
                 if(o.status > 0) preview.append(Logo.create(id));
                 Items.observe(this.items[id], 'url', o.url, val=>{
                     media[0].style.backgroundImage = 'url('+val+')';

@@ -1,19 +1,11 @@
 import options from "../../options";
 
 const canvas = document.createElement('canvas'),
-    ctx = canvas.getContext('2d'),
-    video = document.createElement('video'),
-    img = new Image();
+    ctx = canvas.getContext('2d');
 
 let ow = options.upload.thumb.width || 480,
     oh = options.upload.thumb.height || 270,
     resolve, reject;
-
-img.addEventListener('load', loaded);
-img.addEventListener('error', errorFn);
-
-video.addEventListener('loadeddata', loaded);
-video.addEventListener('error', errorFn);
 
 function loaded(e){
     this.removeEventListener(e.type, loaded);
@@ -36,29 +28,31 @@ function loaded(e){
     canvas.width = ow;
     canvas.height = oh;
     ctx.drawImage(this, 0, 0, w, h, 0, 0, ow, oh);
-    window.revokeURL(this.src);
     resolve(canvas.toFile(ow+'x'+oh+'.jpg', 'image/jpeg'));
 }
 function errorFn(err){
     this.removeEventListener('load', loaded);
     this.removeEventListener('loadeddata', loaded);
     this.removeEventListener('error', errorFn);
-    window.revokeURL(this.src);
     reject(err.message);
 }
 
 export default (type, src, v) =>{
-    if(type instanceof File){
-        src = window.createURL(type);
-        type = type.type;
-    }
     if(/^image/i.test(type)){
+        let img = new Image();
+        img.addEventListener('load', loaded);
+        img.addEventListener('error', errorFn);
         img.src = src;
+
     }else if(/^video/i.test(type)){
+        let video = document.createElement('video');
+
+        video.addEventListener('loadeddata', loaded);
+        video.addEventListener('error', errorFn);
+
         video.src = src;
-        if(v.length){
+        if(v && v.length)
             video.currentTime = v[0].currentTime || 0;
-        }
     }
     return new Promise((res, rej)=>{
         resolve = res;
