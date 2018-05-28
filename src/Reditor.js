@@ -43,6 +43,7 @@ class Reditor {
 
     /**
      * 渲染编辑器
+     * 注：当destroy方法的参数是false，通过update可以恢复使用。
      */
     update(){
         if(this.selector){
@@ -169,13 +170,10 @@ class Reditor {
     }
 
     /**
-     * 从光标所在位置分成两个段落或产生新段落，
-     * 相当于在编辑区键入【enter】键，但与默认不同，
-     * 默认生成段落标签取决于当前range所在的块标签，
-     * 并会附带标签的style属性样式，同时，有一些怪异情况，
-     * 如默认有会发生“p标签里生产p或div”的情况，这是不允许的。
-     * 所以此方法会统一使用P标签来生成，一概作为edit的子级，
-     * 以解决以上怪异情况
+     * 从光标所在位置分成两个段落或产生新段落，相当于在编辑区键入【enter】键，但与默认不同，默认生成段落标签取决于当前range所在的块标签，
+     * 并会附带标签的style属性样式，同时，有一些怪异情况，如默认有会发生“p标签里生产p或div”的情况，这是不允许的。所以此方法会统一使用P标
+     * 签来生成，一概作为edit的子级，以解决以上怪异情况
+     * @return {Element}
      */
     paragraph(){
         let el = this.range.startContainer,
@@ -205,8 +203,9 @@ class Reditor {
 
     /**
      * 销毁编辑器
+     * @param deep 默认false,只注销事件，true时移除元素并删除属性。
      */
-    destroy(deep){
+    destroy(deep = false){
         this.edit.off('mousedown', handlers['editmousedown']);
         this.edit.off('keyup', handlers['editkeyup']);
         this.edit.off('keydown', handlers['editkeydown']);

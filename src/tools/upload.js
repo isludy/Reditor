@@ -2,7 +2,6 @@ import re from './../re';
 import Up from './upload/Up';
 import Down from './upload/Down';
 import Items from './upload/Items';
-import utils from "../utils";
 
 let box;
 
