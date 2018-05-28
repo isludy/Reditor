@@ -127,8 +127,20 @@ class Reditor {
             }
         };
         handlers['editkeydown'] = (e)=>{
+            _this.range = utils.range();
+            /*
+            //对退格键【backspace】进行处理，让编辑区至少保留一个p标签，
+            //其实可以不需要
             if(e.keyCode === 8 && /^<p><br><\/p>$/.test(edit.html().replace(/\s+/g, ''))){
                 e.preventDefault();
+            }
+            */
+
+            if(e.keyCode === 13){
+                if(!e.shiftKey){
+                    e.preventDefault();
+                    _this.paragraph();
+                }
             }
         };
         handlers['editkeyup'] = (e)=>{
@@ -154,6 +166,41 @@ class Reditor {
         edit.on('contextmenu', handlers['editcontextmenu']);
 
         return edit;
+    }
+
+    /**
+     * 从光标所在位置分成两个段落或产生新段落，
+     * 相当于在编辑区键入【enter】键，但与默认不同，
+     * 默认生成段落标签取决于当前range所在的块标签，
+     * 并会附带标签的style属性样式，同时，有一些怪异情况，
+     * 如默认有会发生“p标签里生产p或div”的情况，这是不允许的。
+     * 所以此方法会统一使用P标签来生成，一概作为edit的子级，
+     * 以解决以上怪异情况
+     */
+    paragraph(){
+        let el = this.range.startContainer,
+            p = document.createElement('p'),
+            start = this.range.startOffset,
+            end = this.range.endOffset;
+        if(el === this.edit[0] || (el.parentNode === this.edit[0] && el.nodeType === 3)){
+            document.execCommand('formatBlock', false, 'p');
+        }else{
+            while(el.parentNode !== this.edit[0]){
+                el = el.parentNode;
+            }
+            if(el.nodeType === 1){
+                if(start !== end)
+                    this.range.deleteContents();
+                this.range.setEnd(el, el.childNodes.length);
+               this.edit[0].insertBefore(p, el.nextSibling);
+                p.appendChild(this.range.extractContents());
+                if(!p.innerHTML) p.innerHTML = '<br>';
+                if(!el.innerHTML) el.innerHTML = '<br>';
+                this.range.setStart(p, 0);
+                this.range.collapse(true);
+            }
+        }
+        return p;
     }
 
     /**
