@@ -38,7 +38,6 @@
 .re-scale-controller{
     border: #44a4ff solid 1px;
     position: fixed;
-    display: none;
 }
 .re-scale-controller-tl,
 .re-scale-controller-tr,
@@ -48,6 +47,7 @@
     width: 10px;
     height: 10px;
     background: #44a4ff;
+    cursor: pointer;
 }
 .re-scale-controller-tl{
     top: -5px;

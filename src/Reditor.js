@@ -46,10 +46,10 @@ class Reditor {
      * 注：当destroy方法的参数是false，通过update可以恢复使用。
      */
     update(){
-        if(this.selector){
+        if(this.selector) {
             this.editor = re(this.selector);
 
-            if(!this.editor.length) throw new Error('Can\'t get editor\'s container element by the selector "'+this.selector+'"');
+            if (!this.editor.length) throw new Error('Can\'t get editor\'s container element by the selector "' + this.selector + '"');
 
             this.range = '';
             this.editor.html('');
@@ -119,12 +119,14 @@ class Reditor {
         }
 
         handlers['editmousedown'] = (e)=>{
-            if(/^img$/i.test(e.target.tagName)){
-                _this.range.selectNode(e.target);
-                utils.range(_this.range);
-            }else{
-                re(document).on('mouseup', docUpHandler);
-                _this.range = utils.range();
+            switch (e.target.tagName) {
+                case 'IMG':
+                    _this.range.selectNode(e.target);
+                    utils.range(_this.range);
+                    break;
+                default:
+                    re(document).on('mouseup', docUpHandler);
+                    _this.range = utils.range();
             }
         };
         handlers['editkeydown'] = (e)=>{
@@ -187,7 +189,7 @@ class Reditor {
                 el = el.parentNode;
             }
             if(el.nodeType === 1){
-                if(start !== end)
+                if(start !== end && this.range.deleteContents)
                     this.range.deleteContents();
                 this.range.setEnd(el, el.childNodes.length);
                this.edit[0].insertBefore(p, el.nextSibling);
@@ -202,6 +204,79 @@ class Reditor {
     }
 
     /**
+     * 添加媒体元素到编辑区
+     * @param src
+     * @param thumb
+     * @param type
+     */
+    addMedia(src, thumb, type){
+        let img = document.createElement('img');
+        img.style.maxWidth = '90%';
+
+        if(type !== 'image'){
+            img.setAttribute('data-re-'+type, src);
+            img.src = thumb;
+        }else{
+            img.src = src;
+        }
+        if(this.range.deleteContents){
+            this.range.deleteContents();
+        }
+        this.range.insertNode(img);
+        this.range.collapse(false);
+    }
+
+    /**
+     * 插入内容到edit中，用于修改文章，从服务器中载入内容
+     * @param html
+     */
+    setContent(html){
+        if(!html) return;
+        this.edit.html(html);
+        let vd = this.edit.find('video'),
+            ad = this.edit.find('audio');
+        vd.each(v=>{
+            let style = v.getAttribute('style'),
+                thumb = v.getAttribute('poster');
+            style = style ? ' style="'+style+'"' : '';
+            re(v).after('<img src="'+thumb+'" data-re-video="'+v.src+'"'+style+'>').remove();
+        });
+        ad.each(a=>{
+            let style = a.getAttribute('style');
+            style = style ? ' style="'+style+'"' : '';
+            re(a).after('<img src="" data-re-audio="'+a.src+'"'+style+'>').remove();
+        });
+    }
+
+    /**
+     * 获取需要提交的内容
+     * @return {*}
+     */
+    getContent(){
+        let div = re('<div>'+this.edit.html()+'</div>'),
+            vImg = div.find('img[data-re-video]'),
+            aImg = div.find('img[data-re-audio]');
+
+        vImg.each(img=>{
+            let style = img.getAttribute('style'),
+                src = img.getAttribute('data-re-video');
+            style = style ? ' style="'+style+'"' : '';
+            re(img).after('<video'+style+' src="'+src+'" controls poster="'+img.src+'">'+
+                '<embed'+style+' src="'+src+'" type="application/x-mplayer2" showcontrols="true" pluginspage="http://www.microsoft.com/Windows/MediaPlayer/">'+
+                '</video>').remove();
+        });
+        aImg.each(img=>{
+            let style = img.getAttribute('style'),
+                src = img.getAttribute('data-re-audio');
+            style = style ? ' style="'+style+'"' : '';
+            re(img).after('<audio'+style+' src="'+src+'" controls>'+
+                '<embed'+style+' src="'+src+'" type="application/x-mplayer2" showcontrols="true" pluginspage="http://www.microsoft.com/Windows/MediaPlayer/">'+
+                '</audio>').remove();
+        });
+        return div.html();
+    }
+
+    /**
      * 销毁编辑器
      * @param deep 默认false,只注销事件，true时移除元素并删除属性。
      */
@@ -212,13 +287,10 @@ class Reditor {
         this.edit.off('contextmenu', handlers['editcontextmenu']);
         this.toolbar.children().off('click', handlers['toolshandler']);
 
-        if(deep) this.editor.children().remove();
-
-        for(let k in this){
-            if(!deep && ['selector', 'options'].includes(k)) continue;
-            try{
+        if(deep) {
+            this.editor.children().remove();
+            for(let k in this)
                 delete this[k];
-            }catch (err) {}
         }
     }
 }

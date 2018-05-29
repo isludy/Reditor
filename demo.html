@@ -8,17 +8,28 @@
 </head>
 <body>
 <div id="reditor"></div>
-<button id="btn1">销毁</button>
+<button id="btn0">销毁</button>
+<button id="btn1">完全销毁</button>
 <button id="btn2">更新</button>
+<button id="btn3">获取内容</button>
+
+<hr>
+<textarea id="showResult" style="width: 640px;height: 300px;"></textarea>
 <script src="dist/main.js?v=1.0"></script>
 <script>
     let r = new Reditor('#reditor');
-    btn1.onclick = function(){
+    btn0.onclick = function(){
         r.destroy();
+    };
+    btn1.onclick = function(){
+        r.destroy(true);
     };
     btn2.onclick = function(){
         r.update();
     };
+    btn3.onclick = function(){
+        showResult.value = r.getContent();
+    }
 </script>
 </body>
 </html>

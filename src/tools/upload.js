@@ -39,27 +39,26 @@ export default (reditor)=>{
             Down.init('#re-upload-body');
         });
         re('#re-upload-use').on('click', function(){
-            let frag = document.createDocumentFragment(),
-                media;
+            let media,
+                item;
 
             for(let k in Items.items) {
                 if (Items.items[k].selected) {
-                    if(/^(image|video|audio)\//i.test(Items.items[k].type)){
-                        media = document.createElement('img');
-                        media.src = /image/i.test(Items.items[k].type) ? Items.items[k].url : Items.items[k].poster;
-                        media.style.maxWidth = '90%';
+                    item = Items.items[k];
+                    if(/image|video|audio/.test(item.type)){
+                        reditor.addMedia(item.url, item.thumb, item.type.split(/\//)[0]);
                     }else{
                         media = document.createElement('a');
-                        media.href = Items.items[k].url;
-                        media.innerHTML = media.download = Items.items[k].name;
+                        media.href = item.url;
+                        media.innerHTML = media.download = item.name;
+                        if(reditor.range.deleteContents){
+                            reditor.range.deleteContents();
+                        }
+                        reditor.range.insertNode(media);
+                        reditor.range.collapse(false);
                     }
-                    frag.appendChild(media);
-                    Items.items[k].selected = false;
+                    item.selected = false;
                 }
-            }
-            if(reditor.range.deleteContents){
-                reditor.range.deleteContents();
-                reditor.range.insertNode(frag);
             }
             box.addClass('re-upload-hide');
         });
