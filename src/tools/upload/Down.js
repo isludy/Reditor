@@ -42,7 +42,7 @@ const Down = {
     init(id){
         list = re(id);
         list.append(loading);
-        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180529');//+new Date().format('YMD'));
+        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180531');//+new Date().format('YMD'));
         xhr.send();
     }
 };

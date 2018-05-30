@@ -48,24 +48,13 @@ export default (reditor)=>{
                     item = Items.items[k];
                     switch (item.type.split(/\//)[0]) {
                         case 'image':
-                            reditor.addMedia(item.url, item.url, 'image');
+                            reditor.addMedia(item.url, 'image');
                             break;
                         case 'video':
-                            if(!!item.thumb){
-                                media = new Image();
-                                media.src = item.thumb;
-                            }else{
-                                media = document.createElement('video');
-                                media.src = item.url;
-                            }
-                            media.onload = function(){
-                                let w = this.videoWidth || this.width,
-                                    h = this.videoHeight || this.height;
-                                reditor.addMedia(item.url, utils.thumb(media, w, h), 'video');
-                            };
+                            reditor.addMedia(item.url, 'video', item.thumb);
                             break;
                         case 'audio':
-                            reditor.addMedia(item.url, utils.thumb(null, 480, 270), 'audio');
+                            reditor.addMedia(item.url, 'audio');
                             break;
                         default:
                             media = document.createElement('a');

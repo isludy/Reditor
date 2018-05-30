@@ -101,7 +101,7 @@ class Logo{
             title: '设置logo属性',
             body: `<b>在网页中的实际属性：</b>
             <p>
-                <span style="${style1}">上标图片宽度：</span>
+                <span style="${style1}">图片宽度：</span>
                 <input class="re-input-m" type="text" name="targetWidth" style="${style2}"> px
             </p>
             <p>

@@ -6,6 +6,18 @@ import contextMenus from './contextMenus';
 const RC =  require.context('./tools', false, /\.js$/);
 
 const handlers = {};
+const thumbs = {
+    video: utils.mediaThumb({
+        width: 480,
+        height: 270
+    }),
+    audio: utils.mediaThumb({
+        width: 480,
+        height: 270,
+        text: 'AUDIO',
+        background: '#888'
+    })
+};
 
 class Reditor {
     /**
@@ -206,17 +218,23 @@ class Reditor {
     /**
      * 添加媒体元素到编辑区
      * @param src
-     * @param thumb
      * @param type
+     * @param thumb
      */
-    addMedia(src, thumb, type){
+    addMedia(src, type, thumb = ''){
         let img = document.createElement('img');
         img.style.maxWidth = '90%';
 
-        if(type !== 'image')
+        if(type === 'image'){
+            img.src = src;
+        }else{
             img.setAttribute('data-re-'+type, src);
-
-        img.src = thumb;
+            img.src = thumbs[type];
+            if(thumb){
+                img.style.background = 'url("'+thumb+'") no-repeat center center';
+                img.style.webkitBackgroundSize = img.style.backgroundSize = '100% auto';
+            }
+        }
 
         if(this.range.deleteContents){
             this.range.deleteContents();

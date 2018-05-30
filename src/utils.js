@@ -172,34 +172,37 @@ export default {
             });
         }
     },
-    thumb(el, w, h){
+    /**
+     * 绘制（音、视频的）占位图
+     * @param o
+     * @return {string}
+     */
+    mediaThumb(o){
         let cv = document.createElement('canvas'),
             ctx = cv.getContext('2d');
-        cv.width = w;
-        cv.height = h;
+        cv.width = o.width;
+        cv.height = o.height;
 
-        if(el){
-            if(el.tagName === 'VIDEO'){
-                el.currentTime = Math.floor(el.duration / 2);
-            }
-            ctx.drawImage(el, 0, 0, cv.width, cv.height);
-        }else{
-            ctx.fillStyle = '#ccc';
+        if(o.background){
+            ctx.fillStyle = o.background;
             ctx.fillRect(0, 0, cv.width, cv.height);
-            ctx.font = 'bold 36px "microsoft yahei","Open Sans", sans-serif';
-            ctx.fillStyle = '#888';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("AUDIO", cv.width/2, cv.height/2);
         }
 
-        ctx.globalAlpha = 0.7;
+        if(o.text){
+            ctx.font = o.font || 'bold 36px "Source Code Pro",Consolas,"microsoft yahei","Open Sans", sans-serif';
+            ctx.fillStyle = o.color || '#555';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(o.text, cv.width/2, cv.height/2);
+        }
+
+        ctx.globalAlpha = o.opacity || 0.7;
 
         let px = cv.width/2 - 18,
             py = cv.height/2 - 18;
         ctx.beginPath();
         ctx.arc(px+14, py+18, 28, 0, 2*Math.PI);
-        ctx.strokeStyle = '#fff';
+        ctx.strokeStyle = o.button || '#fff';
         ctx.lineWidth = 4;
         ctx.closePath();
         ctx.stroke();
@@ -208,9 +211,9 @@ export default {
         ctx.moveTo(px, py);
         ctx.lineTo(px+36, py+18);
         ctx.lineTo(px, py+36);
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = o.button || '#fff';
         ctx.closePath();
         ctx.fill();
-        return window.createURL(cv.toFile('thumb.jpg', 'image/jpeg'));
+        return  cv.toDataURL('image/png');
     }
 }
