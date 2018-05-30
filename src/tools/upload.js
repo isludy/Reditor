@@ -2,6 +2,7 @@ import re from './../re';
 import Up from './upload/Up';
 import Down from './upload/Down';
 import Items from './upload/Items';
+import utils from "../utils";
 
 let box;
 
@@ -45,17 +46,36 @@ export default (reditor)=>{
             for(let k in Items.items) {
                 if (Items.items[k].selected) {
                     item = Items.items[k];
-                    if(/image|video|audio/.test(item.type)){
-                        reditor.addMedia(item.url, item.thumb, item.type.split(/\//)[0]);
-                    }else{
-                        media = document.createElement('a');
-                        media.href = item.url;
-                        media.innerHTML = media.download = item.name;
-                        if(reditor.range.deleteContents){
-                            reditor.range.deleteContents();
-                        }
-                        reditor.range.insertNode(media);
-                        reditor.range.collapse(false);
+                    switch (item.type.split(/\//)[0]) {
+                        case 'image':
+                            reditor.addMedia(item.url, item.url, 'image');
+                            break;
+                        case 'video':
+                            if(!!item.thumb){
+                                media = new Image();
+                                media.src = item.thumb;
+                            }else{
+                                media = document.createElement('video');
+                                media.src = item.url;
+                            }
+                            media.onload = function(){
+                                let w = this.videoWidth || this.width,
+                                    h = this.videoHeight || this.height;
+                                reditor.addMedia(item.url, utils.thumb(media, w, h), 'video');
+                            };
+                            break;
+                        case 'audio':
+                            reditor.addMedia(item.url, utils.thumb(null, 480, 270), 'audio');
+                            break;
+                        default:
+                            media = document.createElement('a');
+                            media.href = item.url;
+                            media.innerHTML = media.download = item.name;
+                            if(reditor.range.deleteContents){
+                                reditor.range.deleteContents();
+                            }
+                            reditor.range.insertNode(media);
+                            reditor.range.collapse(false);
                     }
                     item.selected = false;
                 }

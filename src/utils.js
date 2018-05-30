@@ -171,5 +171,46 @@ export default {
                 });
             });
         }
+    },
+    thumb(el, w, h){
+        let cv = document.createElement('canvas'),
+            ctx = cv.getContext('2d');
+        cv.width = w;
+        cv.height = h;
+
+        if(el){
+            if(el.tagName === 'VIDEO'){
+                el.currentTime = Math.floor(el.duration / 2);
+            }
+            ctx.drawImage(el, 0, 0, cv.width, cv.height);
+        }else{
+            ctx.fillStyle = '#ccc';
+            ctx.fillRect(0, 0, cv.width, cv.height);
+            ctx.font = 'bold 36px "microsoft yahei","Open Sans", sans-serif';
+            ctx.fillStyle = '#888';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("AUDIO", cv.width/2, cv.height/2);
+        }
+
+        ctx.globalAlpha = 0.7;
+
+        let px = cv.width/2 - 18,
+            py = cv.height/2 - 18;
+        ctx.beginPath();
+        ctx.arc(px+14, py+18, 28, 0, 2*Math.PI);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 4;
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(px+36, py+18);
+        ctx.lineTo(px, py+36);
+        ctx.fillStyle = '#fff';
+        ctx.closePath();
+        ctx.fill();
+        return window.createURL(cv.toFile('thumb.jpg', 'image/jpeg'));
     }
 }

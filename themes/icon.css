@@ -67,5 +67,11 @@
 
 .icon-replace:before{content: '\e985';}
 .icon-source:before{content: '\ea80';}
-.icon-code:before{content:'\ea81';}
-.icon-removeformat:before{content:'\e94b';}
+.icon-code:before{content: '\ea81';}
+.icon-removeformat:before{content: '\e94b';}
+
+.icon-audio1:before{content: '\e911';}
+.icon-audio2:before{content: '\e910';}
+.icon-video1:before{content: '\e912';}
+.icon-video2:before{content: '\e913';}
+.icon-video3:before{content: '\e914';}

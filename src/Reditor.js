@@ -213,12 +213,11 @@ class Reditor {
         let img = document.createElement('img');
         img.style.maxWidth = '90%';
 
-        if(type !== 'image'){
+        if(type !== 'image')
             img.setAttribute('data-re-'+type, src);
-            img.src = thumb;
-        }else{
-            img.src = src;
-        }
+
+        img.src = thumb;
+
         if(this.range.deleteContents){
             this.range.deleteContents();
         }
@@ -226,6 +225,9 @@ class Reditor {
         this.range.collapse(false);
     }
 
+    convertMedia(){
+
+    }
     /**
      * 插入内容到edit中，用于修改文章，从服务器中载入内容
      * @param html
