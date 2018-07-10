@@ -28,7 +28,6 @@ class Re{
         }
         s = null;
     }
-
     /**
      * 查找节点
      * @param s

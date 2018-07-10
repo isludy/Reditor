@@ -22,7 +22,6 @@ export default (reditor)=>{
                     <button id="re-upload-refresh" class="re-btn-m re-btn-warning">刷新</button>
                 </div>
             </div>
-            <div id="re-upload-slide-left" class="re-upload-slide-left icon icon-arrow-left1"></div>
         </div>`);
         box.on('click',function (e){
             if(e.target === this) box.toggleClass('re-upload-hide');
@@ -70,9 +69,6 @@ export default (reditor)=>{
                 }
             }
             box.addClass('re-upload-hide');
-        });
-        re('#re-upload-slide-left').on('click',()=>{
-            box.toggleClass('re-upload-hide');
         });
     }else{
         box.toggleClass('re-upload-hide');
