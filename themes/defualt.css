@@ -481,12 +481,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: translateX(0);
-    transition: transform .5s;
 }
-.re-upload-hide{
-    transform: translateX(100%);
-}
+
 .re-upload-wrapper{
     width: 80%;
     height: 90%;
