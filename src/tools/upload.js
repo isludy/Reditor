@@ -2,8 +2,6 @@ import re from './../re';
 import Up from './upload/Up';
 import Down from './upload/Down';
 import Items from './upload/Items';
-import utils from "../utils";
-import options from "../options";
 
 let context = document.body,
     box = re(`<div class="re-upload">
@@ -21,7 +19,9 @@ let context = document.body,
                 <button id="re-upload-refresh" class="re-btn-m re-btn-warning">刷新</button>
             </div>
         </div>
-    </div>`);
+    </div>`),
+    list = box.find('#re-upload-body'),
+    reditor = null;
 
 box.on('click',function (e){
     if(e.target === this || re(e.target).hasClass('re-dialog-close')) {
@@ -29,75 +29,50 @@ box.on('click',function (e){
     }
 });
 
+Down.init(list);
+box.find('#re-upload-refresh').on('click', function () {
+    Down.reload();
+});
 
-function loadData(){
-    let xhr = new XMLHttpRequest();
-    xhr.open('get',options.upload.path+'?Reditor=load&date=20180529');//+new Date().format('YMD'));
-    xhr.onreadystatechange = function(){
-        if(xhr.readyState === 4 && xhr.status === 200)
-            console.log(xhr.response);
-    };
-    xhr.send();
-}
-// Up.init({
-//     choser: '#re-upload-choser',
-//     upload: '#re-upload-upload',
-//     clear: '#re-upload-clear',
-//     list: '#re-upload-body'
-// });
-// Down.init('#re-upload-body');
-// re('#re-upload-refresh').on('click', function(){
-//     Down.init('#re-upload-body');
-// });
-loadData();
-export default (reditor)=>{
-    context.appendChild(box[0]);
-    // if(!box){
-        /*
-        Up.init({
-            choser: '#re-upload-choser',
-            upload: '#re-upload-upload',
-            clear: '#re-upload-clear',
-            list: '#re-upload-body'
-        });
-        Down.init('#re-upload-body');
-        re('#re-upload-refresh').on('click', function(){
-            Down.init('#re-upload-body');
-        });
-        re('#re-upload-use').on('click', function(){
-            let media,
-                item;
+Up.init({
+    choser: box.find('#re-upload-choser'),
+    upload: box.find('#re-upload-upload'),
+    clear: box.find('#re-upload-clear'),
+    list: list
+});
+box.find('#re-upload-use').on('click', function(){
+    let media,
+        item;
 
-            for(let k in Items.items) {
-                if (Items.items[k].selected) {
-                    item = Items.items[k];
-                    switch (item.type.split(/\//)[0]) {
-                        case 'image':
-                            reditor.addMedia(item.url, 'image');
-                            break;
-                        case 'video':
-                            reditor.addMedia(item.url, 'video', item.thumb);
-                            break;
-                        case 'audio':
-                            reditor.addMedia(item.url, 'audio');
-                            break;
-                        default:
-                            media = document.createElement('a');
-                            media.href = item.url;
-                            media.innerHTML = media.download = item.name;
-                            if(reditor.range.deleteContents){
-                                reditor.range.deleteContents();
-                            }
-                            reditor.range.insertNode(media);
-                            reditor.range.collapse(false);
+    for(let k in Items.items) {
+        if (Items.items[k].selected) {
+            item = Items.items[k];
+            switch (item.type.split(/\//)[0]) {
+                case 'image':
+                    reditor.addMedia(item.url, 'image');
+                    break;
+                case 'video':
+                    reditor.addMedia(item.url, 'video', item.thumb);
+                    break;
+                case 'audio':
+                    reditor.addMedia(item.url, 'audio');
+                    break;
+                default:
+                    media = document.createElement('a');
+                    media.href = item.url;
+                    media.innerHTML = media.download = item.name;
+                    if(reditor.range.deleteContents){
+                        reditor.range.deleteContents();
                     }
-                    item.selected = false;
-                }
+                    reditor.range.insertNode(media);
+                    reditor.range.collapse(false);
             }
-            box.addClass('re-upload-hide');
-        });
-        */
-    // }else{
-    //     box.toggleClass('re-upload-hide');
-    // }
+            item.selected = false;
+        }
+    }
+    box.addClass('re-upload-hide');
+});
+export default (r)=>{
+    context.appendChild(box[0]);
+    reditor = r;
 }

@@ -120,6 +120,7 @@ export default {
 
         span[0].parentNode.style.textAlign = 'center';
         range.selectNode(span[0]);
+        range.collapse(false);
         utils.range(range);
     }
 }

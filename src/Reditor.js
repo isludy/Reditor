@@ -6,19 +6,13 @@ import contextMenus from './contextMenus';
 const RC =  require.context('./tools', false, /\.js$/);
 
 const handlers = {};
-const thumbs = {
-    video: utils.mediaThumb({
-        width: 480,
-        height: 270
-    }),
-    audio: utils.mediaThumb({
-        width: 480,
-        height: 270,
-        text: 'AUDIO',
-        background: '#888'
-    })
-};
-
+const audioThumb = utils.mediaThumb({
+    width: 480,
+    height: 270,
+    text: 'AUDIO',
+    background: '#ddd',
+    color: '#666'
+});
 class Reditor {
     /**
      * Reditor构造器
@@ -227,13 +221,27 @@ class Reditor {
 
         if(type === 'image'){
             img.src = src;
-        }else{
-            img.setAttribute('data-re-'+type, src);
-            img.src = thumbs[type];
-            if(thumb){
-                img.style.background = 'url("'+thumb+'") no-repeat center center';
-                img.style.webkitBackgroundSize = img.style.backgroundSize = '100% auto';
-            }
+        }else if(type === 'video'){
+            let image = new Image();
+            image.crossOrigin = 'Anonymous';
+            image.onload = function(){
+                img.src = utils.mediaThumb({
+                    width: image.width,
+                    height: image.height,
+                    image: image
+                });
+                image = image.onload = image.onerror = null;
+            };
+            image.onerror = function(){
+                console.log('无缩略图');
+                image = image.onload = image.onerror = null;
+            };
+            image.src = thumb;
+            img.setAttribute('data-re-thumb', thumb);
+            img.setAttribute('data-re-video', src);
+        }else if(type === 'audio'){
+            img.src = audioThumb;
+            img.setAttribute('data-re-audio', src);
         }
 
         if(this.range.deleteContents){
@@ -243,9 +251,6 @@ class Reditor {
         this.range.collapse(false);
     }
 
-    convertMedia(){
-
-    }
     /**
      * 插入内容到edit中，用于修改文章，从服务器中载入内容
      * @param html
@@ -257,14 +262,37 @@ class Reditor {
             ad = this.edit.find('audio');
         vd.each(v=>{
             let style = v.getAttribute('style'),
-                thumb = v.getAttribute('poster');
+                thumb = v.getAttribute('poster'),
+                img = document.createElement('img'),
+                image = new Image();
+            image.crossOrigin = 'Anonymous';
+            image.onload = function(){
+                img.src = utils.mediaThumb({
+                    width: image.width,
+                    height: image.height,
+                    image: image
+                });
+
+                image = image.onload = image.onerror = null;
+            };
+            image.onerror = function(){
+                console.log('无缩略图');
+                image = image.onload = image.onerror = null;
+            };
+            image.src = thumb;
+
             style = style ? ' style="'+style+'"' : '';
-            re(v).after('<img src="'+thumb+'" data-re-video="'+v.src+'"'+style+'>').remove();
+            img.setAttribute('data-re-thumb', thumb);
+            img.setAttribute('data-re-video', v.src);
+            img.setAttribute('style', style);
+            img.src = thumb;
+
+            re(v).after(img).remove();
         });
         ad.each(a=>{
             let style = a.getAttribute('style');
             style = style ? ' style="'+style+'"' : '';
-            re(a).after('<img src="" data-re-audio="'+a.src+'"'+style+'>').remove();
+            re(a).after('<img src="'+audioThumb+'" data-re-audio="'+a.src+'"'+style+'>').remove();
         });
     }
 
@@ -275,20 +303,40 @@ class Reditor {
     getContent(){
         let div = re('<div>'+this.edit.html()+'</div>'),
             vImg = div.find('img[data-re-video]'),
-            aImg = div.find('img[data-re-audio]');
+            aImg = div.find('img[data-re-audio]'),
+            allowStyle = /width|height|float/ig;
 
         vImg.each(img=>{
             let style = img.getAttribute('style'),
-                src = img.getAttribute('data-re-video');
-            style = style ? ' style="'+style+'"' : '';
-            re(img).after('<video'+style+' src="'+src+'" controls poster="'+img.src+'">'+
+                src = img.getAttribute('data-re-video'),
+                stys = style.split(';'),
+                st = [];
+
+            for(let len = stys.length; len--;){
+                if(allowStyle.test(stys[len])){
+                    st.push(stys[len]);
+                }
+            }
+
+            style = st.length ? ' style="'+st.join(';')+'"' : '';
+            re(img).after('<video'+style+' src="'+src+'" controls poster="'+(img.getAttribute('data-re-thumb') || '')+'">'+
                 '<embed'+style+' src="'+src+'" type="application/x-mplayer2" showcontrols="true" pluginspage="http://www.microsoft.com/Windows/MediaPlayer/">'+
                 '</video>').remove();
         });
         aImg.each(img=>{
             let style = img.getAttribute('style'),
-                src = img.getAttribute('data-re-audio');
-            style = style ? ' style="'+style+'"' : '';
+                src = img.getAttribute('data-re-audio'),
+                stys = style.split(';'),
+                st = [];
+
+            for(let len = stys.length; len--;){
+                if(allowStyle.test(stys[len])){
+                    st.push(stys[len]);
+                }
+            }
+
+            style = st.length ? ' style="'+st.join(';')+'"' : '';
+
             re(img).after('<audio'+style+' src="'+src+'" controls>'+
                 '<embed'+style+' src="'+src+'" type="application/x-mplayer2" showcontrols="true" pluginspage="http://www.microsoft.com/Windows/MediaPlayer/">'+
                 '</audio>').remove();

@@ -38,12 +38,19 @@ Items.ondelete = function(id){
         xhr.send();
     }
 };
+
+function load(){
+    list.append(loading);
+    xhr.open('get',options.upload.path+'?Reditor=load&date=20180529');//+new Date().format('YMD'));
+    xhr.send();
+}
 const Down = {
-    init(id){
-        list = re(id);
-        list.append(loading);
-        xhr.open('get',options.upload.path+'?Reditor=manage&date=20180531');//+new Date().format('YMD'));
-        xhr.send();
+    init(obj){
+        list = obj;
+        load();
+    },
+    reload(){
+        load();
     }
 };
 export default Down;

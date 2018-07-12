@@ -189,11 +189,15 @@ export default {
         }
 
         if(o.text){
-            ctx.font = o.font || 'bold 36px "Source Code Pro",Consolas,"microsoft yahei","Open Sans", sans-serif';
+            ctx.font = (o.fontWeight || 'bold') +' '+ (o.fontSize || '36px') + ' ' + (o.fontFamily || '"microsoft yahei","Open Sans", sans-serif');
             ctx.fillStyle = o.color || '#555';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(o.text, cv.width/2, cv.height/2);
+        }
+
+        if(o.image){
+            ctx.drawImage(o.image, 0, 0, cv.width, cv.height);
         }
 
         ctx.globalAlpha = o.opacity || 0.7;

@@ -51,10 +51,10 @@ class Up{
         };
     }
     init(o){
-        this.choser = re(o.choser);
-        this.upload = re(o.upload);
-        this.clear = re(o.clear);
-        this.list = re(o.list);
+        this.choser = o.choser;
+        this.upload = o.upload;
+        this.clear = o.clear;
+        this.list = o.list;
 
         this.choser.on('click', this.handlers.choser);
         this.upload.on('click', this.handlers.upload);
