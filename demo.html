@@ -12,6 +12,7 @@
 <button id="btn1">完全销毁</button>
 <button id="btn2">更新</button>
 <button id="btn3">获取内容</button>
+<button id="btn4">setContent</button>
 
 <textarea id="showResult" style="width: 100%;height: 300px; margin: 30px 0;" title="dd"></textarea>
 <script src="dist/main.js?v=1.0"></script>
@@ -29,7 +30,9 @@
     btn3.onclick = function(){
         showResult.value = r.getContent();
     };
-
+    btn4.onclick = function () {
+        r.setContent(showResult.value);
+    }
 
 </script>
 </body>
