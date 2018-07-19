@@ -1,0 +1,77 @@
+@font-face {
+  font-family: 'editorIcon';
+  src:
+    /*url('fonts/editor.ttf') format('truetype'),*/
+    url('fonts/editor.woff') format('woff'),
+    url('fonts/editor.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon {
+  font-family: 'editorIcon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-home1:before{content: '\e900';}
+.icon-home2:before{content: '\e901';}
+.icon-home3:before{content: '\e902';}
+
+.icon-image1:before{content: '\e90d';}
+.icon-image2:before{content: '\e90e';}
+
+.icon-bold:before{content: '\ea62';}
+.icon-italic:before{content: '\ea64';}
+.icon-underline:before{content: '\ea63';}
+.icon-strikethrough:before{content: '\ea65';}
+.icon-subscript:before{content: '\ea6a';}
+.icon-superscript:before{content: '\ea69';}
+.icon-fontname:before{content: '\ea6d';}
+.icon-fontsize:before{content: '\ea61';}
+.icon-forecolor:before{content: '\e903';}
+.icon-backcolor:before{content: '\e915';}
+.icon-border:before{content: '\e907';}
+.icon-linespacing:before{content: '\e9bb';}
+.icon-justifyleft:before{content: '\ea77';}
+.icon-justifycenter:before{content: '\ea78';}
+.icon-justifyright:before{content: '\ea79';}
+.icon-justifyfull:before{content: '\ea7a';}
+.icon-indent:before{content: '\ea7b';}
+.icon-outdent:before{content: '\ea7c';}
+
+.icon-link:before{content: '\e90c';}
+.icon-unlink:before{content: '\e916';}
+.icon-upload:before{content: '\e934';}
+
+.icon-checkbox1:before{content: '\ea10';}
+.icon-checkbox2:before{content: '\ea11';}
+
+.icon-close1:before{content: '\ea0d';}
+.icon-close2:before{content: '\ea0f';}
+
+.icon-file1:before{content: '\e922';}
+.icon-file2:before{content: '\e923';}
+.icon-file3:before{content: '\e924';}
+.icon-file4:before{content: '\e925';}
+.icon-file5:before{content: '\e926';}
+.icon-file6:before{content: '\e904';}
+
+.icon-arrow-left1:before{content: '\ea38';}
+
+.icon-replace:before{content: '\e985';}
+.icon-source:before{content: '\ea80';}
+.icon-code:before{content: '\ea81';}
+.icon-removeformat:before{content: '\e94b';}
+
+.icon-audio1:before{content: '\e911';}
+.icon-audio2:before{content: '\e910';}
+.icon-video1:before{content: '\e912';}
+.icon-video2:before{content: '\e913';}
+.icon-video3:before{content: '\e914';}
