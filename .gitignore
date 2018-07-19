@@ -1,6 +1,5 @@
 node_modules/
 ui/
-dist/
 .*
 !.gitignore
 !.babelrc
